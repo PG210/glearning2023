@@ -1,0 +1,4 @@
+nombre,apellido,email,sexo,area,posicion,usuario,contrasenia,confcontrasenia,personaje
+Marta,Perez,perezmarta@gmail.com,femenino,15,19,marta_perez,Perez.c#,Perez.c#,1
+Oscar,Mallama,mallama312@gmail.com,masculino,15,19,mallama312@gmail.com,Oscar.c#,Oscar.c#,9
+Maria,Benavides,benavides7890@gmail.com,femenino,15,19,benavides7890@gmail.com,Maria.c#,Maria.c#,9
