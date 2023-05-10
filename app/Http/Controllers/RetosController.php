@@ -78,7 +78,16 @@ class RetosController extends Controller
         }else {
             $pathmaterial = "";            
         }
-
+        //proceso para guardar video archivo
+        
+        if($request->hasFile('video')){         
+            $videotxt = $request->file('video')->getClientOriginalName();
+            $rutavideo = $videotxt;
+            $request->file('video')->storeAs('public/videos', $videotxt);
+        }else {
+            $rutavideo = "";            
+        }
+        //end guardar video
         //AHORCADO
         if(!$request->dificultad){
             $dificultadreto = 0;
@@ -99,8 +108,8 @@ class RetosController extends Controller
         $retos->material = $pathmaterial;
         $retos->challenge_type_id = $request->challenge_type_id;        
         $retos->subchapter_id = $request->subchapter_id; 
-        
-        $retos->urlvideo = $request->urlvideo;
+        $retos->urlvideo = $rutavideo;
+       // $retos->urlvideo = $request->urlvideo;
         
         //AHORCADO
         if($request->ahorcado){
@@ -201,6 +210,15 @@ class RetosController extends Controller
             $pathmaterial = "";            
         }
 
+         //proceso para guardar video archivo
+         if($request->hasFile('video')){         
+            $videotxt = $request->file('video')->getClientOriginalName();
+            $rutavideo = $videotxt;
+            $request->file('video')->storeAs('public/videos', $videotxt);
+        }else {
+            $rutavideo = "";            
+        }
+
         $retos = Challenge::find($id);
         $retos->name = $request->name;
         $retos->time = $request->time;
@@ -211,8 +229,8 @@ class RetosController extends Controller
         $retos->material = $pathmaterial;
         $retos->challenge_type_id = $request->challenge_type_id;        
         $retos->subchapter_id = $request->subchapter_id; 
-        
-        $retos->urlvideo = $request->urlvideo;
+        //campo para anexar el video
+        $retos->urlvideo = $rutavideo;
         
         //AHORCADO
         if($request->ahorcado){

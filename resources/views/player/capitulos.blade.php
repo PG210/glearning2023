@@ -2,6 +2,7 @@
 
 @section('content')
 
+
     <!-- /.sidebar-menu -->
   </section>
   <!-- /.sidebar -->
@@ -17,6 +18,20 @@
          <h3 class="text-center">Capitulos terminados de manera exitosa</h3>
       @endif --}}
     </h1>
+    @if(isset($tem))
+    @if($tem == 0)
+         <div class="alert alert-warning alert-dismissible fade in" role="alert" style="padding-top:2px; padding-bottom:2px; border-radius:15px;">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h3 class="text-center"> <strong>¡Felicidades!, Capítulo terminado de manera exitosa &#128522; </strong> </h3>
+            </div>
+    @endif
+    @if($tem == 1)
+         <div class="alert alert-dismissible fade in" role="alert" style="padding-top:2px; padding-bottom:2px; border-radius:15px; background-color:#1ED5F4;">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h3 class="text-center"> <strong>Tienes tareas pendientes para finalizar el capítulo, apresúrate &#128515;</strong> </h3>
+            </div>
+    @endif
+    @endif
     <ol class="breadcrumb">
       <li><a href="#"><i class="fa fa-dashboard"></i> Capitulo {{ $capitulos->order -1 }}</a></li>      
     </ol>

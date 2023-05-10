@@ -11,6 +11,7 @@ use DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Facades\Session;
 
 class PerfilController extends Controller
 {
@@ -83,6 +84,7 @@ class PerfilController extends Controller
         }
         $actu->id_grupo = $request->input('grupo');
         $actu->save();
+        Session::flash('datreg', 'Usuario actualizado exitosamente!');
         return back();
    }
 

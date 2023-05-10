@@ -210,6 +210,7 @@
                 '<td>' + arreglo[0].g_point + '</td>' +
                 '<td>' + arreglo[0].i_point + ' </td>' +
                 '<td>' + arreglo[0].created_at + '</td>' + 
+                '<td> <a href="/home/perfil/admin/'+arreglo[0].id+'" class="btn btn-default"><i class="fa fa-pencil" aria-hidden="true"></i></a> </td>' + 
                 '</tr>';
             $('#tablamostrar').append(valor);
             toastr.success('Username: ' + arreglo[0].username +'&nbsp;', 'Usuario encontrado', {timeOut:3000});

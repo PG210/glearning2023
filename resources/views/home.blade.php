@@ -204,7 +204,7 @@ if ($retospending == 0) {
 
     
     <div class="flex cuadrito retoActual" style="background-color: #521b6e; color: #fff;">
-      <p>Retos</p>
+      <p>Retos gg</p>
       <div class="flex ruedita">
         <h3>{{$retosfinish}} /{{$retospending}} </h3>
       </div>

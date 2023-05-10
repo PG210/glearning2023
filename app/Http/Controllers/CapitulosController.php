@@ -69,9 +69,36 @@ class CapitulosController extends Controller
         // ====================== PUNTAJES S EN CAPITULOS vs SUBCAPITULOS ==========================
         //cantidad puntos maximos de un capitulo
         $chapter = 100;
-
+        $user = Auth::user()->id;
         //cantidad de subcapitulos en el capitulo actual
         $subchapters = DB::table('subchapters')->where('chapter_id', $id)->count();
+        //******************************************* */
+        //evaluar si el capitulo esta terminado
+         // return $verif;
+           $subcap = DB::table('subchapters')->where('chapter_id', $id)->select('subchapters.id as idchap')->get();
+
+            $tareas = array(); // Initialize the $tareas array to avoid errors
+            foreach ($subcap as $sub) {
+                $tasks = DB::table('challenges')->where('subchapter_id', $sub->idchap)->select('id')->get(); 
+                // Use ->id instead of ->idtarea to select the task ID
+                $tareas = array_merge($tareas, $tasks->toArray()); // Merge the task IDs into the $tareas array
+            }
+            // Verify that the user has completed all tasks in the $tareas array 
+            foreach ($tareas as $tarea) {
+                $verif = DB::table('challenge_user')->where('user_id', $user)->where('challenge_id', $tarea->id)->count();
+                if ($verif == 0) {
+                    // If the user has not completed a task, return false
+                    $tem = 1;
+                }else{
+                    $tem = 0;
+                }
+            }
+            //return $tem;
+            // If the loop completes without returning false, the user has completed all tasks
+           // $tem = 0;
+
+        //******************************************* */
+       /*evaluar si tiene subcapitulos pendientes*/
         
         //cantidad puntos para subcapitulos
         $points = $chapter / $subchapters;
@@ -80,7 +107,6 @@ class CapitulosController extends Controller
         $updatepts = Subchapter::where('chapter_id', $id)->update(['s_point' => $points]);
 
         //volver a la vista presentando los subcapitulos del capitulo
-        $user = Auth::user()->id;
         $conta = DB::table('subchapter_user')
                    ->where('user_id', '=', $user)
                    ->select('chapter_id')
@@ -118,7 +144,7 @@ class CapitulosController extends Controller
        // return $usercap[0]->chapter_id;
 
 
-        return view('player.capitulos')->with('capitulos', $capitulos)->with('mensaje', $mensaje);
+        return view('player.capitulos')->with('capitulos', $capitulos)->with('mensaje', $mensaje)->with('tem', $tem);
     }
 
     /**

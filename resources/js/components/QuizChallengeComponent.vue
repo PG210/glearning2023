@@ -64,8 +64,11 @@
         <div v-if="key==5" >
             <div class="col-md-3">
                 <div class="form-group">
-                    <label for="urlvideo">URL Video</label>
+                  <!---<label for="urlvideo">URL Video</label>
                     <input type="text" class="form-control" name="urlvideo" id="urlvideo" v-model="urlmaterial" placeholder="video ayuda para Reto">
+                  -->
+                  <label for="urlvideo">Video MP4</label>
+                  <input type="file" class="form-control" name="video" id="video" placeholder="video ayuda para Reto" accept="video/mp4,video/x-m4v,video/*">
                 </div>
             </div>
             <div class="col-md-3">

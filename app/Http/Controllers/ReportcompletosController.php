@@ -209,63 +209,102 @@ class ReportcompletosController extends Controller
 
     public function crearchi(){
         //limpiar archivo  
-             $exist = file_exists("informe/archivo.txt");
-            if ($exist)
-            {
-                $borrado = unlink("informe/archivo.txt");
+      $exist = file_exists("informe/archivo.txt");
+      if ($exist)
+        {
+        $borrado = unlink("informe/archivo.txt");
                   //#########################
-        $info = DB::table('challenges')
-                ->join('videos', 'challenges.id', '=', 'videos.id_challenge')
-                ->join('challenge_user', 'challenges.id', '=', 'challenge_user.challenge_id')
-                ->leftjoin('readings', 'challenges.id', '=', 'readings.id_challenge')
+        //evidencia videos
+        $info = DB::table('videos')
+                ->join('challenges', 'videos.id_challenge', '=', 'challenges.id') 
+                ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')  
                 ->join('users', 'videos.id_user', '=', 'users.id')
-                ->leftjoin('outdoors', 'challenges.id', '=', 'outdoors.id_challenge')
-                ->leftjoin('pictures', 'challenges.id', '=', 'pictures.id_challenge')
-                ->select('users.id as id_usuario', 'users.firstname as Usuario', 'users.lastname as Apellido',
-                        'challenges.id as id_reto', 'challenges.name as nombre_reto',  
-                        'challenges.time as tiempo', 'challenges.material', 'challenges.urlvideo as video', 
-                        'challenges.description as descripcion', 'challenges.params as palabras',
-                        'challenge_user.s_point as S_ganados', 'challenge_user.i_point as I_ganados',
-                        'challenge_user.g_point as G_ganados', 'outdoors.evidence as Evidencia_Salidas',
-                        'outdoors.image as imagen_Salidas', 'outdoors.evidence as Evidencia_Salidas',
-                        'outdoors.image as imagen_Salidas', 'pictures.evidence as Evidencia_Fotografia',
-                        'pictures.image as imagen_Fotografia', 'readings.evidence as Evidencia_Lecturas',
+                ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
+                ->select('users.id as id_usuario', 'users.firstname as Usuario', 'users.lastname as Apellido', 'grupos.descrip as grup',
+                         'challenges.name as nombre_reto', 'challenges.description as descripcion',
+                        'challenges.material', 'challenges.urlvideo as video', 
+                        'challenges.params as palabras', 'challenges.subchapter_id as idsub', 'subchapters.chapter_id as cap',
                         'videos.evidence as Evidencia_videos')
                 ->distinct()
                 ->get();
-
-        $ar = fopen("informe/archivo.txt", "a");
+    
+        //respuestas de lecturas
+        $info2 = DB::table('readings')
+                 ->join('challenges', 'readings.id_challenge', '=', 'challenges.id')
+                 ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                 ->join('users', 'readings.id_user', '=', 'users.id')
+                 ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
+                 ->select('users.id as id_usuario', 'users.firstname as Usuario', 'users.lastname as Apellido', 'grupos.descrip as grup',
+                          'challenges.name as nombre_reto',  'challenges.description as descripcion', 'challenges.material', 'challenges.urlvideo as video', 
+                         'challenges.params as palabras', 'challenges.subchapter_id as idsub', 'subchapters.chapter_id as cap',
+                         'readings.evidence as Evidencia_Lecturas')
+                ->distinct()
+                ->get();
+        //respuestas de salidas
+        $info3 = DB::table('outdoors')
+                ->join('challenges', 'outdoors.id_challenge', '=', 'challenges.id')
+                ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                ->join('users', 'outdoors.id_user', '=', 'users.id')
+                ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
+                ->select('users.id as id_usuario', 'users.firstname as Usuario', 'users.lastname as Apellido', 'grupos.descrip as grup',
+                        'challenges.name as nombre_reto',  'challenges.description as descripcion', 'challenges.material', 'challenges.urlvideo as video', 
+                        'challenges.params as palabras', 'challenges.subchapter_id as idsub', 'subchapters.chapter_id as cap',
+                        'outdoors.evidence as evioutdoor', 'outdoors.video', 'outdoors.image as img')
+            ->distinct()
+            ->get();
+        //respuestas de pictures
+        $info4 = DB::table('pictures')
+                ->join('challenges', 'pictures.id_challenge', '=', 'challenges.id')
+                ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                ->join('users', 'pictures.id_user', '=', 'users.id')
+                ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
+                ->select('users.id as id_usuario', 'users.firstname as Usuario', 'users.lastname as Apellido', 'grupos.descrip as grup',
+                        'challenges.name as nombre_reto',  'challenges.description as descripcion', 'challenges.material', 'challenges.urlvideo as video', 
+                        'challenges.params as palabras', 'challenges.subchapter_id as idsub', 'subchapters.chapter_id as cap',
+                        'pictures.evidence as evipic', 'pictures.video', 'pictures.image as img')
+            ->distinct()
+            ->get();
+        $ar = fopen("informe/archivo.txt", "w");
+        fwrite($ar, "Usuario*Grupo*nombre_reto*descripcion_reto*palabras*Evidencia_Lecturas*Evidencia_videos*Evidencia_Salidas*Descrip_imagen*Url Video*Link imagen*Capitulo\n");
         $array_num = count($info);
+        //link img outdoor
+        $linkout = "https://glearning.com.co/storage/gameoutdoor/";
+        $linkfoto = "https://glearning.com.co/storage/gamefoto/";
+        //videos
         for($i=0; $i<$array_num; $i++){
-            fwrite($ar, $info[$i]->id_usuario);
-            fwrite($ar, ";");
-            fwrite($ar, $info[$i]->Usuario);
-            fwrite($ar, ";");
-            fwrite($ar, $info[$i]->Apellido);
-            fwrite($ar, ";");
-            fwrite($ar, $info[$i]->nombre_reto);
-            fwrite($ar, ";");
-            fwrite($ar, $info[$i]->tiempo);
-            fwrite($ar, ";");
-            fwrite($ar, $info[$i]->material);
-            fwrite($ar, ";");
-            fwrite($ar, $info[$i]->descripcion);
-            fwrite($ar, ";");
-            fwrite($ar, $info[$i]->palabras);
-            fwrite($ar, ";");
-            fwrite($ar, $info[$i]->S_ganados);
-            fwrite($ar, ";");
-            fwrite($ar, $info[$i]->I_ganados);
-            fwrite($ar, ";");
-            fwrite($ar, $info[$i]->G_ganados);
-            fwrite($ar, ";");
-            fwrite($ar, $info[$i]->Evidencia_Lecturas);
-            fwrite($ar, ";");
-            fwrite($ar, $info[$i]->Evidencia_videos);
-            fwrite($ar, "\n");
+            $des = preg_replace("/[\r\n|\n|\r]+/", " ", $info[$i]->descripcion);
+            $pal = preg_replace("/[\r\n|\n|\r]+/", " ", $info[$i]->palabras);
+            $vid = preg_replace("/[\r\n|\n|\r]+/", " ", $info[$i]->Evidencia_videos);
+            fwrite($ar, $info[$i]->Usuario.'-'.$info[$i]->Apellido.'*'.$info[$i]->grup.'*'.$info[$i]->nombre_reto.'*'.$des.'*'.$pal.'*'.'*'.$vid.'*'.'*'.'*'.'*'.'*'.$info[$i]->cap.PHP_EOL);
+            }
+        //lecturas
+        for($i=0; $i<count($info2); $i++){
+            $des = preg_replace("/[\r\n|\n|\r]+/", " ", $info2[$i]->descripcion);
+            $pal = preg_replace("/[\r\n|\n|\r]+/", " ", $info2[$i]->palabras);
+            $lec = preg_replace("/[\r\n|\n|\r]+/", " ", $info2[$i]->Evidencia_Lecturas);
+            //lecturas
+            fwrite($ar, $info2[$i]->Usuario.'-'.$info2[$i]->Apellido.'*'.$info[$i]->grup.'*'.$info2[$i]->nombre_reto.'*'.$des.'*'.$pal.'*'.$lec.'*'.'*'.'*'.'*'.'*'.'*'.$info2[$i]->cap.PHP_EOL);
+            }
+        //evidencia de salidas
+        for($i=0; $i<count($info3); $i++){
+            $des = preg_replace("/[\r\n|\n|\r]+/", " ", $info3[$i]->descripcion);
+            $pal = preg_replace("/[\r\n|\n|\r]+/", " ", $info3[$i]->palabras);
+            $sal = preg_replace("/[\r\n|\n|\r]+/", " ", $info3[$i]->evioutdoor);
+            $link = $linkout.$info3[$i]->img;
+            //lecturas
+            fwrite($ar, $info3[$i]->Usuario.'-'.$info3[$i]->Apellido.'*'.$info[$i]->grup.'*'.$info3[$i]->nombre_reto.'*'.$des.'*'.$pal.'*'.'*'.'*'.$sal.'*'.'*'.$info3[$i]->video.'*'.$link.'*'.$info3[$i]->cap.PHP_EOL);
+            }
+        //evidencia imagenes
+        for($i=0; $i<count($info4); $i++){
+            $des = preg_replace("/[\r\n|\n|\r]+/", " ", $info4[$i]->descripcion);
+            $pal = preg_replace("/[\r\n|\n|\r]+/", " ", $info4[$i]->palabras);
+            $ev = preg_replace("/[\r\n|\n|\r]+/", " ", $info4[$i]->evipic);
+            $linkf = $linkfoto.$info4[$i]->img;
+            //lecturas
+            fwrite($ar, $info4[$i]->Usuario.'-'.$info4[$i]->Apellido.'*'.$info[$i]->grup.'*'.$info4[$i]->nombre_reto.'*'.$des.'*'.$pal.'*'.'*'.'*'.'*'.$ev.'*'.$info4[$i]->video.'*'.$linkf.'*'.$info4[$i]->cap.PHP_EOL);
             }
         fclose($ar);
-     }   
+     }  
       return back();
 
     }

@@ -88,7 +88,7 @@
 
 
     <div class="row">        
-      <div class="col-md-4">
+      <div class="col-md-3">
         <div class="form-group">
           <label>Material:</label> 
           @if (!$retos->material)
@@ -108,11 +108,16 @@
           @endif        
         </div>
       </div>         
-      <div class="col-md-3">
+      <div class="col-md-4">
           @if ($retos->urlvideo)            
             <div class="form-group">
               <label>Video Material:</label>          
               <a href="{{$retos->urlvideo}}" target="_blank">Ver Video</a>
+            </div>
+            <div class="embed-responsive embed-responsive-16by9">
+                <video class="embed-responsive-item" controls>
+                    <source src="{{ asset('/storage/public/videos/' .$retos->urlvideo) }}" type="video/mp4">
+                </video>
             </div>
             <!-- /.form-group -->
           @endif               
