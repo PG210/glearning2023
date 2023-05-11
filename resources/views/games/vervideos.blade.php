@@ -1,6 +1,20 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+
+.video-container {
+  width: 500px;
+  height: 300px;
+  overflow: hidden;
+}
+
+.video-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+</style>
     <!-- /.sidebar-menu -->
   </section>
   <!-- /.sidebar -->
@@ -49,10 +63,40 @@
                 
                 <div class="row" style="margin:4% 0% 0% 0%;text-align: -webkit-center;">
                   <div class="col-md-12">
-                    <div class="form-group">
+                  @if (auth()->check())
+                      <div class="form-group">
                         <!-- <iframe width="600" height="315" src="{{ $retos->urlvideo }}">  </iframe> -->
+                        <!--<iframe width="600" height="315" src="{{ $retos->urlvideo }}" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>-->
+                        @if (strpos($retos->urlvideo, 'http') !== false) 
                         <iframe width="600" height="315" src="{{ $retos->urlvideo }}" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
+                         @else 
+                         <iframe width="600" height="450" src="{{ asset('/storage/public/videos/' .$retos->urlvideo) }}"  autoplay="false" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen ></iframe>
+                         @endif
+                        <!------############################################-------->
+                      </div>
+                     </div>
+                     <div class="visible-xs">
+                     @if (strpos($retos->urlvideo, 'http') !== false) 
+                      <div class="embed-responsive embed-responsive-16by9">
+                          <video class="embed-responsive-item" controls>
+                              <source src="{{ $retos->urlvideo }}" type="video/mp4">
+                          </video>
+                      </div>
+                     @else 
+                      <div class="embed-responsive embed-responsive-16by9">
+                          <video class="embed-responsive-item" controls>
+                              <source src="{{ asset('/storage/public/videos/' .$retos->urlvideo) }}" type="video/mp4">
+                          </video>
+                      </div>
+                      @endif
+                      </div>
+                      <!---################################################################3-->
+                      <!--###################################################################-->
+                    <!-- Aquí va el contenido que deseas mostrar -->
+                  @else
+                    <p>Vuelva a iniciar la sesión</p>
+                  @endif
+                   
                     <div class="form-group">
                         <label for="evidence">Respuesta - Minimo 120 Caracteres</label>
                         <textarea class="form-control{{ $errors->has('evidence') ? ' is-invalid' : '' }}" rows="5" name="evidence" id="evidence" spellcheck="true" placeholder="A continuación escribe tus respuestas a las instrucciones planteadas en el Reto" require>{{ old('evidence') }}</textarea>

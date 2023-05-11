@@ -15,7 +15,7 @@
 
 <section class="content-header">
     <h1>
-      EDITAR CAPITULO      
+      EDITAR CAPITULO    
     </h1>
     <ol class="breadcrumb">
       <li><a href="{{ url('/backdoor') }}"><i class="fa fa-dashboard"></i> Inicio</a></li>
@@ -29,7 +29,7 @@
 
 <!-- INFO ACTUAL PARA EDITAR -->
 <h2>EDITAR CAPITULO</h2>
-<form method="POST" action="{{ route('capitulos.update', $capitulos->id) }}">
+<form method="POST" action="{{ route('capitulos.update', $capitulos->id) }}" enctype="multipart/form-data">
   @csrf
   @method('PUT')
   <div class="form-group">
@@ -83,8 +83,21 @@
   </div>
   <!--editar video-->
   <div class="form-group">
+  <div class="row">
+  <div class="col-md-3"></div>
+  <div class="col-md-6">
+  <div class="embed-responsive embed-responsive-16by9">
+      <video class="embed-responsive-item" controls>
+        <source src="{{ asset('/storage/public/videos/' .$capitulos->videoIntro) }}" type="video/mp4">
+      </video>
+    </div>
+  </div>
+  <div class="col-md-3"></div>
+  </div>
+  </div>
+  <div class="form-group">
     <label for="descripcion">Url Video</label>
-    <input type="text" class="form-control" name="video" id="video" value="{{$capitulos->videoIntro}}" required>
+    <input type="file" class="form-control" name="video" id="video" value="{{$capitulos->videoIntro}}" required>
   </div>
   <!---end editar-->
   <button type="submit" class="btn btn-default">Guardar</button>

@@ -133,7 +133,11 @@
 
             <div class="media">                
               <div class="media-body">
-              <iframe src="{{ $capitulos->videoIntro }}" id="framevideos" class="{{ $videodisplay }}" frameborder="0" style="width:100%; height:420px;" allowfullscreen></iframe>
+              @if (strpos($capitulos->videoIntro, 'http') !== false) 
+                <iframe src="{{$capitulos->videoIntro}}" id="framevideos" class="{{ $videodisplay }}" frameborder="0" style="width:100%; height:420px;" allowfullscreen></iframe>
+              @else 
+                <iframe src="{{ asset('/storage/public/videos/' .$capitulos->videoIntro) }}" id="framevideos" class="{{ $videodisplay }}" frameborder="0" style="width:100%; height:420px;" allowfullscreen></iframe>
+              @endif
               </div>
             </div>
 

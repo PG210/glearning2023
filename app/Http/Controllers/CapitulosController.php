@@ -195,7 +195,16 @@ class CapitulosController extends Controller
         // $capitulo->time = $request->time;
         $capitulo->description = $request->desc;
         //guardar video 
-        $capitulo->videoIntro = $request->video;
+            //proceso para guardar video archivo
+            if($request->hasFile('video')){         
+                $videotxt = $request->file('video')->getClientOriginalName();
+                $rutavideo = $videotxt;
+                $request->file('video')->storeAs('public/videos', $videotxt);
+            }else {
+                $rutavideo = "";            
+            }
+        //end guardar 
+        $capitulo->videoIntro =  $rutavideo;
         $capitulo->save();
 
         $capitulos = Chapter::all();        

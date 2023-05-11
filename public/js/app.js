@@ -33091,6 +33091,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['tipodereto', 'palabrasparams', 'urlvideo', 'tiemporeto'],
@@ -33440,44 +33443,11 @@ var render = function() {
         _vm._v(" "),
         _vm.key == 7
           ? _c("div", [
-              _c("div", { staticClass: "col-md-3" }, [
-                _c("div", { staticClass: "form-group" }, [
-                  _c("label", { attrs: { for: "urlvideo" } }, [
-                    _vm._v("URL Video")
-                  ]),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.urlmaterial,
-                        expression: "urlmaterial"
-                      }
-                    ],
-                    staticClass: "form-control",
-                    attrs: {
-                      type: "text",
-                      name: "urlvideo",
-                      id: "urlvideo",
-                      placeholder: "video ayuda para Reto"
-                    },
-                    domProps: { value: _vm.urlmaterial },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.urlmaterial = $event.target.value
-                      }
-                    }
-                  })
-                ])
-              ]),
-              _vm._v(" "),
               _vm._m(5),
               _vm._v(" "),
               _vm._m(6),
+              _vm._v(" "),
+              _vm._m(7),
               _vm._v(" "),
               _c("div", { staticClass: "col-md-5" }, [
                 _c("div", { staticClass: "form-group" }, [
@@ -33518,9 +33488,9 @@ var render = function() {
         _vm._v(" "),
         _vm.key == 4 || _vm.key == 8
           ? _c("div", [
-              _vm._m(7),
-              _vm._v(" "),
               _vm._m(8),
+              _vm._v(" "),
+              _vm._m(9),
               _vm._v(" "),
               _c("div", { staticClass: "col-md-3" }, [
                 _c("div", { staticClass: "form-group" }, [
@@ -33569,7 +33539,7 @@ var render = function() {
                 "div",
                 { staticClass: "col-md-12" },
                 [
-                  _vm._m(9),
+                  _vm._m(10),
                   _vm._v(" "),
                   _c(
                     "a",
@@ -33641,7 +33611,7 @@ var render = function() {
                 2
               ),
               _vm._v(" "),
-              _vm._m(10),
+              _vm._m(11),
               _vm._v(" "),
               _c("div", { staticClass: "col-md-3" }, [
                 _c("div", { staticClass: "form-group" }, [
@@ -33782,6 +33752,27 @@ var staticRenderFns = [
             _c("option", { attrs: { value: "1" } }, [_vm._v("Dificil")])
           ]
         )
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-md-3" }, [
+      _c("div", { staticClass: "form-group" }, [
+        _c("label", { attrs: { for: "urlvideo" } }, [_vm._v("Video MP4")]),
+        _vm._v(" "),
+        _c("input", {
+          staticClass: "form-control",
+          attrs: {
+            type: "file",
+            name: "video",
+            id: "video",
+            placeholder: "video ayuda para Reto",
+            accept: "video/mp4,video/x-m4v,video/*"
+          }
+        })
       ])
     ])
   },
