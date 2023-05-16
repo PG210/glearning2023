@@ -21,7 +21,7 @@ class ReportcompletosController extends Controller
         $usuarios = User::all();
         return view('admin.reportcompletos')->with('usuarios', $usuarios);
     }
-
+    
     /**
      * Show the form for creating a new resource.
      *
@@ -307,5 +307,15 @@ class ReportcompletosController extends Controller
      }  
       return back();
 
+    }
+
+    //buscar usuario 
+    public function usuretoster($id)
+    {
+        //
+        $retosuser = User::find($id);        
+        return view('admin.reportcompletes')
+                        ->with('retos', $retosuser->challenges)
+                        ->with('usuarioreto', $id);                        
     }
 }

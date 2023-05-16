@@ -262,3 +262,5 @@ Route::get('/home/perfil/admin/{id}', [PerfilController::class, 'actuadmin'])->m
 //ctualizar usuario
 Route::post('/home/perfil/usu/admin/{id}', [PerfilController::class, 'actualizarusuadmin'])->name('actualizarusuadmin')->middleware('redirectIfSessionExpired');
 
+//buscador
+Route::get('/reportcompletos/retos/{id}', [ReportcompletosController::class, 'usuretoster'])->middleware('redirectIfSessionExpired');
