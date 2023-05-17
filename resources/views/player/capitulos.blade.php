@@ -136,7 +136,8 @@
               @if (strpos($capitulos->videoIntro, 'http') !== false) 
                 <iframe src="{{$capitulos->videoIntro}}" id="framevideos" class="{{ $videodisplay }}" frameborder="0" style="width:100%; height:420px;" allowfullscreen></iframe>
               @else 
-                <iframe src="{{ asset('/storage/public/videos/' .$capitulos->videoIntro) }}" id="framevideos" class="{{ $videodisplay }}" frameborder="0" style="width:100%; height:420px;" allowfullscreen></iframe>
+              <video src="{{ asset('/storage/public/videos/' .$capitulos->videoIntro) }}" id="videoIntro" class="{{$videodisplay}}"
+                     style="width:100%; height:420px; object-fit: cover; "  controls  allowfullscreen></video>
               @endif
               </div>
             </div>

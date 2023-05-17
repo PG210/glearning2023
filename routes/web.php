@@ -264,3 +264,6 @@ Route::post('/home/perfil/usu/admin/{id}', [PerfilController::class, 'actualizar
 
 //buscador
 Route::get('/reportcompletos/retos/{id}', [ReportcompletosController::class, 'usuretoster'])->middleware('redirectIfSessionExpired');
+
+//buscar por grupo
+Route::get('/reportcompletos/grupo/{id}', [GruposController::class, 'buscargrupo'])->name('buscargrupo')->middleware('redirectIfSessionExpired');

@@ -18,8 +18,12 @@ class ReportcompletosController extends Controller
     public function index()
     {
         //        
-        $usuarios = User::all();
-        return view('admin.reportcompletos')->with('usuarios', $usuarios);
+        $usuarios = User::join('grupos', 'users.id_grupo', '=', 'grupos.id')
+                    ->select('users.id', 'firstname', 'lastname', 'username', 'email', 'level', 's_point', 'i_point', 'g_point', 'grupos.descrip')
+                    ->orderBy('firstname', 'asc')
+                    ->get();
+        $grupos = DB::table('grupos')->get();
+        return view('admin.reportcompletos')->with('usuarios', $usuarios)->with('grup', $grupos);
     }
     
     /**
@@ -318,4 +322,7 @@ class ReportcompletosController extends Controller
                         ->with('retos', $retosuser->challenges)
                         ->with('usuarioreto', $id);                        
     }
+
+    //buscar usuarios por grupos
+    
 }

@@ -172,4 +172,24 @@ class GruposController extends Controller
        return  response(json_decode($info),200)->header('content-type', 'text/plain');
     }
 
+    //buscar usuarios por grupos
+    public function  buscargrupo($id){
+      $val = DB::table('grupos')->where('id', $id)->count();
+      if($val != 0){
+        $res = DB::table('users')
+                ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
+                ->where('users.id_grupo', '=', $id)
+                ->select('users.id', 'firstname', 'lastname', 'username', 'email', 'level', 's_point', 'i_point', 'g_point', 'grupos.descrip')
+                ->orderBy('firstname', 'asc')
+                ->get();
+      }else{
+        $res = DB::table('users')
+              ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
+              ->select('users.id', 'firstname', 'lastname', 'username', 'email', 'level', 's_point', 'i_point', 'g_point', 'grupos.descrip')
+              ->orderBy('firstname', 'asc')
+              ->get();
+      }
+      return  response(json_decode($res),200)->header('content-type', 'text/plain');
+   }
+   
 }

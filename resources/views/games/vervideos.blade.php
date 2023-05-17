@@ -63,39 +63,24 @@
                 
                 <div class="row" style="margin:4% 0% 0% 0%;text-align: -webkit-center;">
                   <div class="col-md-12">
-                  @if (auth()->check())
+                 
                       <div class="form-group">
                         <!-- <iframe width="600" height="315" src="{{ $retos->urlvideo }}">  </iframe> -->
                         <!--<iframe width="600" height="315" src="{{ $retos->urlvideo }}" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>-->
-                        @if (strpos($retos->urlvideo, 'http') !== false) 
+                      @if (strpos($retos->urlvideo, 'http') !== false) 
                         <iframe width="600" height="315" src="{{ $retos->urlvideo }}" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                          @else 
-                         <iframe width="600" height="450" src="{{ asset('/storage/public/videos/' .$retos->urlvideo) }}"  autoplay="false" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen ></iframe>
+                         <div style="padding:0% 10% 0% 10%;text-align: -webkit-center;" >
+                             <video src="{{ asset('/storage/public/videos/' .$retos->urlvideo) }}" style="width:100%; height:450px; object-fit: cover;"  controls  allowfullscreen></video>
+                         </div>
                          @endif
                         <!------############################################-------->
                       </div>
                      </div>
-                     <div class="visible-xs">
-                     @if (strpos($retos->urlvideo, 'http') !== false) 
-                      <div class="embed-responsive embed-responsive-16by9">
-                          <video class="embed-responsive-item" controls>
-                              <source src="{{ $retos->urlvideo }}" type="video/mp4">
-                          </video>
-                      </div>
-                     @else 
-                      <div class="embed-responsive embed-responsive-16by9">
-                          <video class="embed-responsive-item" controls>
-                              <source src="{{ asset('/storage/public/videos/' .$retos->urlvideo) }}" type="video/mp4">
-                          </video>
-                      </div>
-                      @endif
-                      </div>
                       <!---################################################################3-->
                       <!--###################################################################-->
                     <!-- Aquí va el contenido que deseas mostrar -->
-                  @else
-                    <p>Vuelva a iniciar la sesión</p>
-                  @endif
+                 
                    
                     <div class="form-group">
                         <label for="evidence">Respuesta - Minimo 120 Caracteres</label>
