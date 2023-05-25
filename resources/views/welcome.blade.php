@@ -109,7 +109,7 @@
     </head>
     <body class="intro">
           
-        <audio id="my_audio" src="http://commondatastorage.googleapis.com/codeskulptor-demos/pyman_assets/intromusic.ogg" autoplay="autoplay"></audio>
+        <audio id="my_audio" src="https://commondatastorage.googleapis.com/codeskulptor-demos/pyman_assets/intromusic.ogg" autoplay="autoplay"></audio>
 
         <div class="flex-center position-ref full-height">
             @if (Route::has('login'))

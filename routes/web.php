@@ -251,8 +251,8 @@ Route::get('/admin/capitulos/grupos/{id}', [GruposController::class, 'vincap'])-
 Route::get('/admin/capitulos/vin/usu/{id}/{id1}', [GruposController::class, 'vinculocap'])->middleware('auth');
 Route::get('/admin/capitulos/eliminar/usu/{id}/{id1}', [GruposController::class, 'eliminarvincap'])->middleware('auth');
 
-//end grupos
-Route::get('/reportcompletos/info/retos/hola', [ReportcompletosController::class, 'crearchi'])->name('creartxt');
+//generar archivo
+Route::get('/generar/respuestas/nuevo/{id}', [ReportcompletosController::class, 'nuevoid'])->middleware('redirectIfSessionExpired');
 //ruta para buscar usuarios
 Route::post('/admin/buscar/user', [GruposController::class, 'buscarusu'])->name('buscar_usuario')->middleware('auth');
 
@@ -267,3 +267,7 @@ Route::get('/reportcompletos/retos/{id}', [ReportcompletosController::class, 'us
 
 //buscar por grupo
 Route::get('/reportcompletos/grupo/{id}', [GruposController::class, 'buscargrupo'])->name('buscargrupo')->middleware('redirectIfSessionExpired');
+
+//validar fomulario de filtro
+
+Route::POST('/filtrar/usuarios/grupos', [GruposController::class, 'valFormu'])->name('valFormu')->middleware('redirectIfSessionExpired');

@@ -66,7 +66,7 @@
 
 
 <audio controls autoplay>
-  <source src="http://commondatastorage.googleapis.com/codeskulptor-demos/riceracer_assets/music/win.ogg" type="audio/ogg">
+  <source src="https://commondatastorage.googleapis.com/codeskulptor-demos/riceracer_assets/music/win.ogg" type="audio/ogg">
 </audio>
 <div class="modal modal-info fade in" id="modal-info" style="display: block; padding-right: 15px;">
   <div class="modal-dialog" style="border-radius: 27px; width: 69%;">

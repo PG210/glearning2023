@@ -20,10 +20,92 @@
            <!--end botones-->
              <div class="d-grid gap-2 d-md-block">
                 <div class="col-md-4" >
-                 <a href="{{route('creartxt')}}" type="button" class="btn btn-success btn-md">Generar</a>
-                 <a href="/informe/archivo.txt" type="button" class="btn btn-primary" download>Download</a>
+                  <!---modal--->
+                    <!-- Botón para abrir el modal -->
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#reportes">Reportes</button>
+                    <!-- Modal -->
+                    <div id="reportes" class="modal fade" role="dialog">
+                      <div class="modal-dialog">
+                        <!-- Contenido del modal -->
+                        <div class="modal-content"  style="border-radius:20px;">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Generar reporte de respuestas por grupo</h4>
+                          </div>
+                          <div class="modal-body">
+                            <!--tabla--->
+                            <div class="table-responsive">
+                              <table class="table">
+                                <thead>
+                                  <tr>
+                                    <th>Grupo</th>
+                                    <th>Descargar archivo</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                 @foreach($grup as $gmodal)
+                                  <tr>
+                                    <td>{{$gmodal->descrip}}</td>
+                                     <td>
+                                        <a href="/generar/respuestas/nuevo/{{$gmodal->id}}" type="button" class="btn btn-success btn-md">Descargar</a>
+                                      </td>
+                                  </tr>
+                                  @endforeach
+                                </tbody>
+                              </table>
+                            </div>
+                            <!--end tabla-->
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-warning" data-dismiss="modal">Cerrar</button>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  <!--end modal-->
+                  <!---####################################################---->
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#filtrar">Filtrar</button>
+                    <!-- Modal -->
+                    <div id="filtrar" class="modal fade" role="dialog">
+                      <div class="modal-dialog">
+                        <!-- Contenido del modal -->
+                        <div class="modal-content"  style="border-radius:20px;">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Filtrar Por Grupos</h4>
+                          </div>
+                          <form method="POST" action="{{route('valFormu')}}">
+                          <div class="modal-body">
+                            <!--filtro-->
+                                  @csrf
+                                  <div class="form-row">
+                                    <div class="col-md-12">
+                                    <select id="idfiltro" name="idfiltro" class="form-control">
+                                        <option value="todos">Todos</option>
+                                        @foreach($grup as $g)
+                                        <option value="{{$g->id}}">{{$g->descrip}}</option>
+                                        @endforeach
+                                    </select>
+                                    </div>
+                                </div>
+                            <!--end filtrar-->
+                            <br>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-warning" data-dismiss="modal">Cerrar</button>
+                            <button class="btn btn-success float-right" type="submit">Filtrar</button>
+                          </div>
+                          </form>
+                        </div>
+
+                      </div>
+                    </div>
+                  <!--end modal-->
+                  <!---###################################################----->
                </div>  
                 <div class="col-md-4" >
+                 
                 </div> 
                 <div class="col-md-4" >
                 <!--buscar-->
@@ -54,14 +136,15 @@
                                 <th>Nombre de Usuario</th>
                                 <th>Email</th>
                                 <th>Grupo 
-                                <i id="filter-icon" class="fa fa-filter" style="font-size: 18px; cursor: pointer;"></i>
+                                {{--<i id="filter-icon" class="fa fa-filter" style="font-size: 18px; cursor: pointer;"></i>
                                     <select id="filter-select" style="display: none;">
                                         <option value="todos">Todos</option>
                                         @foreach($grup as $g)
                                         <option value="{{$g->id}}">{{$g->descrip}}</option>
                                         @endforeach
-                                    </select>
+                                    </select>--}}
                                 </th>
+
                                 <th>Nivel Actual</th>
                                 <th>Puntos S</th>
                                 <th>puntos I</th>
@@ -76,28 +159,9 @@
                                     <td>{{ $user->username }} </td>
                                     <td>{{ $user->email }} </td>
                                     <?php 
-                                    /* $numeroiduser = $user->id;                                
-                                    $currentlevel = DB::select("SELECT chapters.id, chapters.name, chapters.title FROM challenge_user INNER JOIN challenges ON challenge_user.challenge_id = challenges.id INNER JOIN subchapters ON challenges.subchapter_id = subchapters.id INNER JOIN chapters ON subchapters.chapter_id = chapters.id where user_id = '$numeroiduser' and challenge_id = (SELECT max(challenge_id) FROM challenge_user)");
-                                    $currentlevel = json_encode($currentlevel);*/
-                                    $useravatar = App\User::find($user->id);
-
-                                    $calculonivel = $useravatar->s_point / 100;
-                                    // $nivel = number_format($calculonivel, 1);
-
-                                    $nivel = explode(".", $calculonivel);
-
-                                    $spointceiled = ceil($useravatar->s_point);
-                                    $nivelbarra = $spointceiled % 100;
-                                    $nivelbarra = ceil($nivelbarra);
-
-                                    if ($nivelbarra == 0 && $useravatar->s_point == 0) {
-                                        $nivelbarra = 0;
-                                        $nivel = explode(".", $calculonivel);
-
-                                    }elseif ($nivelbarra == 0) {
-                                        $nivelbarra = 100;
-                                        $nivel = explode(".", $calculonivel);
-                                    }                              
+                                     $useravatar = App\User::find($user->id);
+                                     $calculonivel = $useravatar->s_point / 100;
+                                      $nivel = explode(".", $calculonivel);                         
                                    ?>
                                     <td>{{$user->descrip}}</td>
                                     <td>{{$nivel[0]}}</td>
@@ -135,6 +199,11 @@
        var arreglo = JSON.parse(response);
        var conta=0;
        if(arreglo.length!=0){
+        //$calculonivel = $useravatar->s_point / 100;
+        // $nivel = explode(".", $calculonivel); 
+        var calculonivel = Math.round(arreglo[0].s_point)/100;
+        var cniv = calculonivel.toString();
+        var nivel = cniv.split(".");
          $("#tablaocu").hide();
          $("#tablamostrar").empty();
         //aqui imprime los datos 
@@ -143,7 +212,7 @@
                 '<td>' + arreglo[0].lastname + '</td>' +
                 '<td>' + arreglo[0].username + '</td>' +
                 '<td>' + arreglo[0].email + '</td>' +
-                '<td> 0 </td>' +
+                '<td>' + nivel[0]+ ' </td>' +
                 '<td>' + Math.round(arreglo[0].s_point) + '</td>' +
                 '<td>' + arreglo[0].i_point + ' </td>' +
                 '<td>' + arreglo[0].g_point + '</td>' +
@@ -182,19 +251,26 @@
         type: 'GET',  // Reemplaza con el tipo de solicitud que necesites (GET, POST, PUT, DELETE, etc.)
         success: function(response) {
           // Manejar la respuesta del controlador aquí
+          console.log(response);
           var arreglo = JSON.parse(response);
           var conta=0;
+          var calculonivel = 0;
+          var cniv = 0;
+          var nivel = 0;
           if(arreglo.length!=0){
             $("#tablaocu").hide();
             $("#tablamostrar").empty();
             //aqui imprime los datos 
             for(var i=0; i<arreglo.length; i++){
+                  calculonivel = Math.floor(arreglo[i].s_point)/100;
+                  cniv = calculonivel.toString();
+                  nivel = cniv.split(".");
                     var valor = '<tr>' +
                     '<td>' + arreglo[i].firstname + ' ' + arreglo[i].lastname + '</td>' +
                     '<td>' + arreglo[i].username + '</td>' +
                     '<td>' + arreglo[i].email + '</td>' +
                     '<td>' + arreglo[i].descrip + '</td>' + 
-                    '<td> 0 </td>' +
+                    '<td> '+ nivel[0] +'</td>' +
                     '<td>' + Math.round(arreglo[i].s_point) + '</td>' +
                     '<td>' + arreglo[i].i_point + ' </td>' +
                     '<td>' + arreglo[i].g_point + '</td>' +

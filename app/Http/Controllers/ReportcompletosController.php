@@ -210,8 +210,18 @@ class ReportcompletosController extends Controller
         //
     }
 
+    //buscar usuario 
+    public function usuretoster($id)
+    {
+        //
+        $retosuser = User::find($id);        
+        return view('admin.reportcompletes')
+                        ->with('retos', $retosuser->challenges)
+                        ->with('usuarioreto', $id);                        
+    }
+    //
 
-    public function crearchi(){
+    public function nuevoid($id){
         //limpiar archivo  
       $exist = file_exists("informe/archivo.txt");
       if ($exist)
@@ -224,6 +234,7 @@ class ReportcompletosController extends Controller
                 ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')  
                 ->join('users', 'videos.id_user', '=', 'users.id')
                 ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
+                ->where('grupos.id', $id)
                 ->select('users.id as id_usuario', 'users.firstname as Usuario', 'users.lastname as Apellido', 'grupos.descrip as grup',
                          'challenges.name as nombre_reto', 'challenges.description as descripcion',
                         'challenges.material', 'challenges.urlvideo as video', 
@@ -238,6 +249,7 @@ class ReportcompletosController extends Controller
                  ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
                  ->join('users', 'readings.id_user', '=', 'users.id')
                  ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
+                 ->where('grupos.id', $id)
                  ->select('users.id as id_usuario', 'users.firstname as Usuario', 'users.lastname as Apellido', 'grupos.descrip as grup',
                           'challenges.name as nombre_reto',  'challenges.description as descripcion', 'challenges.material', 'challenges.urlvideo as video', 
                          'challenges.params as palabras', 'challenges.subchapter_id as idsub', 'subchapters.chapter_id as cap',
@@ -250,6 +262,7 @@ class ReportcompletosController extends Controller
                 ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
                 ->join('users', 'outdoors.id_user', '=', 'users.id')
                 ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
+                ->where('grupos.id', $id)
                 ->select('users.id as id_usuario', 'users.firstname as Usuario', 'users.lastname as Apellido', 'grupos.descrip as grup',
                         'challenges.name as nombre_reto',  'challenges.description as descripcion', 'challenges.material', 'challenges.urlvideo as video', 
                         'challenges.params as palabras', 'challenges.subchapter_id as idsub', 'subchapters.chapter_id as cap',
@@ -262,6 +275,7 @@ class ReportcompletosController extends Controller
                 ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
                 ->join('users', 'pictures.id_user', '=', 'users.id')
                 ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
+                ->where('grupos.id', $id)
                 ->select('users.id as id_usuario', 'users.firstname as Usuario', 'users.lastname as Apellido', 'grupos.descrip as grup',
                         'challenges.name as nombre_reto',  'challenges.description as descripcion', 'challenges.material', 'challenges.urlvideo as video', 
                         'challenges.params as palabras', 'challenges.subchapter_id as idsub', 'subchapters.chapter_id as cap',
@@ -309,20 +323,10 @@ class ReportcompletosController extends Controller
             }
         fclose($ar);
      }  
-      return back();
+      //return back();
+      return response()->download('informe/archivo.txt');
 
     }
-
-    //buscar usuario 
-    public function usuretoster($id)
-    {
-        //
-        $retosuser = User::find($id);        
-        return view('admin.reportcompletes')
-                        ->with('retos', $retosuser->challenges)
-                        ->with('usuarioreto', $id);                        
-    }
-
     //buscar usuarios por grupos
     
 }

@@ -118,7 +118,7 @@
 
 @if ($insigniapopup == 1)
   <audio controls autoplay>
-    <source src="http://commondatastorage.googleapis.com/codeskulptor-demos/riceracer_assets/music/win.ogg" type="audio/ogg">
+    <source src="https://commondatastorage.googleapis.com/codeskulptor-demos/riceracer_assets/music/win.ogg" type="audio/ogg">
   </audio>
   <div class="modal modal-info fade in" id="modal-info" style="display: block; padding-right: 15px; overflow-x: hidden; ">
     <div class="modal-dialog" style="border-radius: 27px; width: 69%;">
@@ -182,7 +182,7 @@
 {{-- ACTIVAR EL POPUP SI HA OBTENIDO RECONOCIMIENTOS NUEVOS --}}
 @if ($recompensapopup == 1)
   <audio controls autoplay>
-    <source src="http://commondatastorage.googleapis.com/codeskulptor-demos/riceracer_assets/music/win.ogg" type="audio/ogg">
+    <source src="https://commondatastorage.googleapis.com/codeskulptor-demos/riceracer_assets/music/win.ogg" type="audio/ogg">
   </audio>
   <div class="modal modal-info fade in" id="modal-info" style="display: block; padding-right: 15px;  overflow-x: hidden; ">
     <div class="modal-dialog" style="border-radius: 27px; width: 69%;">
@@ -246,7 +246,7 @@
 {{-- ACTIVAR EL POPUP SI HA SUBIDO DE NIVELES --}}
 @if ($leveluppopup == 1)
 <audio controls autoplay>
-  <source src="http://commondatastorage.googleapis.com/codeskulptor-demos/riceracer_assets/music/win.ogg" type="audio/ogg">
+  <source src="https://commondatastorage.googleapis.com/codeskulptor-demos/riceracer_assets/music/win.ogg" type="audio/ogg">
 </audio>
   <div class="modal modal-info fade in" id="modal-info" style="display: block; padding-right: 15px;  overflow-x: hidden; ">
     <div class="modal-dialog" style="border-radius: 27px; width: 69%;">
@@ -346,7 +346,7 @@
 {{-- ACTIVAR EL POPUP SI HA PASADO EL RETO --}}
 @if ($passretouppopup == 1)
 <audio controls autoplay>
-  <source src="http://commondatastorage.googleapis.com/codeskulptor-demos/riceracer_assets/music/win.ogg" type="audio/ogg">
+  <source src="https://commondatastorage.googleapis.com/codeskulptor-demos/riceracer_assets/music/win.ogg" type="audio/ogg">
 </audio>
   <div class="modal modal-info fade in" id="modal-info" style="display: block; padding-right: 15px;  overflow-x: hidden; ">
     <div class="modal-dialog modal-lg" style="border-radius: 27px; width: 75%;">
