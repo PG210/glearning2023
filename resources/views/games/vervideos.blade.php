@@ -55,41 +55,31 @@
               {{ $retos->description }}
             </p>
             <tiempos-component tiempoasignado="{{ $retos->time }}"></tiempos-component>
+            
             <form method="POST" enctype="multipart/form-data" action="{{ route('gamesplay.seevideos', 5) }}">
-                @csrf
-                <input type="hidden" name="usuario" value="{{ Auth::user()->id }}">
-                <input type="hidden" name="reto" value="{{ $retos->id }}">
-                
-                
-                <div class="row" style="margin:4% 0% 0% 0%;text-align: -webkit-center;">
+              @csrf
+              <input type="hidden" name="usuario" value="{{ Auth::user()->id }}">
+              <input type="hidden" name="reto" value="{{ $retos->id }}">
+              <div class="row" style="margin:4% 0% 0% 0%;text-align: -webkit-center;">
                   <div class="col-md-12">
-                 
                       <div class="form-group">
-                        <!-- <iframe width="600" height="315" src="{{ $retos->urlvideo }}">  </iframe> -->
-                        <!--<iframe width="600" height="315" src="{{ $retos->urlvideo }}" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>-->
-                      @if (strpos($retos->urlvideo, 'http') !== false) 
-                        <iframe width="600" height="315" src="{{ $retos->urlvideo }}" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                         @else 
-                         <div style="padding:0% 10% 0% 10%;text-align: -webkit-center;" >
-                             <video src="{{ asset('/storage/public/videos/' .$retos->urlvideo) }}" style="width:100%; height:450px; object-fit: cover;"  controls  allowfullscreen></video>
-                         </div>
-                         @endif
-                        <!------############################################-------->
+                          @if (strpos($retos->urlvideo, 'http') !== false) 
+                          <iframe width="600" height="315" src="{{ $retos->urlvideo }}" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                          @else 
+                          <div style="padding:0% 10% 0% 10%;text-align: -webkit-center;">
+                              <video src="{{ asset('/storage/public/videos/' .$retos->urlvideo) }}" style="width:100%; height:450px; object-fit: cover;" controls></video>
+                          </div>
+                          @endif
                       </div>
-                     </div>
-                      <!---################################################################3-->
-                      <!--###################################################################-->
-                    <!-- Aquí va el contenido que deseas mostrar -->
-                 
-                   
-                    <div class="form-group">
-                        <label for="evidence">Respuesta - Minimo 120 Caracteres</label>
-                        <textarea class="form-control{{ $errors->has('evidence') ? ' is-invalid' : '' }}" rows="5" name="evidence" id="evidence" spellcheck="true" placeholder="A continuación escribe tus respuestas a las instrucciones planteadas en el Reto" require>{{ old('evidence') }}</textarea>
-                    </div>
                   </div>
-                </div>
-                <button type="submit" class="btn btn-default">Terminar</button>
-            </form>
+                  <div class="form-group">
+                      <label for="evidence">Respuesta - Mínimo 120 Caracteres</label>
+                      <textarea class="form-control{{ $errors->has('evidence') ? ' is-invalid' : '' }}" rows="5" name="evidence" id="evidence" spellcheck="true" placeholder="A continuación escribe tus respuestas a las instrucciones planteadas en el Reto" required>{{ old('evidence') }}</textarea>
+                  </div>
+              </div>
+              <button type="submit" class="btn btn-default">Terminar</button>
+          </form>
+
 
               </div>
               <!-- /.user-block -->

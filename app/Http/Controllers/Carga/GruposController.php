@@ -184,44 +184,54 @@ class GruposController extends Controller
                 ->select('users.id', 'firstname', 'lastname', 'username', 'email', 'level', 's_point', 'i_point', 'g_point', 'grupos.descrip')
                 ->orderBy('s_point', 'desc')
                 ->get();
-        for ($x = 0; $x < count($res); $x++) {
-                  $buscar[] = DB::table('subchapter_user')
-                      ->join('users', 'subchapter_user.user_id', '=', 'users.id')
-                      ->Join('challenge_user', 'users.id', '=', 'challenge_user.user_id')
-                      ->where('subchapter_user.user_id', $res[$x]->id)
-                      ->selectRaw('COUNT(chapter_id) as valor')
-                      ->pluck('valor');
-                      
-              }
-          
-        //###############validar
-         // return $verif;
-        /* $subcap = DB::table('subchapters')->where('chapter_id', $buscar[0]->chapter_id)->select('subchapters.id as idchap')->get();
-         $tareas = array(); // Initialize the $tareas array to avoid errors
-         foreach ($subcap as $sub) {
-             $tasks = DB::table('challenges')->where('subchapter_id', $sub->idchap)->select('id')->get(); 
-             // Use ->id instead of ->idtarea to select the task ID
-             $tareas = array_merge($tareas, $tasks->toArray()); // Merge the task IDs into the $tareas array
-         }
-         // Verify that the user has completed all tasks in the $tareas array 
-         foreach ($tareas as $tarea) {
-             $verif[] = DB::table('challenge_user')->where('user_id', $buscar[0]->user_id)->where('challenge_id', $tarea->id)->count();    
-         }*/
-         //return $tem;
-        //end validar
+      //return $al[0]['capitulo'];  
       }else{
         $res = DB::table('users')
               ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
               ->select('users.id', 'firstname', 'lastname', 'username', 'email', 'level', 's_point', 'i_point', 'g_point', 'grupos.descrip')
               ->orderBy('s_point', 'desc')
               ->get();
-        $buscar[] = "hola";
       }
-
+      //buscar las personas con las tareas pendientes y capitulos terminados
+       
+      $totTareas = DB::table('challenges')
+                ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                ->selectRaw('subchapters.chapter_id as cap, COUNT(challenges.id) as tareas')
+                ->groupBy('subchapters.chapter_id')
+                ->get();
+  
+         for ($x = 0; $x < count($res); $x++) {
+                $buscar[] = DB::table('challenge_user')
+                      ->join('challenges', 'challenge_user.challenge_id', '=', 'challenges.id')
+                      ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                      ->where('challenge_user.user_id', $res[$x]->id)
+                      ->selectRaw('COUNT(challenge_user.challenge_id) as valor, challenge_user.user_id as idusu, subchapters.chapter_id')
+                      ->groupBy('challenge_user.user_id', 'subchapters.chapter_id')
+                      ->get(); 
+              }
+  
+            //return $buscar[$i][$i]->chapter_id;
+            $al = [];
+            for ($i = 0; $i < count($buscar); $i++) {
+            for ($r = 0; $r < count($totTareas); $r++) {
+                if (isset($buscar[$i][$r]) && $buscar[$i][$r]->chapter_id == $totTareas[$r]->cap) {
+                    $sum = $totTareas[$r]->tareas - $buscar[$i][$r]->valor;
+                    $item = [
+                      'capitulo' => $buscar[$i][$r]->chapter_id,
+                      'usuario' => $buscar[$i][$r]->idusu,
+                      'tfaltan' => $sum,
+                      'ttotal' => $totTareas[$r]->tareas
+                  ];
+                  $al[] = $item;
+                }
+            }
+            } 
+      //#############
       $resultado =[
         'res' => $res,
-        'buscar' => $buscar
+        'buscar' => $al
       ];
+      
       return response()->json($resultado, 200)->header('content-type', 'text/plain');
      // return  response(json_decode($resultado),200)->header('content-type', 'text/plain');
    }
@@ -238,14 +248,24 @@ class GruposController extends Controller
               ->select('users.id', 'firstname', 'lastname', 'username', 'email', 'level', 's_point', 'i_point', 'g_point', 'grupos.descrip')
               ->orderBy('s_point', 'desc')
               ->get();
-
-      $totTareas = DB::table('challenges')
+    //return $al[0]['capitulo'];  
+    }else{
+      $res = DB::table('users')
+            ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
+            ->select('users.id', 'firstname', 'lastname', 'username', 'email', 'level', 's_point', 'i_point', 'g_point', 'grupos.descrip')
+            ->orderBy('s_point', 'desc')
+            ->get();
+    }
+    //buscar las personas con las tareas pendientes y capitulos terminados
+     
+    $totTareas = DB::table('challenges')
               ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
               ->selectRaw('subchapters.chapter_id as cap, COUNT(challenges.id) as tareas')
               ->groupBy('subchapters.chapter_id')
               ->get();
-      for ($x = 0; $x < count($res); $x++) {
-                $buscar[] = DB::table('challenge_user')
+
+       for ($x = 0; $x < count($res); $x++) {
+              $buscar[] = DB::table('challenge_user')
                     ->join('challenges', 'challenge_user.challenge_id', '=', 'challenges.id')
                     ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
                     ->where('challenge_user.user_id', $res[$x]->id)
@@ -253,53 +273,36 @@ class GruposController extends Controller
                     ->groupBy('challenge_user.user_id', 'subchapters.chapter_id')
                     ->get(); 
             }
-      
-     //return $buscar[$i][$i]->chapter_id;
-     $al = [];
-      for ($i = 0; $i < count($buscar); $i++) {
+
+          //return $buscar[$i][$i]->chapter_id;
+          $al = [];
+          for ($i = 0; $i < count($buscar); $i++) {
+          $conta = 0;
           for ($r = 0; $r < count($totTareas); $r++) {
               if (isset($buscar[$i][$r]) && $buscar[$i][$r]->chapter_id == $totTareas[$r]->cap) {
                   $sum = $totTareas[$r]->tareas - $buscar[$i][$r]->valor;
+                  $conta = $conta+1;
                   $item = [
-                    'capitulo' => $buscar[$i][$r]->chapter_id,
                     'usuario' => $buscar[$i][$r]->idusu,
+                    'capitulo' => $buscar[$i][$r]->chapter_id,
+                    'tcom' => $buscar[$i][$r]->valor,
                     'tfaltan' => $sum,
-                    'ttotal' => $totTareas[$r]->tareas
+                    'ttotal' => $totTareas[$r]->tareas,
+                    'nivel' => $conta
                 ];
                 $al[] = $item;
               }
           }
-      } 
-return $al;   
-      //###############validar
-       // return $verif;
-      /* $subcap = DB::table('subchapters')->where('chapter_id', $buscar[0]->chapter_id)->select('subchapters.id as idchap')->get();
-       $tareas = array(); // Initialize the $tareas array to avoid errors
-       foreach ($subcap as $sub) {
-           $tasks = DB::table('challenges')->where('subchapter_id', $sub->idchap)->select('id')->get(); 
-           // Use ->id instead of ->idtarea to select the task ID
-           $tareas = array_merge($tareas, $tasks->toArray()); // Merge the task IDs into the $tareas array
-       }
-       // Verify that the user has completed all tasks in the $tareas array 
-       foreach ($tareas as $tarea) {
-           $verif[] = DB::table('challenge_user')->where('user_id', $buscar[0]->user_id)->where('challenge_id', $tarea->id)->count();    
-       }*/
-       //return $tem;
-      //end validar
-    }else{
-      $res = DB::table('users')
-            ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
-            ->select('users.id', 'firstname', 'lastname', 'username', 'email', 'level', 's_point', 'i_point', 'g_point', 'grupos.descrip')
-            ->orderBy('s_point', 'desc')
-            ->get();
-      $buscar[] = "hola";
-    }
+          } 
+    //#############
+    $niveles = collect($al)->groupBy('usuario')->map(function ($items) {
+      return count($items);
+    });//este me da los niveles 
+    
+    //return $grouped[86] ?? 0;
+    $grupos = DB::table('grupos')->get();
 
-    $resultado =[
-      'res' => $res,
-      'buscar' => $buscar
-    ];
-       return $resultado;
+    return view('admin.reportenuevo')->with('usuarios', $res)->with('grup', $grupos)->with('bus', $al)->with('niveles', $niveles);
    }
 
 }
