@@ -6,6 +6,11 @@
     float: inherit !important;
     padding: 2%;
   }
+  .contenedor {
+      width: auto;
+      height: 450px;
+      overflow: auto;
+    }
 </style>
 @section('content')
     <!-- /.sidebar-menu -->
@@ -84,6 +89,7 @@
           <div class="tab-pane" id="timeline">
             <div class="post">
               <div class="user-block">
+                <div class="contenedor">
                 <?php
                     $avatars = DB::table('avatars')->get();
                 ?>
@@ -178,6 +184,7 @@
                   </ul>
 
                 </span>
+                  </div>
               </div>
 
 

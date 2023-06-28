@@ -57,6 +57,7 @@ class PerfilController extends Controller
 
     //actualizar desde el admin
     public function actuadmin($id){
+        
         $usu = DB::table('users')->where('users.id', '=', $id)
               ->join('avatars', 'users.avatar_id', '=', 'avatars.id')
               ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
@@ -87,5 +88,28 @@ class PerfilController extends Controller
         Session::flash('datreg', 'Usuario actualizado exitosamente!');
         return back();
    }
-
+   //funcion que lleva a perfil
+   public function perfilhomedos(){
+        $idusu=auth()->id();
+        $usu = DB::table('users')->where('users.id', '=', $idusu)
+            ->join('avatars', 'users.avatar_id', '=', 'avatars.id')
+            ->select('users.id as userid', 'users.firstname', 'users.lastname', 'users.username', 'users.sexo', 'users.email', 'users.avatar_id', 
+                    'avatars.id', 'avatars.name', 'avatars.description', 'avatars.img')
+            ->get();
+        $avatar=DB::table('avatars')->where('avatars.sexo', '=', 'Femenino')->get();
+        $avatarm=DB::table('avatars')->where('avatars.sexo', '=', 'Masculino')->get();
+        //return $usu;
+        return view('grupos.perfilusu')->with('usu', $usu)->with('avatar', $avatar)->with('avatarm', $avatarm);
+   }
+   //deshabilitar usuarios
+   public function deshabilitar($id){
+    $user = User::find($id);
+    if($user->estado == 1){
+        $user->estado = 0;
+    }else{
+        $user->estado = 1;
+    }
+    $user->save();
+    return back();
+   }
 }

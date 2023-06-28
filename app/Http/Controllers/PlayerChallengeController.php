@@ -34,18 +34,26 @@ class PlayerChallengeController extends Controller
 
     public function challenge($id)
     {
+        $var = DB::table('challenges')
+               ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+               ->where('challenges.id', $id)
+               ->select('chapter_id')
+               ->get();
+        $cap = $var[0]->chapter_id;
         //return $id;
         $retos = Challenge::where('id', $id)->first();
        //return $retos;
         $quiz = Challenge::with('quizzes')->find($retos->id);
        
         return view('player.retos')->with('retos', $retos)
-                                ->with('quiz', $quiz);
+                                ->with('quiz', $quiz)
+                                ->with('cap', $cap);
     }
 
     //llega el id del quiz a desarrollar para el reto elegido
     public function startplay(Request $request, $id)
     {
+        
         //$request->idreto = es el id del RETO
         //$id = es el id del QUIZ
         //$request->versu = es el flag de que es un versus (1)
@@ -85,7 +93,7 @@ class PlayerChallengeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {           
+    {        
         $userauthid = Auth::user()->id;
         $datetime = Carbon::now();       
 
@@ -444,19 +452,20 @@ class PlayerChallengeController extends Controller
             ->where('subchapters.id', $subchapter_id) 
             ->groupBy('subchapter_id')
             ->first();
-
+            $guar = $subcapitulo_reto->cantidad_retos_tema;
             $subcapitulo_reto = DB::table('subchapters')
             ->join('challenges', 'subchapters.id', '=', 'challenges.subchapter_id')
             ->join('challenge_user', 'challenges.id', '=', 'challenge_user.challenge_id')  
-
             ->select( DB::raw('COUNT(challenge_user.user_id) as cantidad_retos_terminados'))     
             ->where('subchapters.id', $subchapter_id)
             ->where('challenge_user.user_id', $userauthid) 
             ->first();
 
+            $n = $subcapitulo_reto->cantidad_retos_terminados;
+
             
 
-            if ($insigniapopup == 0 && $recompensapopup == 0 && $leveluppopup == 0 || $subcapitulo_reto->cantidad_retos_tema == $subcapitulo_reto->cantidad_retos_terminados) {
+            if ($insigniapopup == 0 && $recompensapopup == 0 && $leveluppopup == 0 || $guar == $n) {
                 $passretouppopup =  1;
             } else {
                 $passretouppopup =  0;

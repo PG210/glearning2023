@@ -5059,13 +5059,26 @@ table.text-center th {
   background-repeat: no-repeat;
   border-radius: 20px;
 }
+/**/
+@media (min-width: 1200px) {
+  .cuadro{
+    /*background-color: #ccc;*/
+    justify-content: space-around;
+    width: 85%;
+    height: 35vh;
+    margin-top: 32%;
+  }  
+}
 
-.cuadro{
-  /*background-color: #ccc;*/
-  justify-content: space-around;
-  width: 85%;
-  height: 35vh;
-  margin-top: 32%;
+/*pantallas de celulares*/
+@media (max-width: 480px) {
+  .cuadro{
+    /*background-color: #ccc;*/
+    justify-content: space-around;
+    width: 85%;
+    height: 35vh;
+    margin-top: 2%;
+  } 
 }
 
 .cuadrito{

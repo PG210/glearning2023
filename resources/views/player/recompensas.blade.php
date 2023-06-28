@@ -36,18 +36,15 @@
 
         <h2>RECOMPENSAS</h2>
         <!-- <p>vista para todos los capitulos, los datos se cargan dinamicamente</p> -->
-        <h3>Recompensas de Evolución</h3>
         <p>
-          Aqui encontraras todas las recompensas que te han sido otorgadas en tu desarrollo de historia
+          Aqui encontraras todas las recompensas que te han sido otorgadas en tu desarrollon de historia
         </p>
         <p>
-          <b>Accesorios:</b>
-          <br>
+          <h4><b>Accesorios:</b></h4>
           Los retos otorgan puntos, a ciertas cantidades de puntos el juego te recompensará con los accesorios para tu CYBORG 
         </p>
         <p>
-          <b>Insignias:</b>
-          <br>
+        <h4><b>Insignias:</b></h4>
            En la medida que avances de niveles, el juego te reconocerá con insignias especiales para tu CYBORG.
         </p>
       </div>
@@ -66,7 +63,7 @@
     <div class="col-md-9">
       <div class="nav-tabs-custom">
         <ul class="nav nav-tabs">
-          <li class="active"><a href="#insignias" data-toggle="tab">Insignias y Recompensas</a></li>
+          <li class="active"><a href="#insignias" data-toggle="tab" style="font-size:20px;">Insignias y Recompensas</a></li>
           {{-- <li><a href="#premios" data-toggle="tab">Accesorios</a></li> --}}
           <!-- <li><a href="#settings" data-toggle="tab">Causas</a></li> -->
         </ul>
@@ -77,15 +74,84 @@
             <div class="post">
               <h3>Insignias</h3>
               @foreach($users->insignias as $insignia)
-                <div class="user-block">
-                  <img class="img-circle img-responsive img-bordered-sm" src="{{ asset($insignia->imagen) }}" width="100px" alt="{{($insignia->name) }}">
-                  <i aria-hidden="true"></i>
-                      <span class="username">
-                        <a href="#"> {{($insignia->name) }}</a>
-                        <a href="#" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>
-                      </span>
-                  <span class="description">{{($insignia->description) }}</span>
-                </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="user-block">
+                    <img class="img-circle img-responsive img-bordered-sm" src="{{ asset($insignia->imagen) }}" width="100px" alt="{{($insignia->name) }}">
+                    <i aria-hidden="true"></i>
+                        <span class="username">
+                          <a href="#"> {{($insignia->name) }}</a>
+                        </span>
+                    <span class="description">{{($insignia->description) }}</span>
+                  </div>
+              </div>
+              <div class="col-md-6" style="font-size:15px;">
+                  <div class="user-block">
+                  {{-- <a  class="pull-right" href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.it-institute.org/wp-content/uploads/2021/05/medal.png" target="_blank">
+                    <i class="fa fa-linkedin-square" aria-hidden="true"></i>
+                       Compartir pub
+                    </a>
+                    <a  class="pull-right" href="https://www.linkedin.com/in/[TU_USUARIO]/edit/forms/certification/new/?profileFormEntryPoint=PROFILE_COMPLETION_HUB?url=https://www.it-institute.org/wp-content/uploads/2021/05/medal.png" target="_blank">
+                    <i class="fa fa-linkedin-square" aria-hidden="true"></i>
+                       Compartir perfil
+                    </a>--}}
+                    <!--modal-->
+                     <!-- Botón para abrir el modal -->
+                        <a type="button" class="pull-right" data-toggle="modal" data-target="#com{{$insignia->id}}" style="font-size:24px; padding-right:5px;"> <i class="fa fa-linkedin-square" aria-hidden="true"></i></a>
+                        <!-- Modal -->
+                        <div id="com{{$insignia->id}}" class="modal fade" role="dialog">
+                          <div class="modal-dialog" >
+                            <!-- Contenido del modal -->
+                            <div class="modal-content" style="border-radius:20px;">
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Compartir insignia</h4>
+                              </div>
+                              <div class="modal-body">
+                                   <p>
+                                     Por favor, introduce la URL de tu perfil de LinkedIn en el campo correspondiente para poder agregar una insignia a tu perfil.
+                                  </p>
+                                  <p>
+                                     La URL debe seguir el siguiente formato: <b><br>https://www.linkedin.com/in/tu-nombre-de-perfil/</b></p>
+                                  <p>Para obtener esta URL, ve a LinkedIn, haz clic en ver perfil, copia la URL y pégala en el campo indicado.</p> 
+                                   <!--aqui debe ir-->
+                                   <br>
+                                   <!--colapsed-->
+                                   <div class="panel-group" id="accordion">
+                                    <div class="panel panel-default">
+                                      <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                          <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse1">Información de insignia</a>
+                                        </h4>
+                                      </div>
+                                      <div id="collapse1" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                          <p>Nombre: {{($insignia->name) }}</p> 
+                                          <p>Empresa emisora: Evolución / Aprendizaje Divertido</p> 
+                                          <p>Fecha expedición: {{$insignia->created_at}}</p> 
+                                          <p>Fecha caducidad: Indefinido</p> 
+                                          <p>ID credencial: </p> 
+                                          <p>Url de la credencial: {{ asset($insignia->imagen) }} </p> 
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                   <!--end colapsed-->
+                                  <label for="usuario">Url de LinkedIn:</label>
+                                  <input type="text" name="urlval"  id="urlval"  class="form-control" onInput="validarInput()" />
+                              </div>
+                              <div class="modal-footer">
+                                    <button type="button" class="btn btn-warning" data-dismiss="modal" id="btncerrar">Cerrar</button>
+                                    <button onclick="compartirLinkedIn()" name="add_to_cart" id="btnCompartir" class="btn btn-info" style="display: none;">Compartir</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    <!--end modal-->
+                  </div>
+              </div>
+            </div>
               @endforeach
               <!-- /.user-block -->
             </div>
@@ -138,5 +204,30 @@
 
 
 <!-- ./wrapper -->
+
+<script>
+    function validarInput() {
+      var btnCompartir = document.getElementById("btnCompartir");
+      var btncerrar = document.getElementById("btncerrar");
+      var usuarioInput = document.getElementById("urlval");
+
+      if (!usuarioInput.value.length) {
+        btnCompartir.style.display = "none";
+      } else if (usuarioInput.value.includes("https://www.linkedin.com/in/")) {
+        //compartirLinkedIn();
+        btncerrar.style.display = "none";
+        btnCompartir.style.display = "block";
+
+      } else {
+        console.log('La URL no es válida');
+      }
+    }
+    function compartirLinkedIn() {
+        var usuarioInput = document.getElementById("urlval");
+        var usuario = usuarioInput.value;
+        var url = usuario + "edit/forms/certification/new/?profileFormEntryPoint=PROFILE_COMPLETION_HUB";
+        window.open(url, "_blank");
+      }
+  </script>
 
 @endsection

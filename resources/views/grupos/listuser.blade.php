@@ -14,8 +14,7 @@
 @section('cargosCreate')
 
 <!--botones-->
-<h2>Usuarios</h2>
-<div class="container">
+  <br>
 <div class="row box-body">
     <div class="col-12">
          <!--mensaje-->
@@ -29,9 +28,29 @@
      <!--end modal-->
     </div>
 </div>
-</div>
+<!--buscar-->
+<div class="box" style="background:none; margin-top:1em;">
+   <div class="row box-body">
+     <div class="col-md-8"><h2>Usuarios</h2></div>
+      <div class="col-md-4">
+        <!--buscar-->
+        <form method="GET" action="{{route('buscarcor')}}">
+         @csrf
+        <div class="form-row">
+            <div class="col-md-8">
+            <input type="text" name="correo" class="form-control" placeholder="Ingrese correo" required>
+            </div>
+            <div class="col-md-4">
+            <button class="btn btn-info float-right" type="submit">Buscar</button>
+            </div>
+        </div>
+        </form>
+        <!--end buscar-->
+      </div>
+    </div></div>
+<!--end buscar-->
 <!--end botones-->
-<div class="box box-default" style="margin-top: 5%;">
+<div class="box box-default" style="margin-top: 1%;">
    <!--table-->
    <div class="bs-example" data-example-id="striped-table">
     <table class="table table-striped">

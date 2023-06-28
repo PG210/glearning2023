@@ -30,6 +30,14 @@
                 <div class="title m-b-md">
                     Inicia Sesión en <strong>EVO</strong>LUCIÓN
                 </div>
+                @if(Session::has('errorInicio'))
+                <div style="margin-right:10px;">
+                <div class="alert alert-warning alert-dismissable" style="border-radius:15px;">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>{{session('errorInicio')}}</strong> 
+                </div>
+                </div>
+                @endif
                 <div class="card-body">
                     <form method="POST" action="{{ route('login') }}">
                         @csrf

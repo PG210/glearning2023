@@ -141,9 +141,20 @@
         }
     ?>
 @endif
+<style>
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    .blinking-lock {
+      animation: blink 1s infinite;
+    }
+</style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
-@if(Auth::user()->avatar_id !=9) 
+@if(Auth::user()->avatar_id !=9 ) 
 
     <div id="app">
 
@@ -297,7 +308,6 @@
                             @endif
                         </li>
                     @else
-
                     <!-- The user image in the menu -->
                     <li class="user-header">
                         <img src="{{ asset($avatarimage) }}" class="img-circle" alt="User Image">
@@ -375,19 +385,49 @@
       <span style="text-align: center;"> {{$avataritem->name}} </span>
       <!-- Barra de Nivel -->
       @auth
-        <p style="text-align: center;">Nivel {{ $nivel[0] }} </p>      
-        <p>{{ $nivelbarra }}%</p>
+        @if(isset($cap))
+        <?php
+          $usuid = Auth::user()->id;
+           $tarealizadas = DB::table('challenge_user')
+                            ->join('challenges', 'challenge_user.challenge_id', '=', 'challenges.id')
+                            ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                            ->where('subchapters.chapter_id', $cap)
+                            ->where('challenge_user.user_id', '=', $usuid)
+                            ->selectRaw('challenge_user.user_id as idusu, subchapters.chapter_id, COUNT(challenge_user.challenge_id) as tot')
+                             ->groupBy('challenge_user.user_id', 'subchapters.chapter_id')
+                            ->get();
+            $tarporcap = DB::table('challenges')
+                            ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                            ->where('subchapters.chapter_id', $cap)
+                            ->selectRaw('subchapters.chapter_id as cap, COUNT(challenges.id) as tot')
+                            ->groupBy('subchapters.chapter_id')
+                            ->get();
+         if(count($tarealizadas) != 0){
+            $niv = ($tarealizadas[0]->tot*100)/$tarporcap[0]->tot;
+         }else{
+            $niv = 0;
+         }
+        //
+         $bn = round($niv, 0);
+         //dd($niv);
+         
+        ?>
+         <p style="text-align: center;">Nivel {{ $cap }} </p>      
+        <p>{{ $bn }}%</p>
+        @endif
       @endauth
 
-      <div class="progress xs">
-        <!-- Change the css width attribute to simulate progress -->
         @auth
-        <div class="progress-bar progress-bar-aqua" style="width: {{ $nivelbarra }}%; background-color: #ff397f;" role="progressbar"
+        @if(isset($bn))
+        <div class="progress xs">
+        <!-- Change the css width attribute to simulate progress -->
+        <div class="progress-bar progress-bar-aqua" style="width: {{ $bn }}%; background-color: #ff397f;" role="progressbar"
              aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-            <span class="sr-only">EXP: {{ Auth::user()->s_point }}%</span>            
+            <span class="sr-only">EXP: {{ $bn }}%</span>            
         </div>
+        </div>
+        @endif
         @endauth
-    </div>
     </div>
   </div>
 
@@ -399,8 +439,8 @@
     <!-- Optionally, you can add icons to the links -->
      <!---validar para escoger usuario-->
     <li class="active"><a href="{{ url('/home') }}"><i class="fa fa-arrow-circle-right"></i> <span>Inicio</span></a></li>
-    <li><a href="{{ route('perfilhome') }}"><i class="fa fa-arrow-circle-right"></i> <span>Perfil</span></a></li>
-    <li class="treeview">
+    <li><a href="{{ route('perfilhomedos') }}"><i class="fa fa-arrow-circle-right"></i> <span>Perfil</span></a></li>
+    <li class="treeview active">
       <a href="#"><i class="fa fa-arrow-circle-right"></i> <span>Capitulos</span>
         <span class="pull-right-container">
             <i class="fa fa-angle-left pull-right"></i>
@@ -430,22 +470,103 @@
            $capitulosprocedural = DB::select("call chapterSecuence($userauth_id)");
 
          }
-       
-        //#################
-    ?>
-      @if($conta == 0)
+        //#################validar el nivel de cada capitulo
+        $tTareas = DB::table('challenges')
+                  ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                  ->selectRaw('subchapters.chapter_id as cap, COUNT(challenges.id) as tareas')
+                  ->groupBy('subchapters.chapter_id')
+                  ->get();
+        $tareasuser = DB::table('challenge_user')
+                        ->join('challenges', 'challenge_user.challenge_id', '=', 'challenges.id')
+                        ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                        ->where('challenge_user.user_id', $userauth_id)
+                        ->selectRaw('challenge_user.user_id as idusu, subchapters.chapter_id, COUNT(challenge_user.challenge_id) as valor')
+                        ->groupBy('challenge_user.user_id', 'subchapters.chapter_id')
+                        ->get();
+        if(isset($tareasuser) && count($tareasuser) == 0){
+            $buscar = [];
+            $al = [];
+            $niveles =[];
+          
+        }else{
+            //##########################################
+            foreach($tTareas as $t1){
+                $conta = 0;
+                foreach($tareasuser as $t2){
+                if($t1->cap == $t2->chapter_id){
+                    $sum = $t1->tareas - $t2->valor;
+                    $conta = $conta+1;
+                    $item = [
+                    'usuario' => $t2->idusu,
+                    'capitulo' => $t2->chapter_id,
+                    'tcom' => $t2->valor,
+                    'tfaltan' => $sum,
+                    'ttotal' => $t1->tareas,
+                    'nivel' => $conta
+                ];
+                $al[] = $item;
+                }
+                }
+            }
+            $niveles = collect($al)->groupBy('usuario')->map(function ($items) {
+                return count($items);
+            });
+            //este me da los niveles 
+            //##########################################
+            }
+    ?>    
+      @if($conta == 0 && isset($capitulosprocedural))
       <ul class="treeview-menu">
           @foreach($capitulosprocedural as $capitulo)
-            @if ($capitulo->RETOS_CAPITULO_REQUERIDO != 0)                
-                <li><a href="{{ route('capitulos.show', $capitulo->id) }} ">{{ $capitulo->name }}</a></li>
+            @if ($capitulo->RETOS_CAPITULO_REQUERIDO != 0)
+              @foreach($al as $b)
+                 @if($b['capitulo'] == $capitulo->id)
+                       <?php
+                       $por = ($b['tcom']*100)/$b['ttotal'];
+                       
+                        $red = round($por, 0);
+                       
+                       
+                       ?>
+                  <li><a href="{{ route('capitulos.show', $capitulo->id) }} ">
+                     {{ $capitulo->name }} 
+                    </a>
+                    <div class="progress" style="margin-right:3px; margin-bottom:0px;">
+                        <div class="progress-bar" role="progressbar" aria-valuenow="<?= $red ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?= $red ?>%; background-color:#25c5ab; color:black;">
+                            <?= $red ?>% 
+                        </div>
+                    </div></li>
+                    @endif
+                @endforeach            
             @endif
           @endforeach
+          <br>
       </ul>
       @else
       <ul class="treeview-menu">
-          @foreach($subc as $s)               
-                <li><a href="{{ route('capitulos.show', $s->chapter_id) }} ">{{$s->name}}</a></li>
+          @foreach($subc as $s)
+               <!---ver porcentaje de capitulos--> 
+               @foreach($al as $b)
+                    @if($b['capitulo'] == $s->chapter_id)
+                       <?php
+                       echo $b['ttotal'];
+                       $por = ($b['tcom']*100)/$b['ttotal'];
+                       $red = round($por, 0);
+                       ?>
+                  <li>
+                    <a href="{{ route('capitulos.show', $s->chapter_id) }} ">
+                        {{$s->name}}</a>
+                    <div class="progress" style="margin-right:3px; margin-bottom:0px;">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="<?= $red ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?= $red ?>%; background-color:#25c5ab; color:black;">
+                        <?= $red ?>%
+                    </div>
+                </div>
+                  </li>
+                    @endif
+                @endforeach 
+               <!--end porcentaje capitulos-->        
           @endforeach
+          <br>
       </ul>
       @endif
     </li>
@@ -468,7 +589,8 @@
         <li><a href="{{ url('causas') }}"><i class="fa fa-arrow-circle-right"></i> <span>Causas</span></a></li>
     @endif
 
-    <li><a href="{{ url('/versus') }}"><i class="fa fa-arrow-circle-right"></i> <span>Versus</span></a></li>
+    {{--<li><a href="{{ url('/versus') }}"><i class="fa fa-arrow-circle-right"></i> <span>Versus</span></a></li>
+    --}}
     <li class="header"></li>
     <li><a href="{{ url('/about') }}"><i class="fa fa-arrow-circle-right"></i> <span>Aceca de Evolución</span></a></li>
     <li><a href="{{ url('/historia') }}"><i class="fa fa-arrow-circle-right"></i> <span>Historia</span></a></li>
@@ -482,12 +604,12 @@
 </aside>
 </div>
 
-@yield('contentperfil')
-
+    @yield('contentperfil')
+    @yield('nperfil')
 
 @endif
 
-@if(Auth::user()->avatar_id==9) 
+@if(Auth::user()->avatar_id==9 ) 
  @include('actualizarvis');
 @endif
 </body>

@@ -30,11 +30,11 @@
         <div class="box box-primary">
           <div class="box-body box-profile">
 
-        <h2>Informacion Evolución</h2>
+        <h2>Información</h2>
         <!-- <p>vista para todos los capitulos, los datos se cargan dinamicamente</p> -->
 
-        <h3>Evolución</h3>
-        <p>
+        <!--<h3>Evolución</h3>-->
+        <p style="font-size:20px;">
           Acerca de Evolución - Aprendizaje divertido
         </p>        
 
@@ -54,44 +54,44 @@
     <div class="col-md-9">
       <div class="nav-tabs-custom">
         <ul class="nav nav-tabs">
-          <li class="active"><a href="#activity" data-toggle="tab">Info empresa</a></li>
+          <li class="active"><a href="#activity" data-toggle="tab" style="font-size:20px;">Info empresa</a></li>
 
         </ul>
         <div class="tab-content">
           <div class="active tab-pane" id="activity">
             <!-- Post -->
-            <div class="post" style="font-size: 2.5rem; color: #9e2aa7; font-weight:600; text-align:justify;">
-
-
-              <p>
-                Evolución – Aprendizaje divertido es una compañía que tiene como propósito ayudar a solucionar de una manera divertida, creativa y constructivista los retos de aprendizaje de las empresas.
-
-              </p>
-                Dentro de este propósito, hemos diseñado esta plataforma de aprendizaje que busca ayudar a fortalecer de una manera entretenida las competencias asociadas al liderazgo en las personas.
-              <p>
-                Si deseas conocer más de nosotros, de otros servicios y metodologías te invitamos que visites nuestra pagina web:
-              </p>  
-              <p>
-                <a href="http://www.evolucion.co/">www.evolucion.co</a>                              
-              </p>
-                
-              <!-- <div class="user-block"> -->
-                <!-- <img class="img-circle img-bordered-sm" src="{{ asset('dist/img/char_img.png')}}" alt="user image"> -->
-                <!-- <i class="fa fa-circle-o" aria-hidden="true"></i> -->
-                    <!-- <span class="username"> -->
-                      <!-- <a href="#"> Conociendo la Interfaz</a> -->
-                      <!-- <a href="#" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a> -->
-                    <!-- </span> -->
-                <!-- <span class="description">Guia de navegacion de la interfaz de usuario - Conoceras la interfaz de usuario y sabras donde encontrar lo necesario para el desarrollo de -->
-                <!-- las misiones y retos que te encontraras en el desarrollo de la historia.</span> -->
-              <!-- </div> -->
-              <!-- /.user-block -->
-              <!-- <ul class="list-inline">
-                <li>
-                  <a href="#" class="link-black text-sm"><i class="fa fa-thumbs-o-up margin-r-5"></i> Hacer Reto</a>
-                </li>
-                <li class="pull-right">
-              </ul> -->
+            <div class="post" style="font-size: 2.5rem; color: #9e2aa7; font-weight:600; text-align:justify; font-family:effortless; font-weight:0px;">
+              
+            <div style="background-image:url('dist/img/chapter01_bg.jpg');">
+              <br>
+              <div class="hidden-xs" style="color:white; width: 600px; height: 400px; border-radius: 20px; background-color:#021056; margin: 0 auto; margin-top: 5px; opacity: 0.8;  border-left: 6px solid #00CCFF; border-top: 6px solid #00CCFF;">
+                 <div style="padding: 20px;">
+                  <p style="font-size:20px;"> <span style="color:#00CCFF; font-size:23px;">Evolución – Aprendizaje divertido </span> es una compañía que tiene como propósito ayudar a solucionar de una manera divertida, creativa y constructivista los retos de aprendizaje de las empresas. </p>
+                  <p style="font-size:20px;">
+                     Dentro de este propósito, hemos diseñado esta plataforma de aprendizaje que busca ayudar a fortalecer de una manera entretenida las competencias asociadas al liderazgo en las personas.
+                  </p>
+                  <p style="font-size:20px;">
+                    Si deseas conocer más de nosotros, de otros servicios y metodologías te invitamos que visites nuestra pagina web:
+                 </p>
+                 <p style="text-align:right;"><a href="https://www.evolucion.co/" style="text-decoration:none; color:#00CCFF;" target="_blank">www.evolucion.co</a></p>
+                </div>
+                </div>
+                <!--pantallas peques-->
+                <div class="visible-xs" style="color:white; width: auto; height: auto; border-radius: 15px; background-color:#021056; margin: 0 auto; margin-top: 5px; opacity: 0.8;  border-left: 6px solid #00CCFF; border-top: 6px solid #00CCFF;">
+                 <div style="padding: 20px;">
+                  <p style="font-size:20px;"> <span style="color:#00CCFF; font-size:23px;">Evolución – Aprendizaje divertido </span> es una compañía que tiene como propósito ayudar a solucionar de una manera divertida, creativa y constructivista los retos de aprendizaje de las empresas. </p>
+                  <p style="font-size:20px;">
+                     Dentro de este propósito, hemos diseñado esta plataforma de aprendizaje que busca ayudar a fortalecer de una manera entretenida las competencias asociadas al liderazgo en las personas.
+                  </p>
+                  <p style="font-size:20px;">
+                    Si deseas conocer más de nosotros, de otros servicios y metodologías te invitamos que visites nuestra pagina web:
+                 </p>
+                 <p style="text-align:right;"><a href="https://www.evolucion.co/" style="text-decoration:none; color:#00CCFF;" target="_blank">www.evolucion.co</a></p>
+                </div>
+                </div>
+                <!--end pantallas -->
+              <br>
+            </div>
 
             </div>
             <!-- /.post -->
@@ -115,8 +115,6 @@
   <strong>Copyright &copy; 2018 <a href="#">Evolución</a>.</strong> All rights
   reserved.
 </footer>
-
-
 <!-- ./wrapper -->
 
 @endsection

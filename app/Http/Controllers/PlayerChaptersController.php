@@ -50,16 +50,18 @@ class PlayerChaptersController extends Controller
 
         //volver a la vista presentando los subcapitulos del capitulo
         $capitulos = Chapter::find($id);
+        
         return view('player.capitulos')->with('capitulos', $capitulos);
     }
 
     //FUNCION INVOCADA AL SELECCIONAR UN SUBCAPITULO 
     public function pasarchallenge($id)
-    {
+    {  
         $userauthid = Auth::user()->id;
     
         //obtener subcapitulos con el chapter_id del subcapitulo
         $subcapitulos = Subchapter::where('id', $id)->first();
+    
         $capitulos = Chapter::find($subcapitulos->chapter_id);
         
         //obtener retos del subcapitulo por parametro
@@ -78,8 +80,7 @@ class PlayerChaptersController extends Controller
                         ->first();
                         // dd($retospending);
         $retospendientes = $retospending;
-        
-                
+        $retp = $retospending;
         //==== Retos que YA HAN SIDO jugados
         $retosfinish = DB::table('challenge_user')
                         ->join('challenges', 'challenge_user.challenge_id', '=', 'challenges.id')
@@ -87,13 +88,36 @@ class PlayerChaptersController extends Controller
                         ->where('challenges.subchapter_id', '=', $id)
                         ->get();
                         
-        $videohidden = "hidden";     
+        $videohidden = "hidden";    
+        //calcular los retos pendientes
+        $tareasusu = DB::table('challenge_user')
+                    ->join('challenges', 'challenge_user.challenge_id', '=', 'challenges.id')
+                    ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                    ->where('subchapters.chapter_id', $capitulos->id)
+                    ->where('challenge_user.user_id', '=', $userauthid)
+                    ->selectRaw('subchapters.chapter_id as cap, challenges.id as idt, challenges.name')
+                    ->get();
+        $tareacap = DB::table('challenges')
+                    ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                    ->where('subchapters.chapter_id', $capitulos->id)
+                    ->selectRaw('subchapters.chapter_id as cap, challenges.id as idt, challenges.name')
+                    ->get();
+        //fin retos pendientes
+        $v = $subcapitulos->name;
+        $cap = $capitulos->id;
+        //
         return view('player.capitulos')->with('retos', $retos)
                                         ->with('capitulos', $capitulos)
                                         ->with('subcapitulos', $subcapitulos)
                                         ->with('retospendientes', $retospendientes)
                                         ->with('retosfinish', $retosfinish)
-                                        ->with('videohidden', $videohidden);
+                                        ->with('videohidden', $videohidden)
+                                        ->with('tareacap', $tareacap)
+                                        ->with('tareasusu', $tareasusu)
+                                        ->with('retp', $retp)
+                                        ->with('cap', $cap)
+                                        ->with('v', $v);
+                                        
     }
 
     /**

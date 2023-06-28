@@ -27,7 +27,11 @@ class UserController extends Controller
         $status="";
 
         //$users = User::all();
-         $users = DB::table('users')->orderBy('users.id', 'ASC')->paginate(30); //aqui hace la paginacion de usuarios
+         $users = DB::table('users')
+                 ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
+                 ->select('users.id', 'firstname', 'lastname', 'username', 
+                          'email', 'level', 's_point', 'i_point', 'g_point', 'users.created_at', 'estado', 'grupos.descrip')
+                 ->orderBy('users.id', 'ASC')->paginate(30); //aqui hace la paginacion de usuarios
         return view('admin.usuarios', [
             'users' => $users,
             'countusers' => $countusers,

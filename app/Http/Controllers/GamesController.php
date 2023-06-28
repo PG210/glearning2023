@@ -26,35 +26,69 @@ class GamesController extends Controller
     {
         //
     }
-
+    //funcion que encuentra el capitulo y lo retorna al ser encontrado
+    public function eval($id){
+        $var = DB::table('challenges')
+                ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                ->where('challenges.id', $id)
+                ->select('chapter_id')
+                ->get();
+        $cap = $var[0]->chapter_id;
+        return $cap;
+    }
     //comunicacion con la vista de los retos
     public function ahorcado($id){
+        //encontrar el capitulo
+        $cap = $this->eval($id);
+        //end capitulo
         $retos = Challenge::find($id);
-        return view('games.ahorcado')->with('retos', $retos);
+        return view('games.ahorcado')->with('retos', $retos)->with('cap', $cap);
     }
+
     public function sopaletras($id){
+         //encontrar el capitulo
+         $cap = $this->eval($id);
+         //end capitulo
         $retos = Challenge::find($id);
-        return view('games.sopaletras')->with('retos', $retos);
+        return view('games.sopaletras')->with('retos', $retos)->with('cap', $cap);
     }
+
     public function rompecabezas($id){
+        //encontrar el capitulo
+        $cap = $this->eval($id);
+        //end capitulo
         $retos = Challenge::find($id);
-        return view('games.rompecabezas')->with('retos', $retos);
+        return view('games.rompecabezas')->with('retos', $retos)->with('cap', $cap);
     }
     public function seevideos($id){
+         //encontrar el capitulo
+        $cap = $this->eval($id);
+        //end capitulo
         $retos = Challenge::find($id);
-        return view('games.vervideos')->with('retos', $retos);
+        return view('games.vervideos')->with('retos', $retos)->with('cap', $cap);
     }
     public function upfotos($id){
+        //encontrar el capitulo
+        $cap = $this->eval($id);
+        //end capitulo
         $retos = Challenge::find($id);
-        return view('games.subirfotos')->with('retos', $retos);
+        return view('games.subirfotos')
+                ->with('retos', $retos)
+                ->with('cap', $cap);
     }
     public function lectura($id){
+         //encontrar el capitulo
+         $cap = $this->eval($id);
+        //end capitulo
         $retos = Challenge::find($id);
-        return view('games.lectura')->with('retos', $retos);
+        return view('games.lectura')->with('retos', $retos)->with('cap', $cap);
     }
     public function outdoor($id){
+         //encontrar el capitulo
+         $cap = $this->eval($id);
+         //end capitulo
         $retos = Challenge::find($id);
-        return view('games.outdoor')->with('retos', $retos);
+        return view('games.outdoor')->with('retos', $retos)->with('cap', $cap);
     }
 
 
@@ -71,12 +105,14 @@ class GamesController extends Controller
         
         //obtener los datos del jugador
         $userplayer = User::find($userauthid);
-
+        
         //obtener las respuestas elegidas por el jugador
         $valorjuego = $request->valorjuego;
         $usuario = $request->usuario;
         $idretoactual = $request->idretoactual;   
 
+        $cap = $this->eval($idretoactual); //se valida el capitulo
+        
         //validar si el reto unity se perdio o se gano 1 = win , 0 = lose
         if ($valorjuego == 1){ 
 
@@ -383,11 +419,13 @@ class GamesController extends Controller
                                             ->with('insignianamewon', $insignianamewon)
                                             ->with('insigniadescwon', $insigniadescwon)                                            
                                             ->with('recompensawon', $recompensawon)
-                                            ->with('recompensanamewon', $recompensanamewon);
+                                            ->with('recompensanamewon', $recompensanamewon)
+                                            ->with('cap', $cap);
         }else{
             //se agrego el subcapitulo para egresar
             $reto = Challenge::find($idretoactual);
-            return view('player.gamefailed')->with('subcapitulo', $reto->subchapter_id);
+            return view('player.gamefailed')->with('subcapitulo', $reto->subchapter_id)
+                                            ->with('cap', $cap);
         }
     }
 
@@ -418,11 +456,22 @@ class GamesController extends Controller
         //obtener el reto correspondiente:
         $reto = Challenge::find($idretoactual);
 
-        DB::table('videos')->insert([
-            'evidence'     => $evidencia,
-            'id_user'      => $usuario,
-            'id_challenge' => $idretoactual,
-        ]);
+        $cap = $this->eval($idretoactual); //se valida el capitulo
+          
+        //validar si ya esta ingresado
+        $contar1 = DB::table('videos')->where('id_user', $usuario)->where('id_challenge', $idretoactual)->count();
+        
+        if($contar1 != 0){
+            $retosig = $reto->subchapter_id;
+            return redirect('playerchallenge/' .$retosig);
+        }
+        else{
+
+            DB::table('videos')->insert([
+                'evidence'     => $evidencia,
+                'id_user'      => $usuario,
+                'id_challenge' => $idretoactual,
+            ]);
 
 
 
@@ -718,7 +767,9 @@ class GamesController extends Controller
                                         ->with('recompensapopup', $recompensapopup)
                                         ->with('passretouppopup', $passretouppopup)
                                         ->with('recompensawon', $recompensawon)
+                                        ->with('cap', $cap)
                                         ->with('recompensanamewon', $recompensanamewon);
+      }
 
     }
 
@@ -761,13 +812,20 @@ class GamesController extends Controller
         //obtener el reto correspondiente:
         $reto = Challenge::find($idretoactual);
 
-        DB::table('pictures')->insert([
-            'evidence'     => $evidencia,
-            'image'        => $pathmaterial,
-            'video'        => $videour,
-            'id_user'      => $usuario,
-            'id_challenge' => $idretoactual,
-        ]);
+        $cap = $this->eval($idretoactual); //se valida el capitulo
+
+        $contar1 = DB::table('pictures')->where('id_user', $usuario)->where('id_challenge', $idretoactual)->count();       
+        if($contar1 != 0){
+            $retosig = $reto->subchapter_id;
+            return redirect('playerchallenge/' .$retosig);
+        }else{
+            DB::table('pictures')->insert([
+                'evidence'     => $evidencia,
+                'image'        => $pathmaterial,
+                'video'        => $videour,
+                'id_user'      => $usuario,
+                'id_challenge' => $idretoactual,
+            ]);
 
         // ======================= PUNTAJES EN RETOS JUGADOS vs SUBCAPITULOS ========================
         //cantidad puntos S en el subcapitulo
@@ -1070,14 +1128,19 @@ class GamesController extends Controller
                                         ->with('recompensapopup', $recompensapopup)
                                         ->with('passretouppopup', $passretouppopup)
                                         ->with('recompensawon', $recompensawon)
-                                        ->with('recompensanamewon', $recompensanamewon);
-        
+                                        ->with('recompensanamewon', $recompensanamewon)
+                                        ->with('cap', $cap);
+
+     }
+
     }
 
 
 
 
     public function playlectura(Request $request, $id){
+        //encontrar capitulos
+        
         $rules = [
             'evidence' => 'required|min:120',           
         ];         
@@ -1097,15 +1160,23 @@ class GamesController extends Controller
         $usuario = $request->usuario;
         $idretoactual = $request->reto;
         $evidencia = $request->evidence;
-
+        
         //obtener el reto correspondiente:
         $reto = Challenge::find($idretoactual);
 
-        DB::table('readings')->insert([
-            'evidence'     => $evidencia,
-            'id_user'      => $usuario,
-            'id_challenge' => $idretoactual,
-        ]);
+        $cap = $this->eval($idretoactual); //se valida el capitulo
+        
+        $contar1 = DB::table('readings')->where('id_user', $usuario)->where('id_challenge', $idretoactual)->count(); 
+        if($contar1 != 0){
+            $retosig = $reto->subchapter_id;
+            return redirect('playerchallenge/' .$retosig);
+        }
+        else{
+            DB::table('readings')->insert([
+                'evidence'     => $evidencia,
+                'id_user'      => $usuario,
+                'id_challenge' => $idretoactual,
+            ]);
 
         // ======================= PUNTAJES EN RETOS JUGADOS vs SUBCAPITULOS ========================
         //cantidad puntos S en el subcapitulo
@@ -1398,8 +1469,10 @@ class GamesController extends Controller
                                         ->with('recompensapopup', $recompensapopup)
                                         ->with('passretouppopup', $passretouppopup)
                                         ->with('recompensawon', $recompensawon)
-                                        ->with('recompensanamewon', $recompensanamewon);
-        
+                                        ->with('recompensanamewon', $recompensanamewon)
+                                        ->with('cap', $cap);
+     }
+
     }
 
 
@@ -1440,14 +1513,21 @@ class GamesController extends Controller
 
         //obtener el reto correspondiente:
         $reto = Challenge::find($idretoactual);
+        $cap = $this->eval($idretoactual); //se valida el capitulo
 
-        DB::table('outdoors')->insert([
-            'evidence'     => $evidencia,
-            'image'        => $pathmaterial,
-            'video'        => $video,
-            'id_user'      => $usuario,
-            'id_challenge' => $idretoactual,
-        ]);
+        $contar1 = DB::table('outdoors')->where('id_user', $usuario)->where('id_challenge', $idretoactual)->count(); 
+        if($contar1 != 0){
+            $retosig = $reto->subchapter_id;
+            return redirect('playerchallenge/' .$retosig);
+        }
+        else{ 
+          DB::table('outdoors')->insert([
+                'evidence'     => $evidencia,
+                'image'        => $pathmaterial,
+                'video'        => $video,
+                'id_user'      => $usuario,
+                'id_challenge' => $idretoactual,
+            ]);
 
         // ======================= PUNTAJES EN RETOS JUGADOS vs SUBCAPITULOS ========================
         //cantidad puntos S en el subcapitulo
@@ -1746,7 +1826,10 @@ class GamesController extends Controller
                                         ->with('recompensapopup', $recompensapopup)
                                         ->with('passretouppopup', $passretouppopup)
                                         ->with('recompensawon', $recompensawon)
+                                        ->with('cap', $cap)
                                         ->with('recompensanamewon', $recompensanamewon);
+
+     }
         
     }
   

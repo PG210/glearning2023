@@ -142,9 +142,49 @@ class CapitulosController extends Controller
         //subchapter user 
 
        // return $usercap[0]->chapter_id;
-
-
-        return view('player.capitulos')->with('capitulos', $capitulos)->with('mensaje', $mensaje)->with('tem', $tem);
+        //return "hola";
+        //################aqui se agrega 
+        //calcular los retos pendientes
+        $tareasusu = DB::table('challenge_user')
+                    ->join('challenges', 'challenge_user.challenge_id', '=', 'challenges.id')
+                    ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                    ->where('subchapters.chapter_id', $id)
+                    ->where('challenge_user.user_id', '=', $user)
+                    ->selectRaw('subchapters.chapter_id as cap, subchapters.id as ids, challenges.id as idt,  challenges.name')
+                    ->get();
+        $tareacap = DB::table('challenges')
+                    ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                    ->where('subchapters.chapter_id', $id)
+                    ->selectRaw('subchapters.chapter_id as cap,  challenges.id as idt, challenges.name')
+                    ->get();
+        //tarea final
+        $final = $tareasusu->last();
+        //fin retos pendientes
+        if($final != NULL){
+        $retospending = DB::table('challenges as i')
+                            ->select('i.*')
+                            ->leftJoin('challenge_user as q', function ($join) use($user) {
+                                $join->on('q.challenge_id', '=', 'i.id')
+                                        ->where('q.user_id', '=', $user);
+                            })
+                            ->where('i.subchapter_id', '=', $final->ids)
+                            ->whereNull('q.challenge_id')
+                            ->first();
+                            // dd($retospending);
+        $retp = $retospending;
+        }else{
+            $retp = [];
+        }
+       //
+        //######################
+        return view('player.capitulos')
+               ->with('capitulos', $capitulos)
+               ->with('mensaje', $mensaje)
+               ->with('tem', $tem)
+               ->with('retp', $retp)
+               ->with('tareacap', $tareacap)
+               ->with('cap', $id)
+               ->with('tareasusu', $tareasusu);
     }
 
     /**

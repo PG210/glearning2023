@@ -17,13 +17,58 @@ class ReportcompletosController extends Controller
      */
     public function index()
     {
-        //        
-        $usuarios = User::join('grupos', 'users.id_grupo', '=', 'grupos.id')
-                    ->select('users.id', 'firstname', 'lastname', 'username', 'email', 'level', 's_point', 'i_point', 'g_point', 'grupos.descrip')
-                    ->orderBy('firstname', 'asc')
+        
+        /*Aqui se agrego los users */
+        $res = DB::table('users')
+                  ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
+                  ->select('users.id', 'firstname', 'lastname', 'username', 'email', 'level', 's_point', 'i_point', 'g_point', 'grupos.descrip')
+                  ->orderBy('s_point', 'desc')
+                  ->get();
+          //buscar las personas con las tareas pendientes y capitulos terminados
+           
+          $totTareas = DB::table('challenges')
+                    ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                    ->selectRaw('subchapters.chapter_id as cap, COUNT(challenges.id) as tareas')
+                    ->groupBy('subchapters.chapter_id')
                     ->get();
+      
+             for ($x = 0; $x < count($res); $x++) {
+                    $buscar[] = DB::table('challenge_user')
+                          ->join('challenges', 'challenge_user.challenge_id', '=', 'challenges.id')
+                          ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                          ->where('challenge_user.user_id', $res[$x]->id)
+                          ->selectRaw('COUNT(challenge_user.challenge_id) as valor, challenge_user.user_id as idusu, subchapters.chapter_id')
+                          ->groupBy('challenge_user.user_id', 'subchapters.chapter_id')
+                          ->get(); 
+                  }
+      
+                //return $buscar[$i][$i]->chapter_id;
+                $al = [];
+                for ($i = 0; $i < count($buscar); $i++) {
+                $conta = 0;
+                for ($r = 0; $r < count($totTareas); $r++) {
+                    if (isset($buscar[$i][$r]) && $buscar[$i][$r]->chapter_id == $totTareas[$r]->cap) {
+                        $sum = $totTareas[$r]->tareas - $buscar[$i][$r]->valor;
+                        $conta = $conta+1;
+                        $item = [
+                          'usuario' => $buscar[$i][$r]->idusu,
+                          'capitulo' => $buscar[$i][$r]->chapter_id,
+                          'tcom' => $buscar[$i][$r]->valor,
+                          'tfaltan' => $sum,
+                          'ttotal' => $totTareas[$r]->tareas,
+                          'nivel' => $conta
+                      ];
+                      $al[] = $item;
+                    }
+                }
+                } 
+          //#############
+          $niveles = collect($al)->groupBy('usuario')->map(function ($items) {
+            return count($items);
+          });//este me da los niveles 
+        /*finaliza */
         $grupos = DB::table('grupos')->get();
-        return view('admin.reportcompletos')->with('usuarios', $usuarios)->with('grup', $grupos);
+        return view('admin.reportcompletos')->with('usuarios', $res)->with('grup', $grupos)->with('bus', $al)->with('niveles', $niveles);
     }
     
     /**

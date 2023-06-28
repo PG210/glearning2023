@@ -5,6 +5,7 @@ use App\Http\Controllers\Perfil\PerfilController;
 use App\Http\Controllers\RegController\RegunicoController;
 use App\Http\Controllers\ReportcompletosController;
 use App\Http\Controllers\Carga\GruposController;
+use App\Http\Controllers\UserController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -269,5 +270,19 @@ Route::get('/reportcompletos/retos/{id}', [ReportcompletosController::class, 'us
 Route::get('/reportcompletos/grupo/{id}', [GruposController::class, 'buscargrupo'])->name('buscargrupo')->middleware('redirectIfSessionExpired');
 
 //validar fomulario de filtro
-
 Route::POST('/filtrar/usuarios/grupos', [GruposController::class, 'valFormu'])->name('valFormu')->middleware('redirectIfSessionExpired');
+
+//buscar user retos
+Route::POST('/filtrar/usuarios/grupos/retos', [GruposController::class, 'consultarter'])->name('consultarter')->middleware('redirectIfSessionExpired');
+
+//ruta para integrar el perfil dentro de la aplicacion
+Route::get('/home/perfil/usuario', [PerfilController::class, 'perfilhomedos'])->name('perfilhomedos')->middleware('redirectIfSessionExpired');
+
+//deshabilitar usuario
+Route::get('/deshabilitar/usuario/{id}', [PerfilController::class, 'deshabilitar'])->name('deshabilitar')->middleware('redirectIfSessionExpired');
+
+//eliminar usuario
+Route::get('/eliminar/usuario/{id}', [UserController::class, 'destroy'])->middleware('redirectIfSessionExpired');
+
+//buscar usuario por correo
+Route::get('/buscar/usuario/grupo', [GruposController::class, 'buscarcor'])->name('buscarcor')->middleware('redirectIfSessionExpired');

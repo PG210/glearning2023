@@ -44,7 +44,8 @@ class QuizController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {        
+    {      
+        
         $userauthid = Auth::user()->id;
 
         //preguntaas y respuestas que vienen del componente VUE QuizCreationComponent.vue

@@ -40,7 +40,7 @@
 <div class="d-grid gap-2 d-md-block">
     <div class="col-md-2" >
    <!-- <a href="{{ route('usuario.create') }}" class="btn btn-block btn-primary btn-md">Agregar Usuario</a>-->
-   <a href="{{ route('usureg_admin') }}" class="btn btn-block btn-primary btn-md">Agregar Usuario</a>
+   <a href="{{ route('usureg_admin') }}" class="btn btn-block btn-md btn-warning">Agregar Usuarios</a>
     </div>  
     <div class="col-md-2" >
     <a href="{{route('cargamasiva')}}" class="btn btn-block btn-primary btn-md">Carga Masiva</a>
@@ -92,26 +92,31 @@
                     <table class="table table-hover" >
                         <thead>
                             <tr>
-                                <th>Nombre</th>
-                                <th>Apellido</th>
+                                <th>Nombres</th>
                                 <th>Nombre_Usuario</th>
                                 <th>Email</th>
+                                <th>Estado</th>
+                                <th>Grupo</th>
                                 <th>Nivel</th>
                                 <th>S</th>
                                 <th>G</th>
                                 <th>I</th>
                                 <th>Fecha_Creado</th>
-                                <th>Opciones</th>  
+                                <th >Opciones</th>  
+                                
                             </tr>
                         </thead>
                         <tbody id="tablaocu">
                             @foreach($users as $user)
                                 <tr>
-                                    <td>{{ $user->firstname }} </td>
-                                    <td>{{ $user->lastname }} </td>
+                                    <td>{{ $user->firstname }} {{ $user->lastname }}</td>
                                     <td>{{ $user->username }} </td>
-                                    <td>{{ $user->email }} </td>
-
+                                    <td>{{ $user->email }}</td>
+                                    @if($user->estado != 0)
+                                    <td>Activo</td>
+                                    @else
+                                    <td><span  style="background-color:yellow;">Inactivo</span></td>
+                                    @endif
                                     {{-- buscar el nivel del jugador --}}
                                     <?php
                                         $useravatar = App\User::find($user->id);
@@ -134,23 +139,70 @@
                                             $nivel = explode(".", $calculonivel);
                                         }
                                     ?>
-
+                                    <td>{{ $user->descrip }} </td>
                                     <td>{{ $nivel[0] }} </td>
-
+                                 
                                     <td>{{ number_format($user->s_point,0, '.', '') }} </td>
                                     <td>{{ $user->g_point }} </td>
                                     <td>{{ $user->i_point }} </td>
                                     <td>{{ $user->created_at }} </td>   
                                     
-                                    <td style="width:15%;">   
+                                    <td style="width:25%;">   
                                         <a href="/home/perfil/admin/{{$user->id}}" class="btn btn-default"><i class="fa fa-pencil" aria-hidden="true"></i></a>
-                                        <form action="{{ route('usuario.destroy', $user->id ) }} " method="POST" style="display: inline-block;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-default" aria-label="Left Align">
-                                                <span class="fa fa-fw fa-trash-o" aria-hidden="true"></span>
-                                            </button>
-                                        </form>
+                                    @if($user->username != "admin")
+                                        <!--desactivar usuario -->
+                                        <a type="button" class="btn btn-default" data-toggle="modal" data-target="#deshabilitar{{$user->id}}">
+                                           <i class="fa fa-user-times" aria-hidden="true"></i>
+                                       </a>
+                                       <!--eliminar usuario-->
+                                       <a type="button" class="btn btn-default" data-toggle="modal" data-target="#eliminar{{$user->id}}">
+                                         <span class="fa fa-fw fa-trash-o" aria-hidden="true"></span>
+                                       </a>
+                                       <!--end eliminar usuario-->
+                                    @endif
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="deshabilitar{{$user->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content" style="border-radius:20px;">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                                </button>
+                                                <h4 class="modal-title" id="myModalLabel">Deshabilitar/Habilitar Usuario: {{ $user->username }}</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Al deshabilitar un usuario, este no puede ingresar a la plataforma, pero toda su información sera conservada.</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                                                <a href="/deshabilitar/usuario/{{$user->id}}" type="button" class="btn btn-primary">Continuar</a>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                        <!--end desactivar-->
+                                         <!-- Modal eliminar -->
+                                         <div class="modal fade" id="eliminar{{$user->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content" style="border-radius:20px;">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                                </button>
+                                                <h4 class="modal-title" id="myModalLabel">Eliminar Usuario: {{ $user->username }}</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Al eliminar un usuario, este no puede ingresar a la plataforma y toda su información sera eliminada de la base de datos.</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                                                <a href="/eliminar/usuario/{{$user->id}}" type="button" class="btn btn-primary">Continuar</a>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                        
+                                        <!--end modal eliminar-->
                                     </td>
     
                                 </tr>
@@ -158,6 +210,48 @@
                         </tbody>
                          <!--aqui tabla para mostrar-->
                         <tbody id="tablamostrar"></tbody>
+                        <!--aqui modal deshabilitar javascript-->
+                        <div class="modal fade" id="deshabilitars" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content" style="border-radius:20px;">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <h4 class="modal-title" id="myModalLabel">Deshabilitar/Habilitar Usuario: </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Al deshabilitar un usuario, este no puede ingresar a la plataforma, pero toda su información sera conservada.</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                                    <a href="/deshabilitar/usuario/" id="userLink" type="button" class="btn btn-primary">Continuar</a>
+                                </div>
+                                </div>
+                            </div>
+                            </div>
+                            <!--end modal deshabilitar javascript-->
+                       <!--aqui modal eliminar javascript-->
+                        <div class="modal fade" id="eliminar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content" style="border-radius:20px;">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <h4 class="modal-title" id="myModalLabel">Eliminar Usuario: </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Al eliminar un usuario, este no puede ingresar a la plataforma y toda su información sera eliminada de la base de datos.</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-warning" data-dismiss="modal">Cancelar</button>
+                                    <a href="/eliminar/usuario/" id="userLinkelim" type="button" class="btn btn-primary">Continuar</a>
+                                </div>
+                                </div>
+                            </div>
+                            </div>
+                            <!--end modal desh javascript-->
                         <!--end tabla para mostrar-->
                     </table>
                 </div>
@@ -172,7 +266,7 @@
 </div>
 
 <script>
-    $('#alert').on('closed.bs.alert', function () {
+ $('#alert').on('closed.bs.alert', function () {
   // do something…
   $().alert();
   $().alert('close');
@@ -186,6 +280,7 @@
     var dato=$('#dato').val();
     console.log(dato);
     var _token = $('input[name=_token]').val();
+    console.log(_token);
     $.ajax({
       url:"{{route('buscar_usuario')}}",
       type: "POST",
@@ -196,23 +291,51 @@
     }).done(function(response){
        var arreglo = JSON.parse(response);
        var conta=0;
+       var userLink = document.getElementById('userLink');
+       var userLinkelim = document.getElementById('userLinkelim');
        if(arreglo.length!=0){
          $("#tablaocu").hide();
          $("#tablamostrar").empty();
         //aqui imprime los datos 
+            if(arreglo[0].estado != 0){
                 var valor = '<tr>' +
-                '<td>' + arreglo[0].firstname + '</td>' +
-                '<td>' + arreglo[0].lastname + '</td>' +
+                '<td>' + arreglo[0].firstname + ' ' + arreglo[0].lastname + '</td>' +
                 '<td>' + arreglo[0].username + '</td>' +
                 '<td>' + arreglo[0].email + '</td>' +
+                '<td>' + 'Activo' + '</td>' +
+                '<td>' + arreglo[0].descrip + '</td>' +
                 '<td> 0 </td>' +
                 '<td>' + Math.round(arreglo[0].s_point) + '</td>' +
                 '<td>' + arreglo[0].g_point + '</td>' +
                 '<td>' + arreglo[0].i_point + ' </td>' +
                 '<td>' + arreglo[0].created_at + '</td>' + 
-                '<td> <a href="/home/perfil/admin/'+arreglo[0].id+'" class="btn btn-default"><i class="fa fa-pencil" aria-hidden="true"></i></a> </td>' + 
+                '<td> <a href="/home/perfil/admin/'+arreglo[0].id+'" class="btn btn-default"><i class="fa fa-pencil" aria-hidden="true"></i></a>'+ ' ' +
+                     '<a type="button" class="btn btn-default" data-toggle="modal" data-target="#deshabilitars"><i class="fa fa-user-times" aria-hidden="true"></i></a>'+ ' '+
+                     '<a type="button" class="btn btn-default" data-toggle="modal" data-target="#eliminar"><span class="fa fa-fw fa-trash-o" aria-hidden="true"></span></a>'+
+                 '</td>' + 
                 '</tr>';
+            }else{
+                var valor = '<tr>' +
+                '<td>' + arreglo[0].firstname + ' ' + arreglo[0].lastname + '</td>' +
+                '<td>' + arreglo[0].username + '</td>' +
+                '<td>' + arreglo[0].email + '</td>' +
+                '<td>' + '<span style="background-color:yellow;">Inactivo</span>' + '</td>' +
+                '<td>' + arreglo[0].descrip + '</td>' +
+                '<td> 0 </td>' +
+                '<td>' + Math.round(arreglo[0].s_point) + '</td>' +
+                '<td>' + arreglo[0].g_point + '</td>' +
+                '<td>' + arreglo[0].i_point + ' </td>' +
+                '<td>' + arreglo[0].created_at + '</td>' + 
+                '<td> <a href="/home/perfil/admin/'+arreglo[0].id+'" class="btn btn-default"><i class="fa fa-pencil" aria-hidden="true"></i></a>'+ ' ' +
+                     '<a type="button" class="btn btn-default" data-toggle="modal" data-target="#deshabilitars"><i class="fa fa-user-times" aria-hidden="true"></i></a>'+ ' '+
+                     '<a type="button" class="btn btn-default" data-toggle="modal" data-target="#eliminar"><span class="fa fa-fw fa-trash-o" aria-hidden="true"></span></a>'+
+                 '</td>' + 
+                '</tr>';
+            }
             $('#tablamostrar').append(valor);
+            userLink.href = "/deshabilitar/usuario/" + arreglo[0].id; //envia dinamicamente al href
+            userLinkelim.href = "/eliminar/usuario/" + arreglo[0].id;
+            
             toastr.success('Username: ' + arreglo[0].username +'&nbsp;', 'Usuario encontrado', {timeOut:3000});
         //finalizar impresion datos
        }else{

@@ -109,18 +109,18 @@
                 </div> 
                 <div class="col-md-4" >
                 <!--buscar-->
-                <form id="buscar">
-                @csrf
+                <form action="{{route('consultarter')}}" method="POST">
+                 @csrf
                     <div class="form-row">
                         <div class="col-md-8">
-                        <input type="text" class="form-control" placeholder="Ingrese correo" id="dato">
+                        <input type="email" class="form-control" placeholder="Ingrese correo" id="dato" name="dato" required>
                         </div>
                         <div class="col-md-4">
                         <button class="btn btn-success float-right" type="submit">Buscar</button>
                         </div>
                     </div>
                     </form>
-                    <!--end buscar-->
+                  <!--end buscar-->
                 </div>
             </div>
     
@@ -134,18 +134,9 @@
                             <tr>
                                 <th>Nombre</th>
                                 <th>Nombre de Usuario</th>
-                                <th>Email</th>
-                                <th>Grupo 
-                              <i id="filter-icon" class="fa fa-filter" style="font-size: 18px; cursor: pointer;"></i>
-                                    <select id="filter-select" style="display: none;">
-                                        <option value="todos">Todos</option>
-                                        @foreach($grup as $g)
-                                        <option value="{{$g->id}}">{{$g->descrip}}</option>
-                                        @endforeach
-                                    </select>
-                                </th>
-
-                                <th>Nivel Actual</th>
+                                <th>Grupo</th>
+                                <th>Nivel</th>
+                                <th>Porcentaje</th>
                                 <th>Puntos S</th>
                                 <th>puntos I</th>
                                 <th>puntos G</th>
@@ -157,14 +148,39 @@
                                 <tr>      
                                     <td>{{ $user->firstname }} {{ $user->lastname }} </td>                
                                     <td>{{ $user->username }} </td>
-                                    <td>{{ $user->email }} </td>
-                                    <?php 
-                                     $useravatar = App\User::find($user->id);
-                                     $calculonivel = $useravatar->s_point / 100;
-                                      $nivel = explode(".", $calculonivel);                         
-                                   ?>
                                     <td>{{$user->descrip}}</td>
-                                    <td>{{$nivel[0]}}</td>
+                                    <td>{{$niveles[$user->id] ?? 0}}</td>
+                                    <td>
+                                    <div class="panel-group" id="accordion">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                        <h5 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{$user->id}}">Ver mas ...</a>
+                                        </h5>
+                                        </div>
+                                        <div id="collapse{{$user->id}}" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                           <!--porcentajes-->
+                                           @foreach($bus as $b)
+                                                @if($b['usuario'] == $user->id )
+                                                <?php
+                                                $por = ($b['tcom']*100)/$b['ttotal'];
+                                                $red = round($por, 1);
+                                                ?>
+                                                <span>Cap:</span> {{$b['capitulo']}} => {{$red}} <br>
+                                                <div class="progress">
+                                                    <div class="progress-bar" role="progressbar" aria-valuenow="<?= $red ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?= $red ?>%; background-color:#25c5ab; color:black;">
+                                                        <?= $red ?>%
+                                                    </div>
+                                                    </div>
+                                                @endif
+                                            @endforeach
+                                           <!--end porcntajes-->
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                    </td>
                                     <td>{{ round($user->s_point, 2) }} </td>
                                     <td>{{ $user->i_point }} </td>
                                     <td>{{ $user->g_point }} </td>
@@ -172,6 +188,7 @@
                                           Completados</a></td>
                                 </tr>
                             @endforeach
+
                         </tbody>
                         <tbody id="tablamostrar"></tbody>
                     </table>        
@@ -197,7 +214,9 @@
       }
     }).done(function(response){
        var arreglo = JSON.parse(response);
+       console.log(arreglo);
        var conta=0;
+       /*
        if(arreglo.length!=0){
         //$calculonivel = $useravatar->s_point / 100;
         // $nivel = explode(".", $calculonivel); 
@@ -208,10 +227,10 @@
          $("#tablamostrar").empty();
         //aqui imprime los datos 
                 var valor = '<tr>' +
-                '<td>' + arreglo[0].firstname + '</td>' +
-                '<td>' + arreglo[0].lastname + '</td>' +
+                '<td>' + arreglo[0].firstname + ' ' + arreglo[0].lastname + '</td>' +
                 '<td>' + arreglo[0].username + '</td>' +
-                '<td>' + arreglo[0].email + '</td>' +
+                '<td>' + arreglo[0].descrip + '</td>' +
+                '<td>' + nivel[0]+ ' </td>' +
                 '<td>' + nivel[0]+ ' </td>' +
                 '<td>' + Math.round(arreglo[0].s_point) + '</td>' +
                 '<td>' + arreglo[0].i_point + ' </td>' +
@@ -222,11 +241,12 @@
             $('#tablamostrar').append(valor);
             toastr.success('Username: ' + arreglo[0].username +'&nbsp;', 'Usuario encontrado', {timeOut:3000});
         //finalizar impresion datos
-       }else{
+       
+      }else{
          $("#tablaocu").show();
          toastr.warning('Lo sentimos!', 'Datos no encontrados', {timeOut:3000});
        }
-         
+      */   
     }).fail(function(jqXHR, response){
         $("#tablaocu").show();
         $("#tablamostrar").empty();
@@ -241,68 +261,6 @@
     });
   });
  </script> 
- <script>
-  $(document).ready(function() {
-    $("#filter-select").change(function() {
-      var selectedOption = $(this).val();
-      // Realizar la solicitud AJAX al controlador
-      $.ajax({
-        url: '/reportcompletos/grupo/' + selectedOption,  // Reemplaza con la ruta adecuada
-        type: 'GET',  // Reemplaza con el tipo de solicitud que necesites (GET, POST, PUT, DELETE, etc.)
-        success: function(response) {
-          // Manejar la respuesta del controlador aquí
-          var arreglo = JSON.parse(response);
-          var arres = arreglo.res; //aqui llega la info de los usuarios
-          var buscar = arreglo.buscar;
-          console.log(buscar);
-          var conta=0;
-          var calculonivel = 0;
-          var cniv = 0;
-          var nivel = 0;
-          if(arres.length!=0){
-            $("#tablaocu").hide();
-            $("#tablamostrar").empty();
-            //aqui imprime los datos 
-            for(var i=0; i<arres.length; i++){
-                  var cap = 0;
-                  calculonivel = Math.floor(arres[i].s_point)/100;
-                  cniv = calculonivel.toString();
-                  nivel = cniv.split(".");
-                    if (typeof  buscar[i]['usuario'] === 'undefined' ) {
-                          cap = 0;
-                    } else {
-                            cap=1;
-                          
-                    }
-                  
-                  var valor = '<tr>' +
-                              '<td>' + arres[i].id + ' ' + arres[i].firstname + ' ' + arres[i].lastname + '</td>' +
-                              '<td>' + arres[i].username + '</td>' +
-                              '<td>' + arres[i].email + '</td>' +
-                              '<td>' + arres[i].descrip + '</td>' + 
-                              '<td> '+ nivel[0] +'</td>' +
-                              '<td> '+ cap +'</td>' +
-                              '<td>' + Math.round(arres[i].s_point) + '</td>' +
-                              '<td>' + arres[i].i_point + ' </td>' +
-                              '<td>' + arres[i].g_point + '</td>' +
-                              '<td> <a href="/reportcompletos/retos/'+arres[i].id+'" class="btn btn-warning">Completados</a> </td>' + 
-                              '</tr>';  
-                              $('#tablamostrar').append(valor);
-                   
-            }
-         }else{
-            $("#tablaocu").hide();
-            $("#tablamostrar").empty();
-            toastr.warning('No hay ususarios en el grupo', 'Lo sentimos!', {timeOut:3000});
-         }
-        },
-        error: function(xhr) {
-          // Manejar el error en caso de que ocurra
-          // console.log(xhr.responseText);
-        }
-      });
-    });
-  });
-</script>
+
 
 @endsection
