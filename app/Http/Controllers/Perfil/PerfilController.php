@@ -112,4 +112,16 @@ class PerfilController extends Controller
     $user->save();
     return back();
    }
+
+   //aqui insignia
+   public function detinsignia($id){
+    $usu =  Auth::user()->id;
+    $info = DB::table('insignia_user')->join('users', 'insignia_user.user_id', '=', 'users.id')
+           ->join('insignias', 'insignia_user.insignia_id', '=', 'insignias.id')
+           ->where('insignia_user.id', $id)
+           ->select('insignia_user.id', 'insignia_user.insignia_id as idinsig',
+                     'users.firstname as usuname', 'users.lastname as usuape', 'insignias.name', 'insignias.imagen', 'insignias.description', 'insignia_user.created_at')
+           ->get();
+     return view('grupos.vistains')->with('info', $info);
+   }
 }

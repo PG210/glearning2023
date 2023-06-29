@@ -4,6 +4,12 @@
 
 <?php
   $users = App\User::find(Auth::user()->id);
+  $usu =  Auth::user()->id;
+  $info = DB::table('insignia_user')->join('users', 'insignia_user.user_id', '=', 'users.id')
+         ->join('insignias', 'insignia_user.insignia_id', '=', 'insignias.id')
+         ->where('insignia_user.user_id', $usu)
+         ->select('insignia_user.id', 'insignia_user.insignia_id as idinsig', 'insignias.name', 'insignias.imagen', 'insignias.description', 'insignia_user.created_at')
+         ->get();
 ?>
     <!-- /.sidebar-menu -->
   </section>
@@ -73,7 +79,7 @@
             <!-- ACCESORIOS -->
             <div class="post">
               <h3>Insignias</h3>
-              @foreach($users->insignias as $insignia)
+              @foreach($info as $insignia)
               <div class="row">
                 <div class="col-md-6">
                   <div class="user-block">
@@ -90,11 +96,10 @@
                   {{-- <a  class="pull-right" href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.it-institute.org/wp-content/uploads/2021/05/medal.png" target="_blank">
                     <i class="fa fa-linkedin-square" aria-hidden="true"></i>
                        Compartir pub
-                    </a>
-                    <a  class="pull-right" href="https://www.linkedin.com/in/[TU_USUARIO]/edit/forms/certification/new/?profileFormEntryPoint=PROFILE_COMPLETION_HUB?url=https://www.it-institute.org/wp-content/uploads/2021/05/medal.png" target="_blank">
-                    <i class="fa fa-linkedin-square" aria-hidden="true"></i>
-                       Compartir perfil
                     </a>--}}
+                    <a  class="pull-right" href="/ver/insignia/{{$insignia->id}}" target="_blank" style="font-size:20px;">
+                       Visualizar
+                    </a>
                     <!--modal-->
                      <!-- Botón para abrir el modal -->
                         <a type="button" class="pull-right" data-toggle="modal" data-target="#com{{$insignia->id}}" style="font-size:24px; padding-right:5px;"> <i class="fa fa-linkedin-square" aria-hidden="true"></i></a>

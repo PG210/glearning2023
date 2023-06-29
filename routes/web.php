@@ -286,3 +286,5 @@ Route::get('/eliminar/usuario/{id}', [UserController::class, 'destroy'])->middle
 
 //buscar usuario por correo
 Route::get('/buscar/usuario/grupo', [GruposController::class, 'buscarcor'])->name('buscarcor')->middleware('redirectIfSessionExpired');
+//vista para certificado
+Route::get('/ver/insignia/{id}', [PerfilController::class, 'detinsignia']);
