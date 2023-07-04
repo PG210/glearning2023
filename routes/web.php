@@ -6,6 +6,8 @@ use App\Http\Controllers\RegController\RegunicoController;
 use App\Http\Controllers\ReportcompletosController;
 use App\Http\Controllers\Carga\GruposController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Perfil\InsigniaController; //se agrego para insigias
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -288,3 +290,11 @@ Route::get('/eliminar/usuario/{id}', [UserController::class, 'destroy'])->middle
 Route::get('/buscar/usuario/grupo', [GruposController::class, 'buscarcor'])->name('buscarcor')->middleware('redirectIfSessionExpired');
 //vista para certificado
 Route::get('/ver/insignia/{id}', [PerfilController::class, 'detinsignia']);
+//registrar insignia por capitulo
+Route::get('/formulario/insignia/capitulo', [InsigniaController::class, 'index'])->name('formuinsigcap')->middleware('redirectIfSessionExpired');
+//guardar insignia de capitulo
+Route::POST('/registrar/insignia/capitulo', [InsigniaController::class, 'guardar'])->name('insigniasguar')->middleware('redirectIfSessionExpired');
+//elimnar insignias e capitulo
+Route::get('/eliminar/insignia/capitulo/{id}', [InsigniaController::class, 'eliminar'])->name('deletinscap')->middleware('redirectIfSessionExpired');
+//pdf
+Route::get('/generar/pdf', [PerfilController::class, 'generarPDF']);

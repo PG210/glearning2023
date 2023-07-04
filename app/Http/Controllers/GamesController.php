@@ -10,6 +10,8 @@ use App\Chapter;
 use App\Challenge;
 use App\User;
 Use App\Insignia;
+Use App\InsigniaUser; //se agrego para guardar la insignia
+Use App\ModingCap; //se agrego para reg insignias por capitulo
 use App\Gift;
 use Carbon\Carbon;
 use DB;
@@ -37,6 +39,38 @@ class GamesController extends Controller
         return $cap;
     }
     //comunicacion con la vista de los retos
+    //#######################################
+    public function valinsig($cap, $userauthid){
+              $tarealizadas = DB::table('challenge_user')
+                        ->join('challenges', 'challenge_user.challenge_id', '=', 'challenges.id')
+                        ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                        ->where('subchapters.chapter_id', $cap)
+                        ->where('challenge_user.user_id', '=',  $userauthid)
+                        ->selectRaw('challenge_user.user_id as idusu, subchapters.chapter_id, COUNT(challenge_user.challenge_id) as tot')
+                        ->groupBy('challenge_user.user_id', 'subchapters.chapter_id')
+                        ->get();
+                $tarporcap = DB::table('challenges')
+                        ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                        ->where('subchapters.chapter_id', $cap)
+                        ->selectRaw('subchapters.chapter_id as cap, COUNT(challenges.id) as tot')
+                        ->groupBy('subchapters.chapter_id')
+                        ->get();
+                if(count($tarealizadas) != 0){
+                    $niv = ($tarealizadas[0]->tot*100)/$tarporcap[0]->tot;
+                    $bn = round($niv, 0);
+                 }
+                if($bn >= 100){
+                    $idinsig = DB::table('insigniacap')->where('capitulo', $cap)->get();
+                    $fechai = Carbon::now();
+                    $Gr = new ModingCap();
+                    $Gr->userid =  $userauthid;
+                    $Gr->insigid = $idinsig[0]->id;
+                    $Gr->created_at = $fechai;
+                    $Gr->save();
+                  return $idinsig;
+                }
+    }
+    //#######################################
     public function ahorcado($id){
         //encontrar el capitulo
         $cap = $this->eval($id);
@@ -406,6 +440,11 @@ class GamesController extends Controller
                         
 
             $pt_s = $retospts; 
+             //validar que este en el capitulo 1 externo osea 2
+            $count = DB::table('insigniacap')->where('capitulo', $cap)->count();
+                if($count != 0){
+                    $rinsignia = $this->valinsig($cap, $userauthid); 
+                }
             return view('player.finishquiz')->with('puntos_s', $pt_s)
                                             ->with('puntos_i', $i_point)
                                             ->with('puntos_g', $g_point)
@@ -420,6 +459,7 @@ class GamesController extends Controller
                                             ->with('insigniadescwon', $insigniadescwon)                                            
                                             ->with('recompensawon', $recompensawon)
                                             ->with('recompensanamewon', $recompensanamewon)
+                                            ->with('inscap', $rinsignia)
                                             ->with('cap', $cap);
         }else{
             //se agrego el subcapitulo para egresar
@@ -457,7 +497,6 @@ class GamesController extends Controller
         $reto = Challenge::find($idretoactual);
 
         $cap = $this->eval($idretoactual); //se valida el capitulo
-          
         //validar si ya esta ingresado
         $contar1 = DB::table('videos')->where('id_user', $usuario)->where('id_challenge', $idretoactual)->count();
         
@@ -754,6 +793,14 @@ class GamesController extends Controller
         }
 
         $pt_s = $retospts;
+         //###############################################################
+        //validar que este en el capitulo 1 externo osea 2
+        $count = DB::table('insigniacap')->where('capitulo', $cap)->count();
+        if($count != 0){
+            $rinsignia = $this->valinsig($cap, $userauthid); 
+            
+        }
+        //#################################################################
         return view('player.finishquiz')->with('puntos_s', $pt_s)
                                         ->with('puntos_i', $i_point)
                                         ->with('puntos_g', $g_point)
@@ -768,6 +815,7 @@ class GamesController extends Controller
                                         ->with('passretouppopup', $passretouppopup)
                                         ->with('recompensawon', $recompensawon)
                                         ->with('cap', $cap)
+                                        ->with('inscap', $rinsignia)
                                         ->with('recompensanamewon', $recompensanamewon);
       }
 
@@ -1115,6 +1163,12 @@ class GamesController extends Controller
         }
    
         $pt_s = $retospts;
+         //validar que este en el capitulo 1 externo osea 2
+
+         $count = DB::table('insigniacap')->where('capitulo', $cap)->count();
+          if($count != 0){
+            $rinsignia = $this->valinsig($cap, $userauthid); 
+        }
         return view('player.finishquiz')->with('puntos_s', $pt_s)
                                         ->with('puntos_i', $i_point)
                                         ->with('puntos_g', $g_point)
@@ -1129,6 +1183,7 @@ class GamesController extends Controller
                                         ->with('passretouppopup', $passretouppopup)
                                         ->with('recompensawon', $recompensawon)
                                         ->with('recompensanamewon', $recompensanamewon)
+                                        ->with('inscap', $rinsignia)
                                         ->with('cap', $cap);
 
      }
@@ -1456,6 +1511,11 @@ class GamesController extends Controller
         }
 
         $pt_s = $retospts; 
+         //validar que este en el capitulo 1 externo osea 2
+         $count = DB::table('insigniacap')->where('capitulo', $cap)->count();
+         if($count != 0){
+             $rinsignia = $this->valinsig($cap, $userauthid); 
+         }
         return view('player.finishquiz')->with('puntos_s', $pt_s)
                                         ->with('puntos_i', $i_point)
                                         ->with('puntos_g', $g_point)
@@ -1470,6 +1530,7 @@ class GamesController extends Controller
                                         ->with('passretouppopup', $passretouppopup)
                                         ->with('recompensawon', $recompensawon)
                                         ->with('recompensanamewon', $recompensanamewon)
+                                        ->with('inscap', $rinsignia)
                                         ->with('cap', $cap);
      }
 
@@ -1813,6 +1874,11 @@ class GamesController extends Controller
 
         
         $pt_s = $retospts;
+         //validar que este en el capitulo 1 externo osea 2
+         $count = DB::table('insigniacap')->where('capitulo', $cap)->count();
+         if($count != 0){
+             $rinsignia = $this->valinsig($cap, $userauthid); 
+         }
         return view('player.finishquiz')->with('puntos_s', $pt_s)
                                         ->with('puntos_i', $i_point)
                                         ->with('puntos_g', $g_point)
@@ -1827,6 +1893,7 @@ class GamesController extends Controller
                                         ->with('passretouppopup', $passretouppopup)
                                         ->with('recompensawon', $recompensawon)
                                         ->with('cap', $cap)
+                                        ->with('inscap', $rinsignia)
                                         ->with('recompensanamewon', $recompensanamewon);
 
      }

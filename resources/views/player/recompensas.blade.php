@@ -10,6 +10,15 @@
          ->where('insignia_user.user_id', $usu)
          ->select('insignia_user.id', 'insignia_user.insignia_id as idinsig', 'insignias.name', 'insignias.imagen', 'insignias.description', 'insignia_user.created_at')
          ->get();
+  //insignias por capitulo
+  $infoc = DB::table('insigcap_user')
+         ->join('users', 'insigcap_user.userid', '=', 'users.id')
+         ->join('insigniacap', 'insigcap_user.insigid', '=', 'insigniacap.id')
+         ->where('insigcap_user.userid', $usu)
+         ->select('insigcap_user.id', 'insigcap_user.insigid as idinsig', 'insigniacap.nombre as name',
+                  'insigniacap.url as imagen', 'insigniacap.descripcion as description', 'insigniacap.created_at')
+         ->get();
+  
 ?>
     <!-- /.sidebar-menu -->
   </section>
@@ -96,8 +105,8 @@
                   {{-- <a  class="pull-right" href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.it-institute.org/wp-content/uploads/2021/05/medal.png" target="_blank">
                     <i class="fa fa-linkedin-square" aria-hidden="true"></i>
                        Compartir pub
-                    </a>--}}
-                    <a  class="pull-right" href="/ver/insignia/{{$insignia->id}}" target="_blank" style="font-size:20px;">
+                    </a>
+                    <a  class="pull-right btn btn-info" href="/ver/insignia/{{$insignia->id}}" target="_blank" style="font-size:15px;">
                        Visualizar
                     </a>
                     <!--modal-->
@@ -154,6 +163,7 @@
                           </div>
                         </div>
                     <!--end modal-->
+                    --}}
                   </div>
               </div>
             </div>
@@ -162,6 +172,31 @@
             </div>
             <!-- /.post -->
 
+            <!--visualizacion de insignias por capitulo-->
+            <div class="post">
+              <h3>Insignias para compartir</h3>
+              @foreach($infoc as $in)
+                <div class="user-block">
+                <div class="row">
+                <div class="col-md-6">
+                  <img class="img-circle img-responsive img-bordered-sm" src="/insigcap/{{$in->imagen}}" width="100px" alt="Imagen">
+                  <i aria-hidden="true"></i>
+                      <span class="username">
+                        <a href="#"> {{($in->name) }}</a>
+                      </span>
+                     <span class="description">{{($in->description) }}</span>
+                    <!--modal-->
+                </div>
+                 <div class="col-md-6">
+                   <a  class="pull-right btn btn-info" href="/ver/insignia/{{$in->id}}" target="_blank" style="font-size:15px;">
+                       Visualizar
+                    </a>
+                 </div>
+                </div>
+              </div>
+              @endforeach
+            </div>
+            <!--end insignias por capitulo-->
             <!-- RECOMPENSAS -->
             <div class="post">
               <h3>Recompensas</h3>

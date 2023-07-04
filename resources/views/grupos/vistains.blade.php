@@ -14,32 +14,32 @@
 <div style="background-color:#1ED5F4;">
     <div class="container text-end" style="padding-top:5px; padding-bottom:5px;">
        <div class="container">
-        <a href="#" class="btn btn-success"><i class="bi bi-download"></i>&nbsp;Descargar</a>
+        <a href="/generar/pdf" class="btn btn-success"><i class="bi bi-download"></i>&nbsp;Descargar</a>
        </div>
     </div>
 </div>
 <!--<button onclick="descargarPDF()">Descargar en PDF</button>-->
- <div class="container" style="background-image: url('/dist/img/fondo2.png'); background-size: cover; background-position: center;  background-size: contain; background-size: 80% auto; background-repeat: no-repeat; padding-top:0px;">
+ <div class="container d-none d-lg-block" style="background-image: url('/dist/img/fondo2.png'); background-size: cover; background-position: center;  background-size: contain; background-size: 80% auto; background-repeat: no-repeat; padding-top:0px;">
  <br>
     <div class="container">
         <div class="row">
           <div class="col-8">
           </div>
           <div class="col-4">
-            <br><br><br>
-                <img src="{{ asset($info[0]->imagen) }}"  class="img-thumbnail" alt="Descripción de la imagen" style="width: 100px; height: auto;">
+            <br><br><br><br>
+                <img src="/insigcap/{{$info[0]->imagen}}"  class="img-thumbnail" alt="Descripción de la imagen" style="width: 100px; height: auto; border-radius:80px;">
           </div>
         </div>
         <div class="row"> 
          <div class="col-12">
-            <br>
             <h3 class="text-center"><span style="color:blue; font-size:26px;"><b>Certifica que:</b></span> </h3>
-            <br><br>
+            <br>
          </div>
         </div>
     </div>
      <div class="container">
       <h3 class="text-center">{{$info[0]->usuname}} {{$info[0]->usuape}}</h3>
+      <h4 class="text-center">C.C {{$info[0]->cedula}}</h4>
       <br>
     </div>
     <div class="container">
@@ -80,6 +80,56 @@
       <br>
     </div>
   </div>
+  <!--#################################################################--->
+       <!--visualizar en pantallas pequenias-->
+  <div class="d-block d-sm-none" style="background-image: url('/dist/img/fondo2.png'); background-size: cover; background-position: center;  background-size: contain; background-size: 100% auto; background-repeat: no-repeat; padding-top:0px;">
+    <br>
+     <div class="text-start"  style="position: relative;  z-index: 1;">
+        <img src="/insigcap/{{$info[0]->imagen}}"  class="img-thumbnail" alt="Descripción de la imagen" style="width: 50px; height: auto; border-radius:100px; padding-top:0px;">
+    </div>
+    <br>
+     <div class="container" style="position: relative;  z-index: 2;">
+      <div class="row"> 
+         <div class="col-12">
+            <h6 class="text-center"><span style="color:blue; "><b>Certifica que:</b></span> </h6>
+         </div>
+        </div>
+      <h6 class="text-center">{{$info[0]->usuname}} {{$info[0]->usuape}}</h6>
+      <h6 class="text-center">C.C {{$info[0]->cedula}}</h6>
+    </div>
+    <div class="container" style="position: relative;  z-index: 2;">
+        <div class="row">
+        <div class="col-2">
+        </div>
+        <div class="col-8">
+            <p> <h6 class="text-center"><span style="color:blue;">
+               <b>Aprobó el programa:</b></span>
+                @if(strlen($info[0]->name) > 25)
+                   {{$info[0]->name}}
+                 @else
+                   {{$info[0]->name}}
+                @endif
+            </h6></p>
+        </div>
+        <div class="col-2">
+        </div>
+      </div>
+    </div>
+    <div class="container" style="position: relative;  z-index: 2;">
+        <div class="row">
+            <div class="col-12">
+             <h6 class="text-center"><span style="color:white;"><b>Intensidad horaria: 8 Horas</b></span> </h6>
+            </div>
+      </div>
+     </div>
+     <br>
+    <div class="container" style="position: relative;  z-index: 2;">
+      <h6 class="text-center" style="margin-top:8px; font-size:10px; color:white;">Fecha emisión: {{$info[0]->created_at}}</h6>
+      <br>
+    </div>
+  </div>
+  <!--eend visualiar en pantallas pequenias-->
+  <!--################################################################-->
   <!--contenedor para compartir-->
     <div class="container">
         <div class="row">
@@ -154,7 +204,16 @@
     </div>
     <br>
   <!--end compartir-->
-  <footer>
+  <!--#################################################################################--->
+  <footer class="d-none d-lg-block">
+  <div style="background-color:#1ED5F4;">
+    <div class="container text-center">
+       <br><p style="font-size:20px;">&copy; 2023 Evolución SAS. Todos los derechos reservados.</p>
+       <br>
+    </div>
+    </div>
+  </footer>
+  <footer class="footer fixed-bottom d-block d-sm-none">
   <div style="background-color:#1ED5F4;">
     <div class="container text-center">
        <br><p style="font-size:20px;">&copy; 2023 Evolución SAS. Todos los derechos reservados.</p>

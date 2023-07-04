@@ -38,6 +38,9 @@
                 <div class="col-md-2" >
                     <a href="{{ route('insignias.create') }}" class="btn btn-block btn-primary btn-md">Nueva insignia</a>
                 </div>
+                <div class="col-md-2" >
+                    <a href="{{route('formuinsigcap')}}" class="btn btn-block btn-success btn-md">Insignia Capitulo</a>
+                </div>
             </div>
             <div class="box-body table-responsive no-padding">
 

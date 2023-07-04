@@ -283,6 +283,14 @@
                       <h4> {{ $recompensanamewon }} </h4>
                     @endif
                   <!--end si gano una insignia-->
+                  <!--si termino el capitulo darle -->
+                  @if ($isset($inscap))
+                      <h4>¡Felicidades! Ganaste una insignia.</h4>
+                      <img style="width: 30%; height:30%;" src="/insigcap/{{$inscap->url}}" alt="Felicidades">
+                      <h4> {{ $inscap->nombre }} </h4>
+                      <a href="/ver/insignia/{{$inscap->id}}" style="font-size:20px;"><i class="bi bi-linkedin"></i> Compartir</a>
+                    @endif
+                  <!--end insignia capitulo--->
                   </td>
                   <td style="border-top:0px;" class="text-center">
                     <h2 class="text-center visible-lg">Sigues avanzando, has sumado los siguientes puntos: por completar este reto:</h2>

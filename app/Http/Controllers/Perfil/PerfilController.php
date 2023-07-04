@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Session;
+use Dompdf\Dompdf;
+use Illuminate\Support\Facades\View;
 
 class PerfilController extends Controller
 {
@@ -116,12 +118,27 @@ class PerfilController extends Controller
    //aqui insignia
    public function detinsignia($id){
     $usu =  Auth::user()->id;
-    $info = DB::table('insignia_user')->join('users', 'insignia_user.user_id', '=', 'users.id')
-           ->join('insignias', 'insignia_user.insignia_id', '=', 'insignias.id')
-           ->where('insignia_user.id', $id)
-           ->select('insignia_user.id', 'insignia_user.insignia_id as idinsig',
-                     'users.firstname as usuname', 'users.lastname as usuape', 'insignias.name', 'insignias.imagen', 'insignias.description', 'insignia_user.created_at')
+    $info = DB::table('insigcap_user')
+           ->join('users', 'insigcap_user.userid', '=', 'users.id')
+           ->join('insigniacap', 'insigcap_user.insigid', '=', 'insigniacap.id')
+           ->where('insigcap_user.id', $id)
+           ->select('insigcap_user.id', 'insigcap_user.insigid as idinsig',
+                     'users.firstname as usuname', 'users.lastname as usuape', 'users.cedula', 'insigniacap.nombre as name', 
+                     'insigniacap.url as imagen', 'insigniacap.descripcion as description', 'insigcap_user.created_at')
            ->get();
+          
      return view('grupos.vistains')->with('info', $info);
    }
+
+   //generar pdf
+   public function generarPDF()
+        {
+            $data = ['title' => 'Mi PDF'];
+            $pdf = new Dompdf();
+            $pdf->loadHtml(View::make('grupos.pdfinsig', $data)->render());
+            $pdf->setPaper('A4');
+            $pdf->render();
+            $pdf->stream('nombre_del_archivo.pdf');
+        }
+   //end pdf
 }
