@@ -84,19 +84,8 @@
                   <!---end validar correo-->
               </div>
             <div class="form-group col-md-6">
-                <label for="nameuser"><b>Usuario</b></label>
-                <input type="text" class="form-control" id="nameuser" name="nameuser" Required>
-                  <!--validar el correo-->
-                  @if(Session::has('notuser'))
-                  <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <strong>{{session('notuser')}}</strong> 
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <br>
-                @endif
-                  <!---end validar correo-->
+                <label for="ced"><b>Cedula</b></label>
+                <input type="number" class="form-control" id="ced" name="ced" Required>
             </div>
            </div>
             <div class="form-row">

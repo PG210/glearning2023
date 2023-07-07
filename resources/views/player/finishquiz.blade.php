@@ -284,12 +284,17 @@
                     @endif
                   <!--end si gano una insignia-->
                   <!--si termino el capitulo darle -->
-                  @if ($isset($inscap))
-                      <h4>¡Felicidades! Ganaste una insignia.</h4>
-                      <img style="width: 30%; height:30%;" src="/insigcap/{{$inscap->url}}" alt="Felicidades">
-                      <h4> {{ $inscap->nombre }} </h4>
-                      <a href="/ver/insignia/{{$inscap->id}}" style="font-size:20px;"><i class="bi bi-linkedin"></i> Compartir</a>
-                    @endif
+                   @if(isset($inscap))
+                      @if($inscap != "")
+                      <div class="text-center">
+                        <h4>¡Felicidades! Ganaste una insignia.</h4>
+                        <img style=" width: 32%; border-radius: 48%; border: 4px solid #be18d2; background-color:#A74FEA;" src="/insigcap/{{$inscap[0]->url}}" alt="Felicidades">
+                        <h4> {{ $inscap[0]->nombre }} </h4>
+                        <i class="fa fa-share"></i>
+                        <a href="/ver/insignia/{{$inscap[0]->id}}" style="font-size:20px; color:#FBFF05;" target="_blank"><i class="bi bi-linkedin"></i> Compartir</a>
+                      </div>
+                      @endif
+                   @endif
                   <!--end insignia capitulo--->
                   </td>
                   <td style="border-top:0px;" class="text-center">
@@ -392,6 +397,19 @@
                       <h4> {{ $recompensanamewon }} </h4>
                     @endif
                <!--end validar si gano insignia-->
+                  <!--si termino el capitulo darle -->
+                  @if(isset($inscap))
+                   @if($inscap != "")
+                      <div class="text-center">
+                        <h4>¡Felicidades! Ganaste una insignia.</h4>
+                        <img style=" width: 32%; border-radius: 48%; border: 4px solid #be18d2; background-color:#A74FEA;" src="/insigcap/{{$inscap[0]->url}}" alt="Felicidades">
+                        <h4> {{ $inscap[0]->nombre }} </h4>
+                        <i class="fa fa-share"></i>
+                        <a href="/ver/insignia/{{$inscap[0]->id}}" style="font-size:20px; color:#FBFF05;" target="_blank"><i class="bi bi-linkedin"></i> Compartir</a>
+                      </div>
+                      @endif
+                   @endif
+                  <!--end insignia capitulo--->
               </td>
               <td style="border-top:0px;" class="text-center">
                  <h2 class="text-center visible-lg">Sigues avanzando, has sumado los siguientes puntos: por completar este reto:</h2>

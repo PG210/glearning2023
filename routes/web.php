@@ -296,5 +296,9 @@ Route::get('/formulario/insignia/capitulo', [InsigniaController::class, 'index']
 Route::POST('/registrar/insignia/capitulo', [InsigniaController::class, 'guardar'])->name('insigniasguar')->middleware('redirectIfSessionExpired');
 //elimnar insignias e capitulo
 Route::get('/eliminar/insignia/capitulo/{id}', [InsigniaController::class, 'eliminar'])->name('deletinscap')->middleware('redirectIfSessionExpired');
+//editar insignia
+Route::get('/editar/insignia/capitulo/{id}', [InsigniaController::class, 'editar'])->name('editinscap')->middleware('redirectIfSessionExpired');
+//editar insfignia formulario
+Route::POST('/actualizar/insignia/capitulo', [InsigniaController::class, 'actualizar'])->name('actuignias')->middleware('redirectIfSessionExpired');
 //pdf
 Route::get('/generar/pdf', [PerfilController::class, 'generarPDF']);

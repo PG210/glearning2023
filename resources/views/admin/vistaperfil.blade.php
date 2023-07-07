@@ -13,7 +13,7 @@
 @section('cargosCreate')
 
 <!--botones-->
-<h2>AGREGAR NUEVO GRUPO</h2>
+<h2>ACTUALIZAR USUARIO</h2>
 <div class="container">
 <div class="row box-body">
     <div class="col-12">
@@ -70,11 +70,19 @@
                             </div>
                             </div>
                            </div>                      
-                  
                         <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" value="{{$usu[0]->email}}">
+                            <div class="row">
+                            <div class="col-md-6">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" value="{{$usu[0]->email}}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email">Cedula</label>
+                                <input type="number" class="form-control" id="ced" name="ced" value="{{$usu[0]->cedula}}">
+                            </div>
+                          </div>
                         </div>
+                        <!---####################-->
                         <div class="row">
                           <div class="col-md-6">
                             <div class="form-group">

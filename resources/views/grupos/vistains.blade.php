@@ -6,7 +6,10 @@
   <title>Insignia</title>
   <!-- Aquí puedes agregar enlaces a tus archivos CSS y scripts JS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+
+
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
   <!--<script src="{{asset('dist/js/estilo.js')}}"></script>-->
 </head>
@@ -14,11 +17,13 @@
 <div style="background-color:#1ED5F4;">
     <div class="container text-end" style="padding-top:5px; padding-bottom:5px;">
        <div class="container">
-        <a href="/generar/pdf" class="btn btn-success"><i class="bi bi-download"></i>&nbsp;Descargar</a>
-       </div>
+        <button class="btn btn-success" id="btnDownload" > <i class="bi bi-download"></i>&nbsp;Descargar</button>
+      </div>
     </div>
 </div>
 <!--<button onclick="descargarPDF()">Descargar en PDF</button>-->
+<br>
+<div id="elementToCapture">
  <div class="container d-none d-lg-block" style="background-image: url('/dist/img/fondo2.png'); background-size: cover; background-position: center;  background-size: contain; background-size: 80% auto; background-repeat: no-repeat; padding-top:0px;">
  <br>
     <div class="container">
@@ -26,8 +31,8 @@
           <div class="col-8">
           </div>
           <div class="col-4">
-            <br><br><br><br>
-                <img src="/insigcap/{{$info[0]->imagen}}"  class="img-thumbnail" alt="Descripción de la imagen" style="width: 100px; height: auto; border-radius:80px;">
+            <br><br>
+                <img src="/insigcap/{{$info[0]->imagen}}"  alt="Descripción de la imagen" style="width: 120px; height: auto; border-radius:80px;">
           </div>
         </div>
         <div class="row"> 
@@ -68,7 +73,7 @@
             <div class="col-3">
             </div>
             <div class="col-5">
-             <h3 ><span style="color:white; font-size:26px; "><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Intensidad horaria: 8 Horas</b></span> </h3>
+             <h3 ><span style="color:white; font-size:26px; "><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Intensidad horaria: {{$info[0]->horas}}</b></span> </h3>
             </div>
             <div class="col-4">
             </div>
@@ -76,10 +81,15 @@
      </div>
         <br><br><br><br>
     <div class="container">
-      <h5 class="text-center" style="margin-top:8px;">Fecha emisión: {{$info[0]->created_at}}</h5>
+      <br>
       <br>
     </div>
   </div>
+</div>
+<?php
+ $f = $info[0]->created_at;
+ $fecha = substr($f, 0, 10);
+?>
   <!--#################################################################--->
        <!--visualizar en pantallas pequenias-->
   <div class="d-block d-sm-none" style="background-image: url('/dist/img/fondo2.png'); background-size: cover; background-position: center;  background-size: contain; background-size: 100% auto; background-repeat: no-repeat; padding-top:0px;">
@@ -118,16 +128,17 @@
     <div class="container" style="position: relative;  z-index: 2;">
         <div class="row">
             <div class="col-12">
-             <h6 class="text-center"><span style="color:white;"><b>Intensidad horaria: 8 Horas</b></span> </h6>
+             <h6 class="text-center"><span style="color:white;"><b>Intensidad horaria: {{$info[0]->horas}}</b></span> </h6>
             </div>
       </div>
      </div>
      <br>
     <div class="container" style="position: relative;  z-index: 2;">
-      <h6 class="text-center" style="margin-top:8px; font-size:10px; color:white;">Fecha emisión: {{$info[0]->created_at}}</h6>
-      <br>
+    <br>
+    <br>
     </div>
   </div>
+  <h5 class="text-center" style="margin-top:8px;">Fecha emisión:  {{$fecha}}</h5>
   <!--eend visualiar en pantallas pequenias-->
   <!--################################################################-->
   <!--contenedor para compartir-->
@@ -136,7 +147,7 @@
             <div class="col-2"></div> 
             <div class="col-8 text-center">
             <!--describir insignia-->
-            <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+            <button class="btn btn-warning  ms-2"  style="margin-top:10px;" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
                 Descripción Insignia
             </button>
             <div class="collapse" id="collapseExample">
@@ -146,12 +157,22 @@
             </div>
             @auth
             <!--end describir inignia-->
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#comu{{$info[0]->id}}">
+           <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#comu{{$info[0]->id}}">
                 Compartir en perfil <i class="bi bi-linkedin"></i>
-            </button>
-            <a  class="btn btn-primary" href="https://www.linkedin.com/sharing/share-offsite/?url=http://127.0.0.1:8000/ver/insignia/{{$info[0]->id}}" target="_blank">
+            </button>-->
+           <!-- <a  class="btn btn-primary" href="https://www.linkedin.com/sharing/share-offsite/?url=http://127.0.0.1:8000/ver/insignia/{{$info[0]->id}}" target="_blank">
                  Compartir en historia <i class="bi bi-linkedin"></i>
+             </a>-->
+             <!--boton-->
+             <?php
+                $fec = $info[0]->created_at;
+                $anio = date("Y", strtotime($fec));
+                $mes = date("m", strtotime($fec));
+              ?>
+             <a class="btn btn-primary ms-2" style="margin-top:10px;"  href="https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME&name={{$info[0]->name}}&organizationId=35549462&issueYear=2023&issueMonth={{$mes}}&certUrl=https://glearning.com.co/ver/insignia/{{$info[0]->id}}&certId={{$info[0]->id}} ">
+               Compartir en perfil <i class="bi bi-linkedin"></i>
              </a>
+                          <!--end boton-->
              @endauth
               <!-- Modal -->
                 <div class="modal" id="comu{{$info[0]->id}}">
@@ -181,7 +202,7 @@
                                     <p>Fecha expedición: {{$info[0]->created_at}}</p> 
                                     <p>Fecha caducidad: Indefinido</p> 
                                     <p>ID credencial: </p> 
-                                    <p>Url de la credencial: http://127.0.0.1:8000/ver/insignia/{{$info[0]->id}} </p>
+                                    <p>Url de la credencial: </p>
                                 </div>
                             </div>
                             <br><br>
@@ -190,6 +211,7 @@
                             <input type="text" name="urlval"  id="urlval"  class="form-control" onInput="validarInput()" />
                             <br>
                         </div>
+                       
                         <div class="modal-footer">
                           <button type="button" class="btn btn-warning"  data-bs-dismiss="modal" id="btncerrar">Cerrar</button>
                           <button onclick="compartirLinkedIn()" name="add_to_cart" id="btnCompartir" class="btn btn-info" style="display: none;">Compartir</button>
@@ -216,7 +238,7 @@
   <footer class="footer fixed-bottom d-block d-sm-none">
   <div style="background-color:#1ED5F4;">
     <div class="container text-center">
-       <br><p style="font-size:20px;">&copy; 2023 Evolución SAS. Todos los derechos reservados.</p>
+       <br><p style="font-size:18px;">&copy; 2023 Evolución SAS. Todos los derechos reservados.</p>
        <br>
     </div>
     </div>
@@ -246,5 +268,27 @@
         window.open(url, "_blank");
       }
   </script>
+  <!--aqui gener pdf-->
+  <script>
+        document.getElementById('btnDownload').addEventListener('click', function() {
+            const elementToCapture = document.getElementById('elementToCapture');
+
+            html2canvas(elementToCapture).then(function(canvas) {
+                const imgData = canvas.toDataURL('image/png');
+
+                const img = new Image();
+                img.src = imgData;
+
+                /*const pdf = new jsPDF();
+                pdf.addImage(img, 'PNG', 15, 15, 180, 0);
+                pdf.save('midiploma.pdf');*/
+
+                const link = document.createElement('a');
+                link.href = imgData;
+                link.download = 'midiploma.png';
+                link.click();
+            });
+        });
+    </script>
 </body>
 </html>

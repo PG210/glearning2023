@@ -39,6 +39,7 @@ class InsigniaController extends Controller
          $category->descripcion = $request->input('des');
          $category->capitulo = $request->input('cap');
          $category->url = $val;
+         $category->horas = $request->horas;
          $category->save();
          Session::flash('msj', 'Datos guardados exitosamente!');
       }else{
@@ -49,9 +50,47 @@ class InsigniaController extends Controller
    }
    //eliminar
    public function eliminar($id){
-      InsigniaCap::findOrFail($id)->delete();
+      $val = DB::table('insigcap_user')->where('insigid', $id)->count();
+      if($val == 0){
+         InsigniaCap::findOrFail($id)->delete();
+         Session::flash('msj', 'Insignia eliminada correctamente!');
+      }else{
+         Session::flash('msj', 'Lo sentimos, la insignia no se puede eliminar');
+      }
       $info = InsigniaCap::all();
-      Session::flash('msj', 'Insignia eliminada correctamente!');
       return back()->with('info', $info);
+   }
+
+   //editar
+   public function editar($id){
+      $bus = InsigniaCap::findOrFail($id)->get();
+      return view('admin.actuincap')->with('bus', $bus);
+   }
+
+   //actualizar 
+   public function actualizar(Request $request){
+      //###########################
+      $category = InsigniaCap::findOrfail($request->id);
+      $file = $request->file('ruta');//guarda la variable id en un file
+      if($file){
+         $name = $file->getClientOriginalName();
+         $limpiarnombre = str_replace(array("#",".",";"," "), '', $name);
+         $val = $limpiarnombre.".".$file->guessExtension();//renombra el archivo subido
+         $ruta = public_path("insigcap/".$val);//ruta para guardar el archivo pdf/ es la carpeta
+         copy($file, $ruta);
+         //########################
+      }else{
+        $val = $category->url;
+      }
+         $category->nombre = $request->input('name');
+         $category->descripcion = $request->input('des');
+         $category->capitulo = $request->input('cap');
+         $category->url = $val;
+         $category->horas = $request->horas;
+         $category->save();
+         Session::flash('msj', 'Datos guardados exitosamente!');
+         //return route('/formulario/insignia/capitulo');
+         $info = InsigniaCap::all();
+         return view('admin.incap')->with('info', $info);
    }
 }

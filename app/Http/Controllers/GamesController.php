@@ -444,6 +444,8 @@ class GamesController extends Controller
             $count = DB::table('insigniacap')->where('capitulo', $cap)->count();
                 if($count != 0){
                     $rinsignia = $this->valinsig($cap, $userauthid); 
+                }else{
+                    $rinsignia = "";
                 }
             return view('player.finishquiz')->with('puntos_s', $pt_s)
                                             ->with('puntos_i', $i_point)
@@ -798,7 +800,8 @@ class GamesController extends Controller
         $count = DB::table('insigniacap')->where('capitulo', $cap)->count();
         if($count != 0){
             $rinsignia = $this->valinsig($cap, $userauthid); 
-            
+        }else{
+            $rinsignia = "";
         }
         //#################################################################
         return view('player.finishquiz')->with('puntos_s', $pt_s)
@@ -1168,6 +1171,8 @@ class GamesController extends Controller
          $count = DB::table('insigniacap')->where('capitulo', $cap)->count();
           if($count != 0){
             $rinsignia = $this->valinsig($cap, $userauthid); 
+        }else{
+            $rinsignia = "";
         }
         return view('player.finishquiz')->with('puntos_s', $pt_s)
                                         ->with('puntos_i', $i_point)
@@ -1515,6 +1520,8 @@ class GamesController extends Controller
          $count = DB::table('insigniacap')->where('capitulo', $cap)->count();
          if($count != 0){
              $rinsignia = $this->valinsig($cap, $userauthid); 
+         }else{
+            $rinsignia = "";
          }
         return view('player.finishquiz')->with('puntos_s', $pt_s)
                                         ->with('puntos_i', $i_point)
@@ -1878,6 +1885,8 @@ class GamesController extends Controller
          $count = DB::table('insigniacap')->where('capitulo', $cap)->count();
          if($count != 0){
              $rinsignia = $this->valinsig($cap, $userauthid); 
+         }else{
+            $rinsignia = "";
          }
         return view('player.finishquiz')->with('puntos_s', $pt_s)
                                         ->with('puntos_i', $i_point)

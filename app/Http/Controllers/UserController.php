@@ -154,6 +154,7 @@ class UserController extends Controller
         $mensaje=DB::table('messages')->where('id_user', '=', $id)->delete();
         $outdoors=DB::table('outdoors')->where('id_user', '=', $id)->delete();
         $pictures=DB::table('pictures')->where('id_user', '=', $id)->delete();
+        $insigcap = DB::table('insigcap_user')->where('userid', '=', $id)->delete();
         $users ->delete();
         Session::flash('eliminado', 'Usuario eliminado con éxito!');
         return back();

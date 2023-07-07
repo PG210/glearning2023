@@ -64,7 +64,7 @@ class PerfilController extends Controller
               ->join('avatars', 'users.avatar_id', '=', 'avatars.id')
               ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
               ->select('users.id as userid', 'users.firstname', 'users.lastname', 'users.username', 'users.sexo', 'users.email', 'users.avatar_id', 
-                       'avatars.id', 'avatars.name', 'avatars.description', 'avatars.img', 'grupos.descrip as grupo', 'users.id_grupo as idgrupo')
+                       'avatars.id', 'avatars.name', 'avatars.description', 'avatars.img', 'grupos.descrip as grupo', 'users.id_grupo as idgrupo', 'users.cedula')
               ->get();
         $avatar=DB::table('avatars')->where('avatars.sexo', '=', 'Femenino')->get();
         $avatarm=DB::table('avatars')->where('avatars.sexo', '!=', 'Femenino')->get();
@@ -117,14 +117,14 @@ class PerfilController extends Controller
 
    //aqui insignia
    public function detinsignia($id){
-    $usu =  Auth::user()->id;
+    //$usu =  Auth::user()->id;
     $info = DB::table('insigcap_user')
            ->join('users', 'insigcap_user.userid', '=', 'users.id')
            ->join('insigniacap', 'insigcap_user.insigid', '=', 'insigniacap.id')
            ->where('insigcap_user.id', $id)
            ->select('insigcap_user.id', 'insigcap_user.insigid as idinsig',
                      'users.firstname as usuname', 'users.lastname as usuape', 'users.cedula', 'insigniacap.nombre as name', 
-                     'insigniacap.url as imagen', 'insigniacap.descripcion as description', 'insigcap_user.created_at')
+                     'insigniacap.url as imagen', 'insigniacap.descripcion as description', 'insigcap_user.created_at', 'insigniacap.horas')
            ->get();
           
      return view('grupos.vistains')->with('info', $info);

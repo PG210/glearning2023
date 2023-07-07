@@ -200,26 +200,8 @@ class RetosController extends Controller
         ];         
         $this->validate($request, $rules, $messages);
 
-        //proceso guardar archivo material para el reto
-        if($request->hasFile('material')){ 
-           // return "Hola";           
-            $thefilename = $request->file('material')->getClientOriginalName();
-            $pathmaterial = $thefilename;
-            //http://evolucion.website/storage/
-            $request->file('material')->storeAs('public', $thefilename);
-        }else {
-            $pathmaterial = "";            
-        }
-
          //proceso para guardar video archivo
-         if($request->hasFile('video')){         
-            $videotxt = $request->file('video')->getClientOriginalName();
-            $rutavideo = $videotxt;
-            $request->file('video')->storeAs('public/videos', $videotxt);
-        }else {
-            $rutavideo = "";            
-        }
-
+        
         $retos = Challenge::find($id);
         $retos->name = $request->name;
         $retos->time = $request->time;
@@ -227,10 +209,25 @@ class RetosController extends Controller
         $retos->i_point = $request->i_pts;
         $retos->g_point = $request->g_pts;
         $retos->gametype = $request->gametype;
+        //proceso guardar archivo material para el reto
+        if($request->hasFile('material')){         
+            $thefilename = $request->file('material')->getClientOriginalName();
+            $pathmaterial = $thefilename;
+            $request->file('material')->storeAs('public', $thefilename);
+        }else {
+            $pathmaterial = $retos->material;            
+        }
         $retos->material = $pathmaterial;
         $retos->challenge_type_id = $request->challenge_type_id;        
         $retos->subchapter_id = $request->subchapter_id; 
         //campo para anexar el video
+        if($request->hasFile('video')){         
+            $videotxt = $request->file('video')->getClientOriginalName();
+            $rutavideo = $videotxt;
+            $request->file('video')->storeAs('public/videos', $videotxt);
+        }else {
+            $rutavideo = $retos->urlvideo;            
+        }
         $retos->urlvideo = $rutavideo;
         
         //AHORCADO

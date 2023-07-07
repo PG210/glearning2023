@@ -47,8 +47,10 @@ class RegunicoController extends Controller
                  $category->lastname=$request->input('apellido');
                  $category->avatar_id=$request->input('avatar');
                  $category->sexo=$request->input('sexo');
-                 $category->username= $request->input('nameuser');
+                 $category->username= $request->input('correo');
                  $category->email= $request->input('correo');
+                 $category->cedula = $request->input('ced');
+
                  $category->id_grupo = 1; //grupo por default
                  $category->password=Hash::make($request->input('password_confirmation'));
                  $category->save(); //aqui guarda los datos del usuario

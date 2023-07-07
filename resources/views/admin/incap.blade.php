@@ -64,10 +64,17 @@
             </div>
 
             <div class="row">
-                <div class="col-md-12">
+                  <div class="col-md-8">
                     <div class="form-group">
                       <label for="descripcion">Descripcion</label>
                       <textarea class="form-control" rows="5" name="des" id="des" required></textarea>
+                    </div>
+                    <!-- /.form-group -->                   
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="descripcion">Horas</label>
+                      <input class="form-control" name="horas" id="horas" placeholder="8 horas" required>
                     </div>
                     <!-- /.form-group -->                   
                 </div>
@@ -95,7 +102,7 @@
 <!--complemento del modal-->
 <!-- Modal -->
 <div id="vinsig" class="modal fade" role="dialog">
-  <div class="modal-dialog modal-md">
+  <div class="modal-dialog modal-lg">
     <!-- Contenido del modal -->
     <div class="modal-content" style="border-radius:20px;">
       <div class="modal-header">
@@ -111,6 +118,7 @@
                     <th>Nombre</th>
                     <th>Descripción</th>
                     <th>Capitulo</th>
+                    <th>Horas</th>
                     <th>Insignia</th>
                     <th>Acción</th>
                 </tr>
@@ -122,12 +130,16 @@
                     <td>{{$in->nombre}}</td>
                     <td>{{$in->descripcion}}</td>
                     <td>{{$in->capitulo}}</td>
+                    <td>{{$in->horas}}</td>
                     <td>
                     <a href="/insigcap/{{$in->url}}" target="_blank">
                        <img src="/insigcap/{{$in->url}}" alt="Imagen pequeña" class="img-thumbnail" width="50px;">
                     </a>
                     </td>
                     <td>
+                    <a href="{{route('editinscap', ['id' => $in->id])}}" style="font-size: 24px; color:green;">
+                      <i class="fa fa-pencil"></i>
+                    </a>
                     <a href="{{ route('deletinscap', ['id' => $in->id]) }}" style="font-size: 24px; color: red;">
                         <i class="fa fa-trash"></i>
                     </a>
