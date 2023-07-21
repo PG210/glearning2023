@@ -267,7 +267,7 @@ class GamesController extends Controller
             $insigniadescwon = '';
 
             //obtener y recorrer todas las insignias:
-            foreach ($insignias as $insignia) {
+           /* foreach ($insignias as $insignia) {
                 if ($insigniauser->i_point >= $insignia->i_point && $insigniauser->g_point >= $insignia->g_point ) {
                     //verificar existencia de insignias
                     $wininsignia = DB::table('insignia_user')->where('user_id', $userauthid)->where('insignia_id', $insignia->id)->get();
@@ -283,7 +283,35 @@ class GamesController extends Controller
                         $insigniapopup = 0;
                     }
                 }
+            }*/
+            //===============================ACTUALIZAR INSIGNIAS=======================================
+         if($reto->id_insignia != 100){
+            //tiene recompensa
+            $insearch = DB::table('insignias')
+                     ->where('insignias.id', $reto->id_insignia)
+                     ->select('insignias.id as idinsig', 'insignias.name', 'insignias.imagen', 'insignias.s_point', 'insignias.i_point', 'insignias.g_point',                            'insignias.description')
+                     ->first();
+            
+            //validar que esta insignia no este rpetida
+            $valinsig = DB::table('insignia_user')->where('user_id', $userauthid)->where('insignia_id', $insearch->idinsig)->get();
+            if ($valinsig->isEmpty()) {                        
+                DB::table('insignia_user')->insert([
+                    'user_id' => $userplayer->id,
+                    'insignia_id' => $insearch->idinsig, 
+                ]);
+                //una insignia nueva
+                $insigniapopup = 1;
+                $insigniawon = $insearch->imagen;
+                $insignianamewon = $insearch->name;
+                $insigniadescwon = $insearch->description;
+
+
+            }else{
+               $insigniapopup = 0;
             }
+           
+        }
+         //==============================END ACTUALIZAR INSIGNIAS==================================
             //====================== Actualizar INSIGNIAS del jugador  ===============//
             //========================================================================//
 
@@ -301,7 +329,7 @@ class GamesController extends Controller
 
         
             //obtener y recorrer todas las recompensas:
-            foreach ($recompensas as $recompensa) {
+          /*  foreach ($recompensas as $recompensa) {
                 if ($recompensauser->i_point >= $recompensa->i_point && $recompensauser->g_point >= $recompensa->g_point) {
                     //verificar existencia de recompensas
                     if ($recompensauser->avatar_id == $recompensa->avatar_id) {                       
@@ -318,6 +346,32 @@ class GamesController extends Controller
                         }
                     }
                 }
+            }*/
+            //====================== Actualizar ========================//
+             //veirifcar si el reto tiene una recompensa
+             if($reto->id_grupo != 200){
+                //tiene recompensa
+               $search = DB::table('gifts')
+                         ->where('id_grupo', $reto->id_grupo)
+                         ->where('avatar_id', $userplayer->avatar_id)
+                         ->select('gifts.id as idin', 'gifts.imagen', 'gifts.name')
+                         ->first();
+                //validar que esta insignia no este rpetida
+                $validarin = DB::table('gift_user')->where('user_id', $userauthid)->where('gift_id', $search->idin)->get();
+                if ($validarin->isEmpty()) {                        
+                    DB::table('gift_user')->insert([
+                        'gift_id' => $search->idin,
+                        'user_id' => $userplayer->id,
+                        // Agrega más columnas y valores según corresponda
+                    ]);
+                    //una insignia nueva
+                    $recompensapopup = 1;
+                    $recompensawon = $search->imagen;
+                    $recompensanamewon = $search->name;
+                }else{
+                    $recompensapopup = 0;
+                }
+               
             }
             //====================== Actualizar RECOMPENSAS del jugador  ===============//
             //========================================================================//
@@ -628,7 +682,7 @@ class GamesController extends Controller
         $insigniadescwon = '';
 
          //obtener y recorrer todas las insignias:
-        foreach ($insignias as $insignia) {
+     /* foreach ($insignias as $insignia) {
             $insignia->id;
             if ($insigniauser->i_point >= $insignia->i_point && $insigniauser->g_point >= $insignia->g_point ) {
                 //verificar existencia de insignias
@@ -646,7 +700,35 @@ class GamesController extends Controller
                     }
             }
         }
+         */
+         //===============================ACTUALIZAR INSIGNIAS=======================================
+         if($reto->id_insignia != 100){
+            //tiene recompensa
+            $insearch = DB::table('insignias')
+                     ->where('insignias.id', $reto->id_insignia)
+                     ->select('insignias.id as idinsig', 'insignias.name', 'insignias.imagen', 'insignias.s_point', 'insignias.i_point', 'insignias.g_point',                            'insignias.description')
+                     ->first();
+            
+            //validar que esta insignia no este rpetida
+            $valinsig = DB::table('insignia_user')->where('user_id', $userauthid)->where('insignia_id', $insearch->idinsig)->get();
+            if ($valinsig->isEmpty()) {                        
+                DB::table('insignia_user')->insert([
+                    'user_id' => $userplayer->id,
+                    'insignia_id' => $insearch->idinsig, 
+                ]);
+                //una insignia nueva
+                $insigniapopup = 1;
+                $insigniawon = $insearch->imagen;
+                $insignianamewon = $insearch->name;
+                $insigniadescwon = $insearch->description;
 
+
+            }else{
+               $insigniapopup = 0;
+            }
+           
+        }
+         //==============================END ACTUALIZAR INSIGNIAS==================================
         //========================================================================//
             //====================== Actualizar RECOMPENSAS GIFTS del jugador  ===============//
             $recompensas = Gift::all();
@@ -658,7 +740,7 @@ class GamesController extends Controller
             $recompensanamewon = '';
 
             //obtener y recorrer todas las recompensas:
-            foreach ($recompensas as $recompensa) {
+           /* foreach ($recompensas as $recompensa) {
                 if ($recompensauser->i_point >= $recompensa->i_point && $recompensauser->g_point >= $recompensa->g_point) {
                     //verificar existencia de recompensas
                     if ($recompensauser->avatar_id == $recompensa->avatar_id) {                       
@@ -675,7 +757,34 @@ class GamesController extends Controller
                         }
                     }
                 }
+            }*/
+            //=======================nua validacion de recompensas ===================//
+            //veirifcar si el reto tiene una recompensa
+            if($reto->id_grupo != 200){
+                //tiene recompensa
+               $search = DB::table('gifts')
+                         ->where('id_grupo', $reto->id_grupo)
+                         ->where('avatar_id', $userplayer->avatar_id)
+                         ->select('gifts.id as idin', 'gifts.imagen', 'gifts.name')
+                         ->first();
+                //validar que esta insignia no este rpetida
+                $validarin = DB::table('gift_user')->where('user_id', $userauthid)->where('gift_id', $search->idin)->get();
+                if ($validarin->isEmpty()) {                        
+                    DB::table('gift_user')->insert([
+                        'gift_id' => $search->idin,
+                        'user_id' => $userplayer->id,
+                        // Agrega más columnas y valores según corresponda
+                    ]);
+                    //una insignia nueva
+                    $recompensapopup = 1;
+                    $recompensawon = $search->imagen;
+                    $recompensanamewon = $search->name;
+                }else{
+                    $recompensapopup = 0;
+                }
+               
             }
+           
             //====================== Actualizar RECOMPENSAS del jugador  ===============//
             //========================================================================//
         
@@ -684,10 +793,10 @@ class GamesController extends Controller
         //obtener area del usuario   
         $userareas = User::find($userauthid);        
         foreach ($userareas->areas as $userarea) {            
-        }
         //obtener el jefe del area        
         $jefeareas = DB::table('type_user')->where('id_areas', $userarea->id)->get();  
-                        
+       // return $jefeareas;
+        }          
         //obtener datos del jefe para crear mensaje            
         if (!$jefeareas->isEmpty()) {                
             //obtener puntajes de jefes para cambio de mensaje , segun el area              
@@ -992,7 +1101,7 @@ class GamesController extends Controller
         $insigniadescwon = '';
 
         //obtener y recorrer todas las insignias:
-        foreach ($insignias as $insignia) {
+       /* foreach ($insignias as $insignia) {
             $insignia->id;
             $insignia->s_point;
             $insignia->i_point;
@@ -1012,8 +1121,36 @@ class GamesController extends Controller
                         $insigniapopup = 0;
                 }
             }
-        }
+        }*/
+         
+        //===============================ACTUALIZAR INSIGNIAS=======================================
+        if($reto->id_insignia != 100){
+            //tiene recompensa
+            $insearch = DB::table('insignias')
+                     ->where('insignias.id', $reto->id_insignia)
+                     ->select('insignias.id as idinsig', 'insignias.name', 'insignias.imagen', 'insignias.s_point', 'insignias.i_point', 'insignias.g_point',                            'insignias.description')
+                     ->first();
+            
+            //validar que esta insignia no este rpetida
+            $valinsig = DB::table('insignia_user')->where('user_id', $userauthid)->where('insignia_id', $insearch->idinsig)->get();
+            if ($valinsig->isEmpty()) {                        
+                DB::table('insignia_user')->insert([
+                    'user_id' => $userplayer->id,
+                    'insignia_id' => $insearch->idinsig, 
+                ]);
+                //una insignia nueva
+                $insigniapopup = 1;
+                $insigniawon = $insearch->imagen;
+                $insignianamewon = $insearch->name;
+                $insigniadescwon = $insearch->description;
 
+
+            }else{
+               $insigniapopup = 0;
+            }
+           
+        }
+         //==============================END ACTUALIZAR INSIGNIAS==================================
 
         //========================================================================//
             //====================== Actualizar RECOMPENSAS GIFTS del jugador  ===============//
@@ -1026,7 +1163,7 @@ class GamesController extends Controller
             $recompensanamewon = '';
 
             //obtener y recorrer todas las recompensas:
-            foreach ($recompensas as $recompensa) {
+          /*  foreach ($recompensas as $recompensa) {
                 if ($recompensauser->i_point >= $recompensa->i_point && $recompensauser->g_point >= $recompensa->g_point) {
                     //verificar existencia de recompensas
                     if ($recompensauser->avatar_id == $recompensa->avatar_id) {                       
@@ -1043,7 +1180,34 @@ class GamesController extends Controller
                         }
                     }
                 }
+            }*/
+            //======================== actualizar nuevas recomepnsas ====//
+          //veirifcar si el reto tiene una recompensa
+          if($reto->id_grupo != 200){
+                //tiene recompensa
+            $search = DB::table('gifts')
+                        ->where('id_grupo', $reto->id_grupo)
+                        ->where('avatar_id', $userplayer->avatar_id)
+                        ->select('gifts.id as idin', 'gifts.imagen', 'gifts.name')
+                        ->first();
+                //validar que esta insignia no este rpetida
+                $validarin = DB::table('gift_user')->where('user_id', $userauthid)->where('gift_id', $search->idin)->get();
+                if ($validarin->isEmpty()) {                        
+                    DB::table('gift_user')->insert([
+                        'gift_id' => $search->idin,
+                        'user_id' => $userplayer->id,
+                        // Agrega más columnas y valores según corresponda
+                    ]);
+                    //una insignia nueva
+                    $recompensapopup = 1;
+                    $recompensawon = $search->imagen;
+                    $recompensanamewon = $search->name;
+                }else{
+                    $recompensapopup = 0;
+                }
+            
             }
+
             //====================== Actualizar RECOMPENSAS del jugador  ===============//
             //========================================================================//
 
@@ -1349,7 +1513,7 @@ class GamesController extends Controller
         $insigniadescwon = '';
 
         //obtener y recorrer todas las insignias:
-        foreach ($insignias as $insignia) {
+      /*  foreach ($insignias as $insignia) {
             if ($insigniauser->i_point >= $insignia->i_point && $insigniauser->g_point >= $insignia->g_point ) {
                 //verificar existencia de insignias
                 $wininsignia = DB::table('insignia_user')->where('user_id', $userauthid)->where('insignia_id', $insignia->id)->get();
@@ -1366,7 +1530,36 @@ class GamesController extends Controller
                         $insigniapopup = 0;
                     }
             }
+        }*/
+
+        //===============================ACTUALIZAR INSIGNIAS=======================================
+        if($reto->id_insignia != 100){
+            //tiene recompensa
+            $insearch = DB::table('insignias')
+                     ->where('insignias.id', $reto->id_insignia)
+                     ->select('insignias.id as idinsig', 'insignias.name', 'insignias.imagen', 'insignias.s_point', 'insignias.i_point', 'insignias.g_point',                            'insignias.description')
+                     ->first();
+            
+            //validar que esta insignia no este rpetida
+            $valinsig = DB::table('insignia_user')->where('user_id', $userauthid)->where('insignia_id', $insearch->idinsig)->get();
+            if ($valinsig->isEmpty()) {                        
+                DB::table('insignia_user')->insert([
+                    'user_id' => $userplayer->id,
+                    'insignia_id' => $insearch->idinsig, 
+                ]);
+                //una insignia nueva
+                $insigniapopup = 1;
+                $insigniawon = $insearch->imagen;
+                $insignianamewon = $insearch->name;
+                $insigniadescwon = $insearch->description;
+
+
+            }else{
+               $insigniapopup = 0;
+            }
+           
         }
+         //==============================END ACTUALIZAR INSIGNIAS==================================
 
 
         //========================================================================//
@@ -1380,7 +1573,7 @@ class GamesController extends Controller
             $recompensanamewon = '';
 
             //obtener y recorrer todas las recompensas:
-            foreach ($recompensas as $recompensa) {
+          /*  foreach ($recompensas as $recompensa) {
                 if ($recompensauser->i_point >= $recompensa->i_point && $recompensauser->g_point >= $recompensa->g_point) {
                     //verificar existencia de recompensas
                     if ($recompensauser->avatar_id == $recompensa->avatar_id) {                       
@@ -1397,7 +1590,34 @@ class GamesController extends Controller
                         }
                     }
                 }
+            }*/
+            //=======================actualizar recompensas ========================//
+             //veirifcar si el reto tiene una recompensa
+             if($reto->id_grupo != 200){
+                //tiene recompensa
+               $search = DB::table('gifts')
+                         ->where('id_grupo', $reto->id_grupo)
+                         ->where('avatar_id', $userplayer->avatar_id)
+                         ->select('gifts.id as idin', 'gifts.imagen', 'gifts.name')
+                         ->first();
+                //validar que esta insignia no este rpetida
+                $validarin = DB::table('gift_user')->where('user_id', $userauthid)->where('gift_id', $search->idin)->get();
+                if ($validarin->isEmpty()) {                        
+                    DB::table('gift_user')->insert([
+                        'gift_id' => $search->idin,
+                        'user_id' => $userplayer->id,
+                        // Agrega más columnas y valores según corresponda
+                    ]);
+                    //una insignia nueva
+                    $recompensapopup = 1;
+                    $recompensawon = $search->imagen;
+                    $recompensanamewon = $search->name;
+                }else{
+                    $recompensapopup = 0;
+                }
+               
             }
+           
             //====================== Actualizar RECOMPENSAS del jugador  ===============//
             //========================================================================//
         
@@ -1743,7 +1963,7 @@ class GamesController extends Controller
             $recompensanamewon = '';
 
             //obtener y recorrer todas las recompensas:
-            foreach ($recompensas as $recompensa) {
+          /*  foreach ($recompensas as $recompensa) {
                 if ($recompensauser->i_point >= $recompensa->i_point && $recompensauser->g_point >= $recompensa->g_point) {
                     //verificar existencia de recompensas
                     if ($recompensauser->avatar_id == $recompensa->avatar_id) {                       
@@ -1760,6 +1980,32 @@ class GamesController extends Controller
                         }
                     }
                 }
+            }*/
+            //=====================Actualizar recompensas=============================//
+             //veirifcar si el reto tiene una recompensa
+             if($reto->id_grupo != 200){
+                //tiene recompensa
+               $search = DB::table('gifts')
+                         ->where('id_grupo', $reto->id_grupo)
+                         ->where('avatar_id', $userplayer->avatar_id)
+                         ->select('gifts.id as idin', 'gifts.imagen', 'gifts.name')
+                         ->first();
+                //validar que esta insignia no este rpetida
+                $validarin = DB::table('gift_user')->where('user_id', $userauthid)->where('gift_id', $search->idin)->get();
+                if ($validarin->isEmpty()) {                        
+                    DB::table('gift_user')->insert([
+                        'gift_id' => $search->idin,
+                        'user_id' => $userplayer->id,
+                        // Agrega más columnas y valores según corresponda
+                    ]);
+                    //una insignia nueva
+                    $recompensapopup = 1;
+                    $recompensawon = $search->imagen;
+                    $recompensanamewon = $search->name;
+                }else{
+                    $recompensapopup = 0;
+                }
+               
             }
             //====================== Actualizar RECOMPENSAS del jugador  ===============//
             //========================================================================//

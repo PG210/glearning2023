@@ -165,12 +165,31 @@ class RetosController extends Controller
      */
     public function edit($id)
     {
-        //            
-        $retos = Challenge::find($id);
+        //
+                    
+        $retos = Challenge::join('gruprecompensas', 'id_grupo', '=', 'gruprecompensas.id')
+                 ->join('insignias', 'id_insignia', '=', 'insignias.id')
+                 ->join('nivelcate', 'insignias.id_nivel', '=', 'nivelcate.id')
+                 ->join('caterecompensas', 'insignias.id_cate', '=', 'caterecompensas.id')
+                 ->select('challenges.id', 'challenges.name', 'challenges.description', 'time', 'dificult', 'material', 'urlvideo',
+                         'params', 'challenges.s_point', 'challenges.i_point', 'challenges.g_point', 'gametype', 'subchapter_id', 'challenge_type_id',
+                         'id_grupo', 'gruprecompensas.nombre', 'gruprecompensas.tipo', 'gruprecompensas.descrip', 'id_nivel', 'id_cate', 'insignias.name as nominsig', 'nivelcate.nombre as nomnivel', 'caterecompensas.nombre as nomcat')
+                 ->where('challenges.id', $id)
+                 ->firstOrFail();
+
+        
         $subcapitulos = Subchapter::find($retos->subchapter_id);
 
+        $cat = DB::table('caterecompensas')->get();
+        $niv = DB::table('nivelcate')->get();
+
+        $grupo = DB::table('gruprecompensas')->get();
+
         return view('admin.RetosEdit')->with('retos', $retos)
-                                    ->with('subcapitulo', $subcapitulos->name);
+                                      ->with('subcapitulo', $subcapitulos->name)
+                                      ->with('grupo', $grupo)
+                                      ->with('cat', $cat)
+                                      ->with('niv', $niv);
     }
 
     /**
@@ -182,7 +201,7 @@ class RetosController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+       
         $rules = [
             'name' => 'required|max:255',
             'description' => 'required',
@@ -200,15 +219,19 @@ class RetosController extends Controller
         ];         
         $this->validate($request, $rules, $messages);
 
+        $insig = DB::table('insignias')->where('id_nivel', $request->nivel)->where('id_cate', $request->cate)->first();
+        //####################
          //proceso para guardar video archivo
-        
-        $retos = Challenge::find($id);
+        $retos = Challenge::findOrFail($id);
         $retos->name = $request->name;
         $retos->time = $request->time;
         $retos->description = $request->description;
         $retos->i_point = $request->i_pts;
         $retos->g_point = $request->g_pts;
         $retos->gametype = $request->gametype;
+        //se agrego este campo 
+        $retos->id_grupo = $request->tipor;
+        $retos->id_insignia = $insig->id; //se agrego este item
         //proceso guardar archivo material para el reto
         if($request->hasFile('material')){         
             $thefilename = $request->file('material')->getClientOriginalName();

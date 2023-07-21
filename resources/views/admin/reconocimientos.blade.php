@@ -29,12 +29,15 @@
         <!-- /.box-header -->
         <div class="box-body">
             <div class="row">
-                <div class="col-md-10">
+                <div class="col-md-12">
                         <h1>Reconocimientos</h1>
 
                         <div class="row">
                             <div class="col-md-3" >
                                 <a href="{{ route('reconocimientos.create') }}" class="btn btn-block btn-primary btn-md">Agregar Nuevo</a>
+                            </div>
+                            <div class="col-md-3" >
+                                <a href="{{ route('gruporeconocimiento.index') }}" class="btn btn-warning"><span>Agregar Grupo</span></a>
                             </div>
                         </div>
                         <div class="box-body table-responsive no-padding">
@@ -44,10 +47,15 @@
                                     <tr>
                                         <th>Nombre</th>
                                         <th>Imagen</th>
+                                        <th>Descripción</th>
+                                        <th>Puntos S</th>
                                         <th>Puntos I</th>
                                         <th>Puntos G</th>
-                                        <th>Descripcion</th>
-                                        <th>Opciones</th>
+                                        <th>Genero</th>
+                                        <th>Grupo</th>
+                                        <th>Info</th>
+                                        <th colspan="2">Opciones</th>
+                                        
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -56,11 +64,14 @@
                                             <td>{{ $reconocimiento->name }} </td>
                                             <td><img src="{{ asset($reconocimiento->imagen)}}" width="60px"></td>
                                             <td>{{ $reconocimiento->description }} </td>
-    
+                                            <td>{{ $reconocimiento->s_point }} </td>
                                             <td>{{ $reconocimiento->i_point }} </td>
                                             <td>{{ $reconocimiento->g_point }} </td>
-    
-                                            <td>                   
+                                            <td>{{ $reconocimiento->sexo }} </td>
+                                            <td>{{ $reconocimiento->nombre }} </td>
+                                            <td>{{ $reconocimiento->descrip }} </td>
+                                            <td> 
+                                            <div class="btn-group" role="group">                  
                                                 <a href="{{ route('reconocimientos.edit', $reconocimiento->id) }}" class="btn btn-default"><i class="fa fa-pencil" aria-hidden="true"></i></a>
                                                 <form action="{{ route('reconocimientos.destroy', $reconocimiento->id ) }} " method="POST" style="display: inline-block;">
                                                     @csrf
@@ -69,7 +80,8 @@
                                                         <span class="fa fa-fw fa-trash-o" aria-hidden="true"></span>
                                                     </button>
                                                 </form>
-                            
+                                             </div>
+                                            
                                             </td>
                                         </tr>
                                     @endforeach

@@ -67,7 +67,7 @@
                     <div class="panel-heading" role="tab" id="headingTwo" style="color:black; background-color:#1bf9cd; border-radius:10px;">
                     <h4 class="panel-title">
                         <a style=" color: inherit;" class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                       <h3> Elegir Avatar Femenino </h3>
+                       <h3>Avatar Femenino </h3>
                         </a>
                     </h4>                  
                     </div>
@@ -92,16 +92,16 @@
                                       </div><!-- /.col-lg-6 -->
                                           <div class="col-md-2">
                                             <br>
-                                          <label for="nombre"> Seleccionar</label>
+                                          <label for="nombre"> Selección</label>
                                           <br><br> <br><br>
                                             @if($usu[0]->id == $a->id)
                                             <input type="radio" id="contactChoice1"
                                                 name="avat" value="{{$a->id}}"  checked>
                                                 <label for="contactChoice1"> </label>
                                             @else
-                                            <input type="radio" id="contactChoice1"
+                                            {{--<input type="radio" id="contactChoice1"
                                                 name="avat" value="{{$a->id}}">
-                                                <label for="contactChoice1"> </label>
+                                                <label for="contactChoice1"> </label>--}}
                                             @endif
                                           </div><!-- /.col-lg-6 -->
                                   </div><!-- /.row -->
@@ -114,7 +114,7 @@
                     <div class="panel-heading" role="tab" id="headingTre"  style="color:black; background-color:#1bf9cd; border-radius:10px;">
                     <h4 class="panel-title">
                         <a style=" color: inherit;" class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTre" aria-expanded="false" aria-controls="collapseTre">
-                        <h3>Elegir Avatar Masculino</h3>
+                        <h3>Avatar Masculino</h3>
                         </a>
                     </h4>
                     </div>
@@ -138,16 +138,16 @@
                                       </div><!-- /.col-lg-6 -->
                                       <div class="col-md-2">
                                         <br>
-                                      <label for="nombre"> Seleccionar</label>
+                                      <label for="nombre">Selección</label>
                                        <br><br> <br><br>
                                        @if($usu[0]->id == $m->id)
                                           <input type="radio" id="contactChoice1"
                                             name="avat" value="{{$m->id}}"  checked>
                                             <label for="contactChoice1"> </label>
                                           @else
-                                          <input type="radio" id="contactChoice1"
+                                         {{--<input type="radio" id="contactChoice1"
                                             name="avat" value="{{$m->id}}">
-                                            <label for="contactChoice1"> </label>
+                                            <label for="contactChoice1"> </label>--}}
                                           @endif
                                       </div><!-- /.col-lg-6 -->
                                   </div><!-- /.row -->

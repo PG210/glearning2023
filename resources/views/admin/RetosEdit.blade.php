@@ -130,14 +130,61 @@
                       <label for="g_pts">PUNTOS G</label>
                       <input type="text" class="form-control" name="g_pts" id="g_pts" value="{{$retos->g_point}}">
                     </div>
-                    <br><br><br>
+                     <!--tipo de recompensa-->
+                     <div class="col-md-3">
+                     <div class="form-group">
+                        <label for="descripcion">Elegir recompensa</label>
+                        <select class="form-control" id="tipor" name="tipor">
+                            <option value="{{$retos->id_grupo}}">{{$retos->nombre}} => {{$retos->descrip}}</option>
+                            @foreach($grupo as $gr)
+                              @if($gr->id != $retos->id_grupo)
+                              <option value="{{$gr->id}}">{{$gr->nombre}} => {{$gr->descrip}}</option>
+                              @endif
+                            @endforeach
+                        </select>
+                       </div> 
+                    </div>
+                    </div>
+                     <!--end recompensa-->
+                     <!--insignias-->
+                     <div class="row" style="margin-left:5px; margin-right:5px;">
+                     <br>
+                      <div class="margin-right:5px;">
+                        <h2>INSIGNIA ACTUAL => <span>{{$retos->nominsig}}</span></h2> 
+                      </div>
+                      <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="descripcion">Categoría</label>
+                        <select class="form-control" id="cate" name="cate">
+                            <option value="{{$retos->id_cate}}">{{$retos->nomcat}}</option>
+                            @foreach($cat as $c)
+                              @if($c->id != $retos->id_cate)
+                              <option value="{{$c->id}}">{{$c->nombre}} => {{$c->descrip}}</option>
+                              @endif
+                            @endforeach
+                        </select>
+                       </div> 
+                      </div>
+                      <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="descripcion">Nivel Categoría</label>
+                        <select class="form-control" id="nivel" name="nivel">
+                            <option value="{{$retos->id_nivel}}">{{$retos->nomnivel}}</option>
+                            @foreach($niv as $n)
+                              @if($n->id != $retos->id_nivel)
+                              <option value="{{$n->id}}">{{$n->nombre}}</option>
+                              @endif
+                            @endforeach
+                        </select>
+                       </div> 
+                      </div>
+                    </div>
+                     <!--end insignias-->
                     <div class="col-md-12">
+                      <br>
                       <button type="submit" class="btn btn-primary">Actualizar</button>
                     </div>
-                  
-                    <input type="hidden" name="subchapter_id" value="{{$retos->subchapter_id}}">
-                  </div>
-                  
+                    <input type="hidden" name="subchapter_id" value="{{$retos->subchapter_id}}">  
               </form>                     
           </div>
           <!-- /.col -->                                

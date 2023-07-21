@@ -18,7 +18,14 @@ class AwardController extends Controller
         //
         $status="";
         
-        $reconocimientos = Gift::all();
+        //$reconocimientos = Gift::all();
+        $reconocimientos = Gift::join('avatars', 'avatar_id', '=', 'avatars.id')
+                         ->join('gruprecompensas', 'gifts.id_grupo', '=', 'gruprecompensas.id')
+                         ->select('gifts.id', 'gifts.name',  'gifts.imagen', 'gifts.s_point', 
+                          'gifts.i_point', 'gifts.g_point', 'gifts.description', 
+                          'avatars.description as desavatar', 'avatars.sexo', 'nombre', 'tipo', 'descrip')
+                         ->get();
+
         return view('admin.reconocimientos')->with('reconocimientos', $reconocimientos)
                                             ->with('status', $status);
     }
@@ -108,9 +115,14 @@ class AwardController extends Controller
      */
     public function edit($id)
     {
-        //
-        $recompensa = Gift::find($id);
-        return view('admin.reconocimientosEdit')->with('recompensas', $recompensa);
+         //se cambio esta parte
+        $recompensa = DB::table('gifts')->where('gifts.id', $id)
+                       ->join('gruprecompensas', 'gifts.id_grupo', '=', 'gruprecompensas.id')
+                       ->select('gifts.id', 'gifts.name', 'gifts.imagen', 'gifts.avatarchange', 's_point', 'i_point', 'g_point', 'description',
+                          'avatar_id', 'id_grupo', 'nombre', 'tipo', 'descrip')
+                       ->get();
+        $grupo = DB::table('gruprecompensas')->get();
+        return view('admin.reconocimientosEdit')->with('recompensas', $recompensa)->with('grup', $grupo);
     }
 
     /**
@@ -148,9 +160,18 @@ class AwardController extends Controller
         $reconocimiento->i_point = $request->ipoints;
         $reconocimiento->g_point = $request->gpoints;
         $reconocimiento->description = $request->desc;
+        $reconocimiento->id_grupo = $request->tipo;// se agrego este campo
         $reconocimiento->save();
+        
 
-        $reconocimientos = Gift::all();        
+        //debe regresar la informacion
+        $reconocimientos = Gift::join('avatars', 'avatar_id', '=', 'avatars.id')
+                         ->join('gruprecompensas', 'gifts.id_grupo', '=', 'gruprecompensas.id')
+                         ->select('gifts.id', 'gifts.name',  'gifts.imagen', 'gifts.s_point', 
+                          'gifts.i_point', 'gifts.g_point', 'gifts.description', 
+                          'avatars.description as desavatar', 'avatars.sexo', 'nombre', 'tipo', 'descrip')
+                         ->get();
+
         return view('admin.reconocimientos')->with('reconocimientos', $reconocimientos)
                                     ->with('status', $status); 
 

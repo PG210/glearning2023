@@ -7,6 +7,8 @@ use App\Http\Controllers\ReportcompletosController;
 use App\Http\Controllers\Carga\GruposController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Perfil\InsigniaController; //se agrego para insigias
+use App\Http\Controllers\Carga\GruposRecom;
+use App\Http\Controllers\Carga\GruposInsignias;//se agrego este controlador
 
 /*
 |--------------------------------------------------------------------------
@@ -302,3 +304,20 @@ Route::get('/editar/insignia/capitulo/{id}', [InsigniaController::class, 'editar
 Route::POST('/actualizar/insignia/capitulo', [InsigniaController::class, 'actualizar'])->name('actuignias')->middleware('redirectIfSessionExpired');
 //pdf
 Route::get('/generar/pdf', [PerfilController::class, 'generarPDF']);
+//#######################################################
+//descargar material
+Route::get('/material/ver', [PerfilController::class, 'vistamaterial'])->middleware('redirectIfSessionExpired');
+
+//activar grupos
+Route::get('/activar/grupo/{id}', [GruposController::class, 'activargrupo'])->middleware('redirectIfSessionExpired');
+
+//mapear rutas para el controlador de grupos de recompenss
+Route::resource('gruporeconocimiento', 'Carga\GruposRecom')->middleware('auth');
+Route::POST('/gruporeconocimiento/actu', [GruposRecom::class, 'actu'])->name('acturec')->middleware('redirectIfSessionExpired');
+
+
+//CATEGORIAS DE INSIGNIAS 
+Route::get('/formulario/categorias', [GruposInsignias::class, 'formularioreg'])->name('formuCategory')->middleware('redirectIfSessionExpired');
+Route::POST('/formulario/categorias/registro', [GruposInsignias::class, 'registrarCategoria'])->name('registrarCategoria')->middleware('redirectIfSessionExpired');
+Route::get('/formulario/editcat/{id}', [GruposInsignias::class, 'formeditar'])->name('formuEditarCat')->middleware('redirectIfSessionExpired');
+Route::POST('/formulario/editcat/registro', [GruposInsignias::class, 'regisEditCat'])->name('regisEditCat')->middleware('redirectIfSessionExpired');

@@ -32,9 +32,13 @@ class UserController extends Controller
                  ->select('users.id', 'firstname', 'lastname', 'username', 
                           'email', 'level', 's_point', 'i_point', 'g_point', 'users.created_at', 'estado', 'grupos.descrip')
                  ->orderBy('users.id', 'ASC')->paginate(30); //aqui hace la paginacion de usuarios
+        
+         $grupos = DB::table('grupos')->where('descrip', '!=', 'Default')->get();
+
         return view('admin.usuarios', [
             'users' => $users,
             'countusers' => $countusers,
+            'grupos' =>$grupos
         ])->with('status', $status);
     }
 

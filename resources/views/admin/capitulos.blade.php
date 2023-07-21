@@ -33,6 +33,13 @@
         <li class="active">Capitulos</li>        
       </ol>
     </section>
+    <br>
+    @if(Session::has('mensj'))
+        <div class="alert alert-warning alert-dismissible fade in" role="alert" style="border-radius:15px;">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <strong>{{Session('mensj')}}</strong> 
+        </div>
+    @endif
 @endsection
 
 @section('capitulos')

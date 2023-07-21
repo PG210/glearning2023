@@ -141,4 +141,56 @@ class PerfilController extends Controller
             $pdf->stream('nombre_del_archivo.pdf');
         }
    //end pdf
+   
+   //###############################
+   public function vistamaterial(){
+    $user=auth()->id();
+    $tTareas = DB::table('challenges')
+                ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                ->selectRaw('subchapters.chapter_id as cap, COUNT(challenges.id) as tareas')
+                ->groupBy('subchapters.chapter_id')
+                ->get();
+    $tareasuser = DB::table('challenge_user')
+                ->join('challenges', 'challenge_user.challenge_id', '=', 'challenges.id')
+                ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                ->join('chapters', 'subchapters.chapter_id', '=', 'chapters.id')
+                ->where('challenge_user.user_id', $user)
+                ->selectRaw('challenge_user.user_id as idusu, subchapters.chapter_id, COUNT(challenge_user.challenge_id) as valor, chapters.name, chapters.title')
+                ->groupBy('challenge_user.user_id', 'subchapters.chapter_id', 'chapters.name', 'chapters.title')
+                ->get();
+    
+    if(isset($tareasuser) && count($tareasuser) == 0){
+            $buscar = [];
+            $al = [];
+            $niveles =[];
+
+            }else{
+            //##########################################
+            foreach($tTareas as $t1){
+            $conta = 0;
+            foreach($tareasuser as $t2){
+            if($t1->cap == $t2->chapter_id){
+                $sum = $t1->tareas - $t2->valor;
+                $conta = $conta+1;
+                $item = [
+                'usuario' => $t2->idusu,
+                'capitulo' => $t2->chapter_id,
+                'nombre' => $t2->name,
+                'titulo' => $t2->title,
+                'tcom' => $t2->valor,
+                'tfaltan' => $sum,
+                'ttotal' => $t1->tareas,
+                'nivel' => $conta
+                ];
+                $al[] = $item;
+               }
+            }
+         }
+            $niveles = collect($al)->groupBy('usuario')->map(function ($items) {
+                return count($items);
+             });
+     }
+    
+    return view('grupos.vistamat')->with('ninfo', $al);
+   }
 }

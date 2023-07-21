@@ -8,6 +8,7 @@ use App\Subchapter;
 use App\PosUsuModel\SubcapUser;
 use DB;
 use Auth;
+use Session;
 
 class CapitulosController extends Controller
 {
@@ -209,8 +210,11 @@ class CapitulosController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
-        $rules = [
+    {   
+        $val = Chapter::where('name', $request->name)->count();
+        $status = "";
+     if($val == 0){
+      $rules = [
             'name' => 'required|unique:challenges|max:255',            
             'desc' => 'required',
             'title' => 'required',
@@ -226,8 +230,6 @@ class CapitulosController extends Controller
         ];         
         $this->validate($request, $rules, $messages);
 
-
-        $status = "";
         $capitulo = Chapter::find($id);
         $capitulo->name = $request->name;
         $capitulo->title = $request->title;
@@ -246,6 +248,11 @@ class CapitulosController extends Controller
         //end guardar 
         $capitulo->videoIntro =  $rutavideo;
         $capitulo->save();
+
+    }
+    else{
+        Session::flash('mensj', 'El nombre del capítulo debe ser único!'); 
+    }
 
         $capitulos = Chapter::all();        
         return view('admin.capitulos')->with('capitulos', $capitulos)

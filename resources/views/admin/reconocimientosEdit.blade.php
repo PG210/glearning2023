@@ -21,7 +21,7 @@
     <!-- /.box-header -->
     <div class="box-body">
         <div class="row">
-            <div class="col-md-10">
+            <div class="col-md-12">
                 <h2>EDITAR RECONOCIMIENTO</h2>
                 <br><br>
                 <div class="row">
@@ -31,23 +31,23 @@
 
                 <!-- TRAER LA INFO ACTUAL PARA EDITAR -->
 
-                <form method="POST" enctype="multipart/form-data" action="{{ route('reconocimientos.update', $recompensas->id) }}">
+                <form method="POST" enctype="multipart/form-data" action="{{ route('reconocimientos.update', $recompensas[0]->id) }}">
                   @csrf
                   @method('PUT')
 
                   <div class="col-md-4">
                     <div class="form-group">
                       <label for="name">Nombre</label>
-                      <input type="text" class="form-control" name="name" id="name" value="{{$recompensas->name}}" placeholder="Nombre">
+                      <input type="text" class="form-control" name="name" id="name" value="{{$recompensas[0]->name}}" placeholder="Nombre">
                     </div>
                   </div>
                   <div class="col-md-7">
                     <div class="form-group">
                       <label for="imagen">Imagen Recompensa</label>
                       <div class="form-inline">    
-                          <img src="{{ asset($recompensas->imagen)}}" width="200px">
+                          <img src="{{ asset($recompensas[0]->imagen)}}" width="100px">
                         <input type="file" class="form-control" name="imagen" id="imagen">
-                        <input type="hidden" name="imagennoupdate" value="{{$recompensas->imagen}}">
+                        <input type="hidden" name="imagennoupdate" value="{{$recompensas[0]->imagen}}">
                       </div>
                     </div>
                   </div>
@@ -56,29 +56,44 @@
                   <div class="col-md-3">                    
                       <div class="form-group">
                           <label for="spoints">PUNTAJE S</label>
-                          <input type="text" class="form-control" name="spoints" value="{{$recompensas->s_point}}" id="spoints" placeholder="spoints">                       
+                          <input type="text" class="form-control" name="spoints" value="{{$recompensas[0]->s_point}}" id="spoints" placeholder="spoints">                       
                       </div>
                   </div>
                   <div class="col-md-3">      
                       <div class="form-group">
                           <label for="ipoints">Puntaje I</label>
-                          <input type="text" class="form-control" name="ipoints" value="{{$recompensas->i_point}}" id="ipoints" placeholder="ipoints">
+                          <input type="text" class="form-control" name="ipoints" value="{{$recompensas[0]->i_point}}" id="ipoints" placeholder="ipoints">
                         
                       </div>
                   </div>
                   <div class="col-md-3">            
                       <div class="form-group">
                           <label for="gpoints">Puntaje G</label>
-                          <input type="text" class="form-control" name="gpoints" value="{{$recompensas->g_point}}" id="gpoints" placeholder="gpoints">
+                          <input type="text" class="form-control" name="gpoints" value="{{$recompensas[0]->g_point}}" id="gpoints" placeholder="gpoints">
                       </div>
                   </div>
 
                   <div class="col-md-9">
                     <div class="form-group">
-                      <label for="descripcion">Descripcion</label>
-                      <textarea rows="4" cols="50" class="form-control" name="desc" id="descripcion" placeholder="Descripcion">{{$recompensas->description}}</textarea>
+                      <label for="descripcion">Descripción</label>
+                      <textarea rows="4" cols="50" class="form-control" name="desc" id="descripcion" placeholder="Descripcion">{{$recompensas[0]->description}}</textarea>
                     </div>
                   </div>
+                  <!--actualizar -->
+                  <div class="col-md-9">
+                  <div class="form-group">
+                    <label for="descripcion">Elegir grupo</label>
+                      <select class="form-control" id="tipo" name="tipo">
+                          <option value="{{$recompensas[0]->id_grupo}}">{{$recompensas[0]->nombre}}</option>
+                          @foreach($grup as $gr)
+                          @if($gr->id != $recompensas[0]->id_grupo)
+                          <option value="{{$gr->id}}">{{$gr->nombre}}</option>
+                          @endif
+                          @endforeach
+                      </select>
+                    </div> 
+                  </div>
+                  <!--end actualizar-->
                   <div class="col-md-12">
                     <button type="submit" class="btn btn-default">Actualizar</button>
                   </div>

@@ -20,7 +20,12 @@ class InsigniasController extends Controller
     {
         //
         $status="";
-        $insignias = Insignia::all();        
+       // $insignias = Insignia::all();   
+       $insignias = DB::table('insignias')->join('caterecompensas', 'id_cate', '=', 'caterecompensas.id')
+                    ->join('nivelcate', 'id_nivel', '=', 'nivelcate.id')
+                    ->select('insignias.id', 'insignias.name', 'insignias.imagen', 'insignias.s_point', 'insignias.g_point', 'insignias.i_point', 'insignias.description',
+                        'nivelcate.nombre as nomnivel', 'nivelcate.id as idnivel', 'caterecompensas.id as idcat', 'caterecompensas.nombre as nomcat')
+                    ->get();
         return view('admin.insignias')->with('insignias', $insignias)
                                         ->with('status', $status);
     }
@@ -96,7 +101,12 @@ class InsigniasController extends Controller
             'accion_realizada' => 'Una Insignia ha sido Creada'
         ]);
 
-        $insignia = Insignia::all();        
+        // $insignia = Insignia::all();       
+        $insignia = DB::table('insignias')->join('caterecompensas', 'id_cate', '=', 'caterecompensas.id')
+                        ->join('nivelcate', 'id_nivel', '=', 'nivelcate.id')
+                        ->select('insignias.id', 'insignias.name', 'insignias.imagen', 'insignias.s_point', 'insignias.g_point', 'insignias.i_point', 'insignias.description',
+                        'nivelcate.nombre as nomnivel', 'nivelcate.id as idnivel', 'caterecompensas.id as idcat', 'caterecompensas.nombre as nomcat')
+                       ->get(); 
         return view('admin.insignias')->with('insignias', $insignia)
                                     ->with('status', $status);
     }
@@ -121,8 +131,16 @@ class InsigniasController extends Controller
     public function edit($id)
     {
         //
-        $insignias = Insignia::find($id);
-        return view('admin.insigniasEdit')->with('insignias', $insignias);
+        $insignias = DB::table('insignias')->where('insignias.id', $id)->join('caterecompensas', 'id_cate', '=', 'caterecompensas.id')
+                     ->join('nivelcate', 'id_nivel', '=', 'nivelcate.id')
+                     ->select('insignias.id', 'insignias.name', 'insignias.imagen', 'insignias.s_point', 'insignias.g_point', 'insignias.i_point', 'insignias.description',
+                      'nivelcate.nombre as nomnivel', 'nivelcate.id as idnivel', 'caterecompensas.id as idcat', 'caterecompensas.nombre as nomcat')
+                    ->first();
+        //se agrego las categorias y nivel
+        $cat = DB::table('caterecompensas')->where('caterecompensas.id','!=', $insignias->idcat)->get();
+        $niv = DB::table('nivelcate')->where('nivelcate.id','!=', $insignias->idnivel)->get();
+
+        return view('admin.insigniasEdit')->with('insignias', $insignias)->with('cat', $cat)->with('niv', $niv);
     }
 
     /**
@@ -155,11 +173,20 @@ class InsigniasController extends Controller
         $insignias->i_point = $request->ipoints;
         $insignias->g_point = $request->gpoints;
         $insignias->description = $request->descripcion;
+        //==============================================================//
+        $insignias->id_nivel = $request->nivel;
+        $insignias->id_cate = $request->cate;
+        //==========================================================//
         $insignias->save();
 
-        $insignia = Insignia::all();        
+       // $insignia = Insignia::all();   
+       $insignia = DB::table('insignias')->join('caterecompensas', 'id_cate', '=', 'caterecompensas.id')
+                    ->join('nivelcate', 'id_nivel', '=', 'nivelcate.id')
+                    ->select('insignias.id', 'insignias.name', 'insignias.imagen', 'insignias.s_point', 'insignias.g_point', 'insignias.i_point', 'insignias.description',
+                        'nivelcate.nombre as nomnivel', 'nivelcate.id as idnivel', 'caterecompensas.id as idcat', 'caterecompensas.nombre as nomcat')
+                    ->get();     
         return view('admin.insignias')->with('insignias', $insignia)
-                                    ->with('status', $status);                                    
+                                      ->with('status', $status);                                    
     }
 
     /**

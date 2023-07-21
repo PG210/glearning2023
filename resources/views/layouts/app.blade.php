@@ -571,6 +571,8 @@
       @endif
     </li>
     <li><a href="{{ url('/recompensas') }}"><i class="fa fa-arrow-circle-right"></i> <span>Distinciones</span></a></li>
+   <!--se agrego para informacion-->
+   <li><a href="{{ url('/material/ver') }}"><i class="fa fa-arrow-circle-right"></i> <span>Material</span></a></li>
 
     <?php
         if (Auth::user() != null) {                        

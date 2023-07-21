@@ -16,7 +16,10 @@ class AwardController extends Controller
     {
         //
         $status="";
-        $reconocimientos = Gift::all();
+        $reconocimientos = Gift::join('avatars', 'avatar_id', '=', 'avatars.id')
+                         ->select('gifts.id', 'gifts.imagen', 'gifts.s_point', 'gifts.i_point', 'gifts.g_point', 'gifts.description', 'avatars.description as desavatar', 'avatars.sexo')
+                         ->get();
+        return $reconocimientos;
         return view('admin.reconocimientos')->with('reconocimientos', $reconocimientos)
                                             ->with('status', $status);
     }

@@ -30,7 +30,7 @@
     <!-- /.box-header -->
     <div class="box-body">
         <div class="row">
-            <div class="col-md-10">
+            <div class="col-md-12">
                             
             <h1>Insignias</h1>
 
@@ -41,6 +41,11 @@
                 <div class="col-md-2" >
                     <a href="{{route('formuinsigcap')}}" class="btn btn-block btn-success btn-md">Insignia Capitulo</a>
                 </div>
+                <!---CREAR CATEGORIAS-->
+                <div class="col-md-2" >
+                    <a href="{{route('formuCategory')}}" class="btn btn-block btn-warning btn-md">Categorias</a>
+                </div>
+                <!--END CATEGORIAS-->
             </div>
             <div class="box-body table-responsive no-padding">
 
@@ -53,6 +58,8 @@
                             <th>Puntos S</th>
                             <th>Puntos I</th>
                             <th>Puntos G</th>
+                            <th>Categoría</th>
+                            <th>Nivel</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
@@ -65,6 +72,8 @@
                                 <td>{{ $insignia->s_point }} </td>
                                 <td>{{ $insignia->i_point }} </td>
                                 <td>{{ $insignia->g_point }} </td>
+                                <td>{{ $insignia->nomcat}} </td>
+                                <td>{{ $insignia->nomnivel}} </td>
                                 <td>
                                     <a href="{{ route('insignias.edit', $insignia->id) }}" class="btn btn-default"><i class="fa fa-pencil" aria-hidden="true"></i></a>
                                     <form action="{{ route('insignias.destroy', $insignia->id ) }} " method="POST" style="display: inline-block;">

@@ -437,4 +437,28 @@ class GruposController extends Controller
     return view('grupos.listuser')->with('usu', $usu)->with('grupos', $grupos);
   }
   //end buscar
+  //#################################### desactivarel grupo
+   public function activargrupo($id){
+      $grup = GruposModel::findOrfail($id);
+      if($grup->estado_grup == 1){
+       $grup->estado_grup = 0;
+        $usu = User::where('id_grupo', $id)->get();
+          foreach ($usu as $user) {
+            $user->estado = 0;
+            $user->save();
+        }
+        Session::flash('grup', 'El grupo ha sido desactivado');
+      }else{
+        $grup->estado_grup = 1;
+        $usu = User::where('id_grupo', $id)->get();
+        foreach ($usu as $user) {
+          $user->estado = 1;
+          $user->save();
+      }
+        Session::flash('grup', 'Grupo activado exitosamente!');
+      }
+        $grup->save();
+        return back();
+   }
+  //##################
 }

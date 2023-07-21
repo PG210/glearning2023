@@ -14,7 +14,7 @@
 @section('insigniasEdit')
 
 <!-- TRAER LA INFO ACTUAL PARA EDITAR -->
-<h2>AGREGAR NUEVA INSIGNIA</h2>
+<h2>EDITAR INSIGNIA</h2>
 
 <div class="box box-default" style="margin-top: 5%;">
         <form method="POST" enctype="multipart/form-data" action="{{ route('insignias.update', $insignias->id) }}">
@@ -74,7 +74,33 @@
                     </div>
                     <!-- /.col -->                                
                 </div>
-    
+                <!--==========================================================--->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                        <label for="cate">Categoría</label>
+                            <select class="form-control" id="cate" name="cate">
+                                <option value="{{$insignias->idcat}}">{{$insignias->nomcat}}</option>
+                                @foreach($cat as $c)
+                                  <option value="{{$c->id}}">{{$c->nombre}}</option>
+                                @endforeach
+                            </select>
+                        </div>                  
+                    </div>
+                    <!-- /.col -->   
+                     <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="nivel">Nivel</label>
+                            <select class="form-control" id="nivel" name="nivel">
+                                <option value="{{$insignias->idnivel}}">{{$insignias->nomnivel}}</option>
+                                @foreach($niv as $n)
+                                  <option value="{{$n->id}}">{{$n->nombre}}</option>
+                                @endforeach
+                            </select>
+                        </div>                  
+                    </div>                          
+                </div>
+                <!--=========================================================-->
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">

@@ -153,12 +153,19 @@ class RetosController extends Controller
      */
     public function edit($id)
     {
+        
         //            
         $retos = Challenge::find($id);
         $subcapitulos = Subchapter::find($retos->subchapter_id);
 
+        //consultar categorias y nivel
+        $cat = DB::table('caterecompensas')->get();
+        $niv = DB::table('nivelcate')->get();
+
         return view('admin.RetosEdit')->with('retos', $retos)
-                                    ->with('subcapitulo', $subcapitulos->name);
+                                    ->with('subcapitulo', $subcapitulos->name)
+                                    ->with('cat', $cat)
+                                    ->with('niv', $niv);
     }
 
     /**
@@ -198,6 +205,10 @@ class RetosController extends Controller
             $pathmaterial = "";            
         }
 
+        //##########################
+        $insig = DB::table('insignias')->where('id_nivel', $request->nivel)->where('id_cate', $request->cate)->first();
+        //####################
+       // return $insig->id;
         $retos = Challenge::find($id);
         $retos->name = $request->name;
         $retos->time = $request->time;
@@ -208,7 +219,7 @@ class RetosController extends Controller
         $retos->material = $pathmaterial;
         $retos->challenge_type_id = $request->challenge_type_id;        
         $retos->subchapter_id = $request->subchapter_id; 
-        
+        $retos->id_insignia = $insig->id; //se agrego este item
         $retos->urlvideo = $request->urlvideo;
         
         //AHORCADO
@@ -267,6 +278,7 @@ class RetosController extends Controller
 
     public function datosreto($id)
     {
+        
         $retos = Challenge::find($id);     
         $tiporeto = DB::table('challenge_types')->where('id', $retos->challenge_type_id)->get(); 
         return view('admin.viewChallenge')->with('retos', $retos)->with('tiporeto', $tiporeto);

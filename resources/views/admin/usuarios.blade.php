@@ -1,5 +1,12 @@
 @extends('layouts.admin')
 
+<style>
+    .modal-body-scroll {
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+    }
+</style>
+
 @section('titulos')
 <section class="content-header">
     <ol class="breadcrumb">
@@ -22,20 +29,13 @@
 @endif
 
 <h1>USUARIOS</h1>
-
-
-
-
-<!--<div class="row">
-    <div class="col-md-2" >
-        <a href="{{ route('usuario.create') }}" class="btn btn-block btn-primary btn-md">Agregar Usuario</a>
+@if(Session::has('grup'))
+<br>
+    <div class="alert alert-warning alert-dismissible fade in" role="alert" style="border-radius:15px;">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+        <strong>{{Session('grup')}}</strong> 
     </div>
-</div>
-<div class="row">
-    <div class="col-md-2" >
-        <a href="{{ route('usuario.create') }}" class="btn btn-block btn-primary btn-md">Agregar Usuario</a>
-    </div>
-</div>-->
+    @endif
 <!--botones de agregar usuarios y carga masiva-->
 <div class="d-grid gap-2 d-md-block">
     <div class="col-md-2" >
@@ -45,8 +45,60 @@
     <div class="col-md-2" >
     <a href="{{route('cargamasiva')}}" class="btn btn-block btn-primary btn-md">Carga Masiva</a>
     </div> 
-    <div class="col-md-4" >
-      
+    <div class="col-md-2" >
+    <!---modal para desactivar grupos-->
+    <button type="button" class=" btn btn-block btn-md" data-toggle="modal" data-target="#descat" style="background-color:#ff3b30; color:white; border-color: #af1249; border-width: 0 0 5px;">
+        Desactivar
+    </button>
+    <div class="modal fade" id="descat" role="dialog">
+        <div class="modal-dialog ">
+            <div class="modal-content" style="border-radius:20px;">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Desactivar usuarios por grupo.</h4>
+                </div>
+                <div class="modal-body modal-body-scroll">
+                    <p>Usted puede restringir el ingreso de todos los usuarios pertenecientes a un grupo.</p>
+                     <!--tabla-->
+                     <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Grupo</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($grupos as $gr)
+                                <tr>
+                                    <td>{{$gr->descrip}}</td>
+                                    @if($gr->estado_grup == 1)
+                                    <td>
+                                        <a href="/activar/grupo/{{$gr->id}}" class="btn btn-success">Activado</a>
+                                    </td>
+                                    @else
+                                    <td>
+                                        <a href="/activar/grupo/{{$gr->id}}" class="btn btn-info">Desactivado</a>
+                                    </td>
+                                    @endif
+                                </tr>
+                                @endforeach
+                                <!-- Agrega más filas según sea necesario -->
+                            </tbody>
+                        </table>
+                    </div>
+                     <!--end tabla-->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <!--end modal para descativar grupos-->
+    </div>
+    <div class="col-md-2" >
     </div>
     <div class="col-md-4" >
     <!--buscar-->
@@ -351,4 +403,6 @@
       });
   });
  </script> 
+ <!--abrir modal-->
+<!--end-->
 @endsection

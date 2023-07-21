@@ -29,6 +29,7 @@
 
 <!-- INFO ACTUAL PARA EDITAR -->
 <h2>EDITAR CAPITULO</h2>
+
 <form method="POST" action="{{ route('capitulos.update', $capitulos->id) }}" enctype="multipart/form-data">
   @csrf
   @method('PUT')
@@ -97,7 +98,7 @@
   </div>
   <div class="form-group">
     <label for="descripcion">Url Video</label>
-    <input type="file" class="form-control" name="video" id="video" value="{{$capitulos->videoIntro}}" required>
+    <input type="file" class="form-control" name="video" id="video" value="{{$capitulos->videoIntro}}">
   </div>
   <!---end editar-->
   <button type="submit" class="btn btn-default">Guardar</button>
