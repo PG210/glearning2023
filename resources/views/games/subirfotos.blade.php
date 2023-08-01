@@ -75,7 +75,7 @@
                   </div>
                 </div>
 
-                <button type="submit" class="btn btn-default">Terminar</button>
+                <button type="submit" class="btn btn-primary">Terminar</button>
             </form>
 
               </div>

@@ -70,6 +70,7 @@
             //code...
             $useravatar = App\User::find($userid);
             $avatarimage = App\Avatar::find($useravatar->avatar_id);
+            
             $avataritem = App\Avatar::find($useravatar->avatar_id);
     
             $avatarlevelscustom = DB::select( DB::raw("SELECT gifts.id as iditem, gifts.name, gifts.imagen, gifts.avatarchange, gifts.avatar_id, gift_user.user_id 
@@ -89,9 +90,11 @@
         if ($avatarlevelscustom != null) {            
             foreach ($avatarlevelscustom as $avatarlevel) {
                 $avatarimage =  $avatarlevel->avatarchange;
+              
             }
         }else {
             $avatarimage = $avatarlevelblank->avatarchange;
+        
         }
 
 
@@ -156,8 +159,7 @@
 <body class="hold-transition skin-blue sidebar-mini">
 @if(Auth::user()->avatar_id !=9 ) 
 
-    <div id="app">
-
+<div id="app">
     <!-- Main Header -->
     <header class="main-header">
         <!-- Logo -->
@@ -284,7 +286,8 @@
 
                         @endforeach
                         <!-- end task item -->
-
+               <!---==================================================validar nivel ================= -->
+               <!---==========================================end validar nivel ===============-->
                 <!-- User Account Menu -->
                 <li class="dropdown user user-menu">
                     <!-- Menu Toggle Button -->
@@ -310,6 +313,7 @@
                     @else
                     <!-- The user image in the menu -->
                     <li class="user-header">
+                       
                         <img src="{{ asset($avatarimage) }}" class="img-circle" alt="User Image">
                         <p>
                         @auth
@@ -322,7 +326,9 @@
                     <li class="user-body">
                         <div class="row">
                         <div class="col-xs-3 text-center">
-                            <span>Nivel</br><strong>{{ $nivel[0][0] }}</strong></span>
+                            @if(isset($cap))
+                            <span>Nivel</br><strong>{{ $cap }}</strong></span>
+                            @endif
                         </div>
                         <div class="col-xs-3 text-center">
                             <span>Puntos I</br><strong>{{ Auth::user()->i_point }}</strong></span>
@@ -364,7 +370,6 @@
             </div>
         </nav>
     </header>
-
 <!-- Left side column. contains the logo and sidebar -->
 <aside class="main-sidebar">
 
@@ -614,5 +619,6 @@
 @if(Auth::user()->avatar_id==9 ) 
  @include('actualizarvis');
 @endif
+
 </body>
 </html>

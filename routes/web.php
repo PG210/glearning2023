@@ -321,3 +321,6 @@ Route::get('/formulario/categorias', [GruposInsignias::class, 'formularioreg'])-
 Route::POST('/formulario/categorias/registro', [GruposInsignias::class, 'registrarCategoria'])->name('registrarCategoria')->middleware('redirectIfSessionExpired');
 Route::get('/formulario/editcat/{id}', [GruposInsignias::class, 'formeditar'])->name('formuEditarCat')->middleware('redirectIfSessionExpired');
 Route::POST('/formulario/editcat/registro', [GruposInsignias::class, 'regisEditCat'])->name('regisEditCat')->middleware('redirectIfSessionExpired');
+
+//llamada a visualizarinsignia
+Route::get('/evolucion/insignia/win/{id}', [PerfilController::class, 'insigniaVisu']);

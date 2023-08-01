@@ -30,6 +30,16 @@
     border-radius: 1px 49px;
     font-family: effortless;
   }
+  /* cambiar de color */
+  @keyframes blink {
+      0% { opacity: 0; color: red; }
+      50% { opacity: 1; color: blue; }
+      100% { opacity: 0; color: green; }
+    }
+    .blinking {
+      animation: blink 1s infinite;
+    }
+
 </style>
 
 @section('content')
@@ -127,6 +137,9 @@
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">×</span></button>
           <h4 class="modal-title">FELICITACIONES {{ Auth::user()->firstname }}</h4>
+          @if($mensaje != 0)
+          <h3 class="text-center blinking">&#127881; &#128522; CAPÍTULO {{$cap}} TERMINADO &#128522; &#127881;</h3>
+          @endif
         </div>
         <div class="modal-body" style="height: 60%; background-color: #ff7737!important;">
 
@@ -191,6 +204,9 @@
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true"> × </span></button>
           <h4 class="modal-title">FELICITACIONES {{ Auth::user()->firstname }}</h4>
+          @if($mensaje != 0)
+          <h3 class="text-center blinking">&#127881; &#128522; CAPÍTULO {{$cap}} TERMINADO &#128522; &#127881;</h3>
+          @endif
         </div>
         <div class="modal-body" style="height: 65%; background-color: #56aab5!important;">
 
@@ -255,6 +271,9 @@
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">×</span></button>
           <h4 class="modal-title">FELICITACIONES {{ Auth::user()->firstname }}</h4>
+          @if($mensaje != 0)
+          <h3 class="text-center blinking">&#127881; &#128522; CAPÍTULO {{$cap}} TERMINADO &#128522; &#127881;</h3>
+          @endif
         </div>
         <div class="modal-body" style="height: 65%; background-color: #a74fea!important;">
           <!--cuerpo del modal-->
@@ -368,6 +387,9 @@
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">×</span></button>
           <h4 class="modal-title">FELICITACIONES {{ Auth::user()->firstname }}</h4>
+          @if($mensaje != 0)
+          <h3 class="text-center blinking">&#127881; &#128522; CAPÍTULO {{$cap}} TERMINADO &#128522; &#127881;</h3>
+          @endif
         </div>
         <div class="modal-body" style="height: 65%; background-color: #a74fea!important;">
          <!--aqui contenido modal-->

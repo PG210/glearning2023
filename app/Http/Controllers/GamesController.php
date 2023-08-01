@@ -70,6 +70,36 @@ class GamesController extends Controller
                   return $idinsig;
                 }
     }
+    //################mesnaje final capitulo
+    public function mensaje($cap, $userauthid){
+            $tarfin = DB::table('challenge_user')
+                        ->join('challenges', 'challenge_user.challenge_id', '=', 'challenges.id')
+                        ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                        ->where('subchapters.chapter_id', $cap)
+                        ->where('challenge_user.user_id', '=',  $userauthid)
+                        ->selectRaw('challenge_user.user_id as idusu, subchapters.chapter_id, COUNT(challenge_user.challenge_id) as tot')
+                        ->groupBy('challenge_user.user_id', 'subchapters.chapter_id')
+                        ->get();
+            $tarcap = DB::table('challenges')
+                        ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                        ->where('subchapters.chapter_id', $cap)
+                        ->selectRaw('subchapters.chapter_id as cap, COUNT(challenges.id) as tot')
+                        ->groupBy('subchapters.chapter_id')
+                        ->get();
+            if(count($tarfin) != 0){
+                $nvel = ($tarfin[0]->tot*100)/$tarcap[0]->tot;
+                $puntos = round($nvel, 0);
+            }
+            if($puntos >= 100){
+                $varmensaje = 1;
+            }else{
+                $varmensaje = 0;
+            }
+
+            return $varmensaje;
+    }
+    //###############validacion
+     
     //#######################################
     public function ahorcado($id){
         //encontrar el capitulo
@@ -146,12 +176,20 @@ class GamesController extends Controller
         $idretoactual = $request->idretoactual;   
 
         $cap = $this->eval($idretoactual); //se valida el capitulo
-        
+        $reto = Challenge::find($idretoactual);
+        //validar que no se repita el juego
+        //validar para que no duplique campos
+        $validar = DB::table('challenge_user')->where('challenge_id', $idretoactual)->where('user_id', $userauthid)->count();
+        if($validar != 0){
+            $retosig = $reto->subchapter_id;
+             return redirect('playerchallenge/' .$retosig);
+       }else{
+
         //validar si el reto unity se perdio o se gano 1 = win , 0 = lose
         if ($valorjuego == 1){ 
 
             //obtener el reto correspondiente:
-            $reto = Challenge::find($idretoactual);
+           
 
             // ======================= PUNTAJES EN RETOS JUGADOS vs SUBCAPITULOS ========================
 
@@ -285,7 +323,8 @@ class GamesController extends Controller
                 }
             }*/
             //===============================ACTUALIZAR INSIGNIAS=======================================
-         if($reto->id_insignia != 100){
+       
+        if($reto->id_insignia != 100 ){
             //tiene recompensa
             $insearch = DB::table('insignias')
                      ->where('insignias.id', $reto->id_insignia)
@@ -380,7 +419,7 @@ class GamesController extends Controller
 
             //======= Enviar confirmacion via EMAIL al jefe de area del reto terminado por el usuario        
             //obtener area del usuario   
-            $userareas = User::find($userauthid);        
+           /* $userareas = User::find($userauthid);        
             foreach ($userareas->areas as $userarea) {            
             }
             
@@ -465,7 +504,7 @@ class GamesController extends Controller
                 }                    
             }                
 
-
+             */
             
             //====================POPUP al terminar ultimo reto del tema:
             //verificar si esta en el ultimo RETO del TEMA al que le pertenece
@@ -501,6 +540,8 @@ class GamesController extends Controller
                 }else{
                     $rinsignia = "";
                 }
+            //mensaje de verificar si es ultimo capitulo
+            $mensajefinal = $this->mensaje($cap, $userauthid);
             return view('player.finishquiz')->with('puntos_s', $pt_s)
                                             ->with('puntos_i', $i_point)
                                             ->with('puntos_g', $g_point)
@@ -516,13 +557,16 @@ class GamesController extends Controller
                                             ->with('recompensawon', $recompensawon)
                                             ->with('recompensanamewon', $recompensanamewon)
                                             ->with('inscap', $rinsignia)
-                                            ->with('cap', $cap);
+                                            ->with('cap', $cap)
+                                            ->with('mensaje', $mensajefinal);
         }else{
             //se agrego el subcapitulo para egresar
             $reto = Challenge::find($idretoactual);
             return view('player.gamefailed')->with('subcapitulo', $reto->subchapter_id)
                                             ->with('cap', $cap);
         }
+
+      }//cierra validacion del if
     }
 
 
@@ -568,7 +612,7 @@ class GamesController extends Controller
                 'id_challenge' => $idretoactual,
             ]);
 
-
+        
 
 
         // ======================= PUNTAJES EN RETOS JUGADOS vs SUBCAPITULOS ========================
@@ -791,7 +835,7 @@ class GamesController extends Controller
 
         //======= Enviar confirmacion via EMAIL al jefe de area del reto terminado por el usuadio        
         //obtener area del usuario   
-        $userareas = User::find($userauthid);        
+      /*  $userareas = User::find($userauthid);        
         foreach ($userareas->areas as $userarea) {            
         //obtener el jefe del area        
         $jefeareas = DB::table('type_user')->where('id_areas', $userarea->id)->get();  
@@ -874,7 +918,7 @@ class GamesController extends Controller
                 }            
             }
 
-        }
+        }*/
     
 
         
@@ -913,6 +957,9 @@ class GamesController extends Controller
             $rinsignia = "";
         }
         //#################################################################
+        //########## validar mensaje de finalizacion
+        $mensajefinal = $this->mensaje($cap, $userauthid);
+
         return view('player.finishquiz')->with('puntos_s', $pt_s)
                                         ->with('puntos_i', $i_point)
                                         ->with('puntos_g', $g_point)
@@ -928,7 +975,8 @@ class GamesController extends Controller
                                         ->with('recompensawon', $recompensawon)
                                         ->with('cap', $cap)
                                         ->with('inscap', $rinsignia)
-                                        ->with('recompensanamewon', $recompensanamewon);
+                                        ->with('recompensanamewon', $recompensanamewon)
+                                        ->with('mensaje', $mensajefinal);
       }
 
     }
@@ -1214,7 +1262,7 @@ class GamesController extends Controller
         
         //======= Enviar confirmacion via EMAIL al jefe de area del reto terminado por el usuadio        
         //obtener area del usuario   
-        $userareas = User::find($userauthid);        
+        /*$userareas = User::find($userauthid);        
         foreach ($userareas->areas as $userarea) {            
         }
         //obtener el jefe del area        
@@ -1299,7 +1347,7 @@ class GamesController extends Controller
                 }
 
 
-        }
+        }*/
 
 
 
@@ -1338,6 +1386,8 @@ class GamesController extends Controller
         }else{
             $rinsignia = "";
         }
+        //validar mensaje de finalizacion
+        $mensajefinal = $this->mensaje($cap, $userauthid);
         return view('player.finishquiz')->with('puntos_s', $pt_s)
                                         ->with('puntos_i', $i_point)
                                         ->with('puntos_g', $g_point)
@@ -1353,6 +1403,7 @@ class GamesController extends Controller
                                         ->with('recompensawon', $recompensawon)
                                         ->with('recompensanamewon', $recompensanamewon)
                                         ->with('inscap', $rinsignia)
+                                        ->with('mensaje', $mensajefinal)
                                         ->with('cap', $cap);
 
      }
@@ -1624,7 +1675,7 @@ class GamesController extends Controller
 
         //======= Enviar confirmacion via EMAIL al jefe de area del reto terminado por el usuadio        
         //obtener area del usuario   
-        $userareas = User::find($userauthid);        
+      /*  $userareas = User::find($userauthid);        
         foreach ($userareas->areas as $userarea) {            
         }
         //obtener el jefe del area        
@@ -1708,7 +1759,7 @@ class GamesController extends Controller
                 }            
             }
         }
-
+            */
 
         //====================POPUP al terminar ultimo reto del tema:
         //verificar si esta en el ultimo RETO del TEMA al que le pertenece
@@ -1743,6 +1794,8 @@ class GamesController extends Controller
          }else{
             $rinsignia = "";
          }
+         //validar mensaje de finalizacion 
+        $mensajefinal = $this->mensaje($cap, $userauthid);
         return view('player.finishquiz')->with('puntos_s', $pt_s)
                                         ->with('puntos_i', $i_point)
                                         ->with('puntos_g', $g_point)
@@ -1758,6 +1811,7 @@ class GamesController extends Controller
                                         ->with('recompensawon', $recompensawon)
                                         ->with('recompensanamewon', $recompensanamewon)
                                         ->with('inscap', $rinsignia)
+                                        ->with('mensaje', $mensajefinal)
                                         ->with('cap', $cap);
      }
 
@@ -1927,7 +1981,7 @@ class GamesController extends Controller
         $insigniadescwon = '';
 
         //obtener y recorrer todas las insignias:
-        foreach ($insignias as $insignia) {
+        /*foreach ($insignias as $insignia) {
             if ($insigniauser->i_point >= $insignia->i_point && $insigniauser->g_point >= $insignia->g_point ) {
                 //verificar existencia de insignias              
                 $wininsignia = DB::table('insignia_user')
@@ -1949,6 +2003,34 @@ class GamesController extends Controller
                         $insigniapopup = 0;
                     }
             }
+        }*/
+
+        //==================== Actaulizar insignias =============
+        if($reto->id_insignia != 100){
+            //tiene recompensa
+            $insearch = DB::table('insignias')
+                     ->where('insignias.id', $reto->id_insignia)
+                     ->select('insignias.id as idinsig', 'insignias.name', 'insignias.imagen', 'insignias.s_point', 'insignias.i_point', 'insignias.g_point',                            'insignias.description')
+                     ->first();
+            
+            //validar que esta insignia no este rpetida
+            $valinsig = DB::table('insignia_user')->where('user_id', $userauthid)->where('insignia_id', $insearch->idinsig)->get();
+            if ($valinsig->isEmpty()) {                        
+                DB::table('insignia_user')->insert([
+                    'user_id' => $userplayer->id,
+                    'insignia_id' => $insearch->idinsig, 
+                ]);
+                //una insignia nueva
+                $insigniapopup = 1;
+                $insigniawon = $insearch->imagen;
+                $insignianamewon = $insearch->name;
+                $insigniadescwon = $insearch->description;
+
+
+            }else{
+               $insigniapopup = 0;
+            }
+           
         }
 
 
@@ -2012,7 +2094,7 @@ class GamesController extends Controller
 
         //======= Enviar confirmacion via EMAIL al jefe de area del reto terminado por el usuadio        
         //obtener area del usuario   
-        $userareas = User::find($userauthid);        
+      /* $userareas = User::find($userauthid);        
         foreach ($userareas->areas as $userarea) {            
         }
         
@@ -2097,7 +2179,7 @@ class GamesController extends Controller
                 }            
             }
         }
-
+        */
 
 
         //====================POPUP al terminar ultimo reto del tema:
@@ -2134,6 +2216,8 @@ class GamesController extends Controller
          }else{
             $rinsignia = "";
          }
+          //validar mensaje de finalizacion 
+          $mensajefinal = $this->mensaje($cap, $userauthid);
         return view('player.finishquiz')->with('puntos_s', $pt_s)
                                         ->with('puntos_i', $i_point)
                                         ->with('puntos_g', $g_point)
@@ -2149,6 +2233,7 @@ class GamesController extends Controller
                                         ->with('recompensawon', $recompensawon)
                                         ->with('cap', $cap)
                                         ->with('inscap', $rinsignia)
+                                        ->with('mensaje', $mensajefinal)
                                         ->with('recompensanamewon', $recompensanamewon);
 
      }

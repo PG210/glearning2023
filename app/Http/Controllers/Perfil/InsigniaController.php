@@ -70,6 +70,7 @@ class InsigniaController extends Controller
    //actualizar 
    public function actualizar(Request $request){
       //###########################
+      
       $category = InsigniaCap::findOrfail($request->id);
       $file = $request->file('ruta');//guarda la variable id en un file
       if($file){

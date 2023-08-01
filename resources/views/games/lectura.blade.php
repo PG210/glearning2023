@@ -91,7 +91,7 @@
                     <textarea class="form-control{{ $errors->has('evidence') ? ' is-invalid' : '' }}" rows="5" name="evidence" id="evidence" spellcheck="true" placeholder="A continuación escribe tus respuestas a las instrucciones planteadas en el Reto">{{ old('evidence') }}</textarea>                                
                                                                 
                   </div>
-                <button type="submit" class="btn btn-default">Terminar</button>
+                <button type="submit" class="btn btn-primary">Terminar</button>
             </form>
 
               </div>

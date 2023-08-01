@@ -60,7 +60,7 @@
 
                               <div class="radio">
                                   <label>
-                                  <input type="radio" name="{{$answe->quizquestion_id}}" value="{{ $answe->id }}" style="margin-left:90px;">
+                                  <input type="radio" name="{{$answe->quizquestion_id}}" value="{{ $answe->id }}" style="margin-left:90px;" required>
                                       {{ $answe->answer }} &nbsp;&nbsp;&nbsp;
                                   </label>
                               </div>

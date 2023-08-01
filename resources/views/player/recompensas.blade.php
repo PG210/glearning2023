@@ -95,7 +95,7 @@
                     <img class="img-circle img-responsive img-bordered-sm" src="{{ asset($insignia->imagen) }}" width="100px" alt="{{($insignia->name) }}">
                     <i aria-hidden="true"></i>
                         <span class="username">
-                          <a href="#"> {{($insignia->name) }}</a>
+                          <span> {{($insignia->name) }}</span>
                         </span>
                     <span class="description">{{($insignia->description) }}</span>
                   </div>
@@ -106,7 +106,7 @@
                     <i class="fa fa-linkedin-square" aria-hidden="true"></i>
                        Compartir pub
                     </a>
-                    <a  class="pull-right btn btn-info" href="/ver/insignia/{{$insignia->id}}" target="_blank" style="font-size:15px;">
+                    <a  class="pull-right btn btn-info" href="/evolucion/insignia/win/{{$insignia->id}}" target="_blank" style="font-size:15px;">
                        Visualizar
                     </a>
                     <!--modal-->
@@ -188,7 +188,7 @@
                     <!--modal-->
                 </div>
                  <div class="col-md-6">
-                   <a  class="pull-right btn btn-info" href="/ver/insignia/{{$in->id}}" target="_blank" style="font-size:15px;">
+                   <a  class="pull-right btn btn-info" href="/evolucion/insignia/win/{{$in->id}}" target="_blank" style="font-size:15px;">
                        Visualizar
                     </a>
                  </div>
@@ -205,8 +205,8 @@
                   <img class="img-circle img-responsive img-bordered-sm" src="{{ asset($gift->imagen) }}" width="100px" alt="{{($gift->name) }}">
                   <i aria-hidden="true"></i>
                       <span class="username">
-                        <a href="#"> {{($gift->name) }}</a>
-                        <a href="#" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>
+                        <span> {{($gift->name) }}</span>
+                        <!--<a href="#" class="pull-right btn-box-tool"><i class="fa fa-times"></i></a>-->
                       </span>
                   <span class="description">{{($gift->description) }}</span>
                 </div>

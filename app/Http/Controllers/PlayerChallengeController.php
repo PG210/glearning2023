@@ -16,6 +16,7 @@ use App\Quiz_Participant;
 Use App\Insignia;
 use App\Gift;
 use Carbon\Carbon;
+Use App\ModingCap; //se agrego para reg insignias por capitulo
 use DB;
 use Auth;
 
@@ -32,6 +33,78 @@ class PlayerChallengeController extends Controller
 
     }
 
+    //funcion que encuentra el capitulo y lo retorna al ser encontrado
+    public function eval($id){
+        $var = DB::table('challenges')
+                ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                ->where('challenges.id', $id)
+                ->select('chapter_id')
+                ->get();
+        $cap = $var[0]->chapter_id;
+        return $cap;
+    }
+    //validar si el quiz tiene insignias para compartir
+    public function valinsig($cap, $userauthid){
+        $tarealizadas = DB::table('challenge_user')
+                  ->join('challenges', 'challenge_user.challenge_id', '=', 'challenges.id')
+                  ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                  ->where('subchapters.chapter_id', $cap)
+                  ->where('challenge_user.user_id', '=',  $userauthid)
+                  ->selectRaw('challenge_user.user_id as idusu, subchapters.chapter_id, COUNT(challenge_user.challenge_id) as tot')
+                  ->groupBy('challenge_user.user_id', 'subchapters.chapter_id')
+                  ->get();
+          $tarporcap = DB::table('challenges')
+                  ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                  ->where('subchapters.chapter_id', $cap)
+                  ->selectRaw('subchapters.chapter_id as cap, COUNT(challenges.id) as tot')
+                  ->groupBy('subchapters.chapter_id')
+                  ->get();
+          if(count($tarealizadas) != 0){
+              $niv = ($tarealizadas[0]->tot*100)/$tarporcap[0]->tot;
+              $bn = round($niv, 0);
+           }
+          if($bn >= 100){
+              $idinsig = DB::table('insigniacap')->where('capitulo', $cap)->get();
+              $fechai = Carbon::now();
+              $Gr = new ModingCap();
+              $Gr->userid =  $userauthid;
+              $Gr->insigid = $idinsig[0]->id;
+              $Gr->created_at = $fechai;
+              $Gr->save();
+            return $idinsig;
+          }
+      }
+
+    //#################################
+    //#################################### validar el mesnaje
+    public function mensaje($cap, $userauthid){
+            $tarfin = DB::table('challenge_user')
+                        ->join('challenges', 'challenge_user.challenge_id', '=', 'challenges.id')
+                        ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                        ->where('subchapters.chapter_id', $cap)
+                        ->where('challenge_user.user_id', '=',  $userauthid)
+                        ->selectRaw('challenge_user.user_id as idusu, subchapters.chapter_id, COUNT(challenge_user.challenge_id) as tot')
+                        ->groupBy('challenge_user.user_id', 'subchapters.chapter_id')
+                        ->get();
+            $tarcap = DB::table('challenges')
+                        ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                        ->where('subchapters.chapter_id', $cap)
+                        ->selectRaw('subchapters.chapter_id as cap, COUNT(challenges.id) as tot')
+                        ->groupBy('subchapters.chapter_id')
+                        ->get();
+            if(count($tarfin) != 0){
+                $nvel = ($tarfin[0]->tot*100)/$tarcap[0]->tot;
+                $puntos = round($nvel, 0);
+            }
+            if($puntos >= 100){
+                $varmensaje = 1;
+            }else{
+                $varmensaje = 0;
+            }
+
+            return $varmensaje;
+    }
+    //###################################
     public function challenge($id)
     {
         $var = DB::table('challenges')
@@ -105,7 +178,19 @@ class PlayerChallengeController extends Controller
         $playerParticipant = $request->usuario;
         $quiz_selected = $request->quizactual;
         $retoactual = $request->idretoactual;
-        
+
+        $cap = $this->eval($retoactual); //se valida el capitulo
+
+         //obtener el reto correspondiente:
+         $reto = Challenge::find($retoactual);
+         
+         //validar para que no duplique campos
+         $validar = DB::table('challenge_user')->where('challenge_id', $retoactual)->where('user_id', $userauthid)->count();
+         if($validar != 0){
+             $retosig = $reto->subchapter_id;
+              return redirect('playerchallenge/' .$retosig);
+        }else{
+
         // ========== calcular respuestas correctas, pasa o no pasa el puntaje para ganar (80% minimo para ganar)
         //matrices temporales
         $arrayanswers = [];
@@ -300,7 +385,7 @@ class PlayerChallengeController extends Controller
             $insigniadescwon = '';
                         
             //obtener y recorrer todas las insignias:
-            foreach ($insignias as $insignia) {
+           /* foreach ($insignias as $insignia) {
                 if ($insigniauser->i_point >= $insignia->i_point && $insigniauser->g_point >= $insignia->g_point ) {
                     //verificar existencia de insignias
                     $wininsignia = DB::table('insignia_user')
@@ -321,8 +406,34 @@ class PlayerChallengeController extends Controller
                         $insigniapopup = 0;
                     }
                 }
+            }*/
+            //==================================== evaluar si existe insignias ===========
+            if($reto->id_insignia != 100){
+                //tiene recompensa
+                $insearch = DB::table('insignias')
+                         ->where('insignias.id', $reto->id_insignia)
+                         ->select('insignias.id as idinsig', 'insignias.name', 'insignias.imagen', 'insignias.s_point', 'insignias.i_point', 'insignias.g_point',                            'insignias.description')
+                         ->first();
+                
+                //validar que esta insignia no este rpetida
+                $valinsig = DB::table('insignia_user')->where('user_id', $userauthid)->where('insignia_id', $insearch->idinsig)->get();
+                if ($valinsig->isEmpty()) {                        
+                    DB::table('insignia_user')->insert([
+                        'user_id' => $userplayer->id,
+                        'insignia_id' => $insearch->idinsig, 
+                    ]);
+                    //una insignia nueva
+                    $insigniapopup = 1;
+                    $insigniawon = $insearch->imagen;
+                    $insignianamewon = $insearch->name;
+                    $insigniadescwon = $insearch->description;
+    
+    
+                }else{
+                   $insigniapopup = 0;
+                }
+               
             }
-
             //========================================================================//
             //====================== Actualizar RECOMPENSAS GIFTS del jugador  ===============//
             $recompensas = Gift::all();
@@ -334,7 +445,7 @@ class PlayerChallengeController extends Controller
             $recompensanamewon = '';
 
             //obtener y recorrer todas las recompensas:
-            foreach ($recompensas as $recompensa) {
+          /*  foreach ($recompensas as $recompensa) {
                 if ($recompensauser->i_point >= $recompensa->i_point && $recompensauser->g_point >= $recompensa->g_point) {
                     //verificar existencia de recompensas
                     if ($recompensauser->avatar_id == $recompensa->avatar_id) {                       
@@ -351,6 +462,32 @@ class PlayerChallengeController extends Controller
                         }
                     }
                 }
+            }*/
+            //======================= recompensas ====================
+            //veirifcar si el reto tiene una recompensa
+            if($reto->id_grupo != 200){
+                //tiene recompensa
+               $search = DB::table('gifts')
+                         ->where('id_grupo', $reto->id_grupo)
+                         ->where('avatar_id', $userplayer->avatar_id)
+                         ->select('gifts.id as idin', 'gifts.imagen', 'gifts.name')
+                         ->first();
+                //validar que esta insignia no este rpetida
+                $validarin = DB::table('gift_user')->where('user_id', $userauthid)->where('gift_id', $search->idin)->get();
+                if ($validarin->isEmpty()) {                        
+                    DB::table('gift_user')->insert([
+                        'gift_id' => $search->idin,
+                        'user_id' => $userplayer->id,
+                        // Agrega más columnas y valores según corresponda
+                    ]);
+                    //una insignia nueva
+                    $recompensapopup = 1;
+                    $recompensawon = $search->imagen;
+                    $recompensanamewon = $search->name;
+                }else{
+                    $recompensapopup = 0;
+                }
+               
             }
             //====================== Actualizar RECOMPENSAS del jugador  ===============//
             //========================================================================//
@@ -358,7 +495,7 @@ class PlayerChallengeController extends Controller
 
             //======= Enviar confirmacion via EMAIL al jefe de area del reto terminado por el usuario        
             //obtener area del usuario   
-            $userareas = User::find($userauthid);        
+          /*  $userareas = User::find($userauthid);        
             foreach ($userareas->areas as $userarea) {            
             }
         
@@ -442,7 +579,7 @@ class PlayerChallengeController extends Controller
                     }            
                 }
                 
-            }           
+            } */     
             
             //====================POPUP al terminar ultimo reto del tema:
             //verificar si esta en el ultimo RETO del TEMA al que le pertenece
@@ -473,6 +610,16 @@ class PlayerChallengeController extends Controller
 
 
             $pt_s = $retospts;
+            //#########################################
+                //validar que este en el capitulo 1 externo osea 2
+                $count = DB::table('insigniacap')->where('capitulo', $cap)->count();
+                if($count != 0){
+                    $rinsignia = $this->valinsig($cap, $userauthid); 
+                }else{
+                    $rinsignia = "";
+                }
+            //#################################
+            $mensajefinal = $this->mensaje($cap, $userauthid);
             return view('player.finishquiz')->with('puntos_s', $pt_s)
                                             ->with('puntos_i', $i_point)
                                             ->with('puntos_g', $g_point)
@@ -486,7 +633,10 @@ class PlayerChallengeController extends Controller
                                             ->with('recompensapopup', $recompensapopup)
                                             ->with('passretouppopup', $passretouppopup)
                                             ->with('recompensawon', $recompensawon)
-                                            ->with('recompensanamewon', $recompensanamewon); 
+                                            ->with('recompensanamewon', $recompensanamewon)
+                                            ->with('cap', $cap)
+                                            ->with('inscap', $rinsignia)
+                                            ->with('mensaje', $mensajefinal); 
         }else{ 
             //validar reto
             $challenge_quiz_id_01= DB::table('challenge_quiz')
@@ -499,6 +649,8 @@ class PlayerChallengeController extends Controller
             
             return view('player.gamefailed')->with('subcapitulo', $subchapter_id_01);
         }
+
+      }//cierre del if de validar
 
     }
 

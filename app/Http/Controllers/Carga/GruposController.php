@@ -280,38 +280,48 @@ class GruposController extends Controller
 
    public function valFormu(Request $request){
 
-    $val = DB::table('grupos')->where('id', $request->idfiltro)->count();
-    if($val != 0){
+    
+    $valselect = $request->input('idfiltro');
+
+    $resultados = [];
+
+    foreach ($valselect as $valor) {
       $res = DB::table('users')
               ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
-              ->where('users.id_grupo', '=', $request->idfiltro)
+              ->where('users.id_grupo', '=', $valor)
               ->select('users.id', 'firstname', 'lastname', 'username', 'email', 'level', 's_point', 'i_point', 'g_point', 'grupos.descrip')
               ->orderBy('s_point', 'desc')
               ->get();
-    //return $al[0]['capitulo'];  
-    }else{
-      $res = DB::table('users')
-            ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
-            ->select('users.id', 'firstname', 'lastname', 'username', 'email', 'level', 's_point', 'i_point', 'g_point', 'grupos.descrip')
-            ->orderBy('s_point', 'desc')
-            ->get();
+      $resultados[] = $res;
     }
+    //return $al[0]['capitulo'];
     //buscar las personas con las tareas pendientes y capitulos terminados
     $totTareas = DB::table('challenges')
               ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
               ->selectRaw('subchapters.chapter_id as cap, COUNT(challenges.id) as tareas')
               ->groupBy('subchapters.chapter_id')
               ->get();
-       if(count($res) != 0){
-       for ($x = 0; $x < count($res); $x++) {
-              $buscar[] = DB::table('challenge_user')
-                    ->join('challenges', 'challenge_user.challenge_id', '=', 'challenges.id')
-                    ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
-                    ->where('challenge_user.user_id', $res[$x]->id)
-                    ->selectRaw('COUNT(challenge_user.challenge_id) as valor, challenge_user.user_id as idusu, subchapters.chapter_id')
-                    ->groupBy('challenge_user.user_id', 'subchapters.chapter_id')
-                    ->get(); 
-            }
+       if(count($resultados) != 0){
+        
+        $buscar = []; // Aquí almacenaremos los resultados de la consulta
+       
+        foreach ($resultados as $nivel1) {
+          foreach ($nivel1 as $res) {
+              $user_id = $res->id;
+              // y así sucesivamente para cada propiedad que necesites utilizar
+              $resultadoConsulta = DB::table('challenge_user')
+                                ->join('challenges', 'challenge_user.challenge_id', '=', 'challenges.id')
+                                ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
+                                ->where('challenge_user.user_id', $user_id) // Accedemos a la propiedad "idusu" en lugar de "id"
+                                ->selectRaw('COUNT(challenge_user.challenge_id) as valor, challenge_user.user_id as idusu, subchapters.chapter_id')
+                                ->groupBy('challenge_user.user_id', 'subchapters.chapter_id')
+                                ->get();
+              // Aquí puedes realizar las operaciones que necesites con los datos obtenidos
+              $buscar[] = $resultadoConsulta;
+          }
+      }
+
+      //return $buscar;
           //return $buscar[$i][$i]->chapter_id;
           $al = [];
           for ($i = 0; $i < count($buscar); $i++) {
@@ -332,7 +342,7 @@ class GruposController extends Controller
               }
           }
           } 
-       
+      //return $al;
     //#############
     $niveles = collect($al)->groupBy('usuario')->map(function ($items) {
       return count($items);
@@ -341,11 +351,13 @@ class GruposController extends Controller
       $al = [];
       $niveles = [];
     }
+
     //return $grouped[86] ?? 0;
     $grupos = DB::table('grupos')->get();
 
-    return view('admin.reportcompletos')->with('usuarios', $res)->with('grup', $grupos)->with('bus', $al)->with('niveles', $niveles);
+    return view('admin.reportcompletos')->with('resultado', $resultados)->with('grup', $grupos)->with('bus', $al)->with('niveles', $niveles);
    }
+
    //buscar usuario por grupos
   public function consultarter(Request $request){
     $buscar = DB::table('users')

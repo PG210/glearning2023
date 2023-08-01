@@ -11,6 +11,16 @@
 
 
 @section('usuarios')
+
+<style>
+  .scrollable-container {
+      width: auto;
+      height: 400px;
+      border: 1px solid #ccc;
+      overflow-y: scroll; /* Agregar scroll vertical */
+    }
+</style>
+
 <div class="box box-default" style="margin-top: 5%;">
     <div class="box-header with-border">
         <div class="box-tools pull-right">
@@ -32,7 +42,7 @@
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                             <h4 class="modal-title">Generar reporte de respuestas por grupo</h4>
                           </div>
-                          <div class="modal-body">
+                          <div class="modal-body scrollable-container">
                             <!--tabla--->
                             <div class="table-responsive">
                               <table class="table">
@@ -76,24 +86,42 @@
                             <h4 class="modal-title">Filtrar Por Grupos</h4>
                           </div>
                           <form method="POST" action="{{route('valFormu')}}">
-                          <div class="modal-body">
+                          <div class="modal-body scrollable-container"  >
                             <!--filtro-->
                                   @csrf
                                   <div class="form-row">
                                     <div class="col-md-12">
-                                    <select id="idfiltro" name="idfiltro" class="form-control">
-                                        <option value="todos">Todos</option>
-                                        @foreach($grup as $g)
-                                        <option value="{{$g->id}}">{{$g->descrip}}</option>
-                                        @endforeach
-                                    </select>
+                                    <!--seleccionar varios campos-->
+                                    <!--end seleccionar campos-->
+                                    <div class="table-responsive">
+                                    <table class="table table-bordered table-striped">
+                                      <thead>
+                                        <tr>
+                                          <th>Elegir</th>
+                                          <th>Nombre</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                          @foreach($grup as $g)
+                                            <tr>
+                                              <td> <input type="checkbox" id="check_{{$g->id}}" name="idfiltro[]" value="{{$g->id}}"></td>
+                                              <td> <span>{{$g->descrip}}</span></td>
+                                            </tr>
+                                          @endforeach
+                                        <!-- Agrega más filas según tus datos -->
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                  <!--end table-->
                                     </div>
                                 </div>
                             <!--end filtrar-->
+                            
                             <br>
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-warning" data-dismiss="modal">Cerrar</button>
+                            <a href="/reportcompletos" class="btn btn-primary float-right" type="submit">Deshacer</a>
                             <button class="btn btn-success float-right" type="submit">Filtrar</button>
                           </div>
                           </form>
@@ -144,6 +172,7 @@
                             </tr>
                         </thead>
                         <tbody id="tablaocu">
+                          @if(isset($usuarios))
                             @foreach($usuarios as $user)  
                                 <tr>      
                                     <td>{{ $user->firstname }} {{ $user->lastname }} </td>                
@@ -188,7 +217,58 @@
                                           Completados</a></td>
                                 </tr>
                             @endforeach
-
+                            @endif
+                            @if(isset($resultado))
+                                  @foreach ($resultado as $nivel1)
+                                      @foreach ($nivel1 as $res) 
+                                          <tr>      
+                                           <td>{{ $res->firstname }} {{ $res->lastname }} </td> 
+                                           <td>{{ $res->username }} </td>
+                                            <td>{{ $res->descrip}}</td>
+                                            <td>{{ $niveles[$res->id] ?? 0}}</td>
+                                            <!--aqui validar que ya completamos-->
+                                            <td>
+                                              <div class="panel-group" id="accordion">
+                                              <div class="panel panel-default">
+                                                  <div class="panel-heading">
+                                                  <h5 class="panel-title">
+                                                      <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{$res->id}}">Ver mas ...</a>
+                                                  </h5>
+                                                  </div>
+                                                  <div id="collapse{{$res->id}}" class="panel-collapse collapse">
+                                                  <div class="panel-body">
+                                                    <!--porcentajes-->
+                                                    @foreach($bus as $b)
+                                                          @if($b['usuario'] == $res->id )
+                                                          <?php
+                                                          $por = ($b['tcom']*100)/$b['ttotal'];
+                                                          $red = round($por, 1);
+                                                          ?>
+                                                          <span>Cap:</span> {{$b['capitulo']}} => {{$red}} <br>
+                                                          <div class="progress">
+                                                              <div class="progress-bar" role="progressbar" aria-valuenow="<?= $red ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?= $red ?>%; background-color:#25c5ab; color:black;">
+                                                                  <?= $red ?>%
+                                                              </div>
+                                                              </div>
+                                                          @endif
+                                                      @endforeach
+                                                    <!--end porcntajes-->
+                                                  </div>
+                                                  </div>
+                                              </div>
+                                              </div>
+                                              </td>
+                                            <!-- aqui finaliza validacion-->
+                                            <td>{{ round($res->s_point, 2) }} </td>
+                                            <td>{{ $res->i_point }} </td>
+                                            <td>{{ $res->g_point }} </td>
+                                            <td><a type="button" class="btn btn-warning" href="{{ route('reportcompletos.show', $res->id) }}">
+                                                  Completados</a>
+                                            </td>
+                                          </tr>
+                                       @endforeach
+                                   @endforeach
+                            @endif
                         </tbody>
                         <tbody id="tablamostrar"></tbody>
                     </table>        

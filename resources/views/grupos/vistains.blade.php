@@ -169,7 +169,7 @@
                 $anio = date("Y", strtotime($fec));
                 $mes = date("m", strtotime($fec));
               ?>
-             <a class="btn btn-primary ms-2" style="margin-top:10px;"  href="https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME&name={{$info[0]->name}}&organizationId=35549462&issueYear=2023&issueMonth={{$mes}}&certUrl=https://glearning.com.co/ver/insignia/{{$info[0]->id}}&certId={{$info[0]->id}} ">
+             <a class="btn btn-primary ms-2" style="margin-top:10px;"  href="https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME&name={{$info[0]->name}}&organizationId=35549462&issueYear=2023&issueMonth={{$mes}}&certUrl=https://glearning.com.co/evolucion/insignia/win/{{$info[0]->id}}&certId={{$info[0]->id}} ">
                Compartir en perfil <i class="bi bi-linkedin"></i>
              </a>
                           <!--end boton-->
