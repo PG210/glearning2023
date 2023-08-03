@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\Perfil\InsigniaController; //se agrego para insigias
 use App\Http\Controllers\Carga\GruposRecom;
 use App\Http\Controllers\Carga\GruposInsignias;//se agrego este controlador
+use App\Http\Controllers\Carga\PorcentajeController;//se agrego este controlador
 
 /*
 |--------------------------------------------------------------------------
@@ -324,3 +325,8 @@ Route::POST('/formulario/editcat/registro', [GruposInsignias::class, 'regisEditC
 
 //llamada a visualizarinsignia
 Route::get('/evolucion/insignia/win/{id}', [PerfilController::class, 'insigniaVisu']);
+
+//porcentajes
+Route::get('/reporte/view/porcentaje', [PorcentajeController::class, 'index'])->name('porcentaje')->middleware('redirectIfSessionExpired');
+//filtrarpor grupos
+Route::post('/reporte/view/filtrar', [PorcentajeController::class, 'filtrar'])->name('valFormuPorcentaje')->middleware('redirectIfSessionExpired');

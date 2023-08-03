@@ -116,7 +116,6 @@
                                     </div>
                                 </div>
                             <!--end filtrar-->
-                            
                             <br>
                           </div>
                           <div class="modal-footer">
@@ -131,6 +130,9 @@
                     </div>
                   <!--end modal-->
                   <!---###################################################----->
+                  <!--bton de filtro-->
+                    <a href="{{route('porcentaje')}}" type="button" class="btn btn-warning">Porcentajes</a>
+                  <!--end boton -->
                </div>  
                 <div class="col-md-4" >
                  
