@@ -43,12 +43,16 @@
                                         </tr>
                                       </thead>
                                       <tbody>
-                                          @foreach($info as $g)
-                                            <tr>
-                                              <td> <input type="checkbox" id="check_{{$g->id}}" name="idfiltro[]" value="{{$g->id}}"></td>
-                                              <td> <span>{{$g->descrip}}</span></td>
-                                            </tr>
-                                          @endforeach
+                                      @foreach($info as $g)
+                                          <tr>
+                                              <td> 
+                                                  <input type="radio" id="radio_{{$g->id}}" name="idfiltro" value="{{$g->id}}">
+                                              </td>
+                                              <td> 
+                                                  <span>{{$g->descrip}}</span>
+                                              </td>
+                                          </tr>
+                                      @endforeach
                                         <!-- Agrega más filas según tus datos -->
                                       </tbody>
                                     </table>
@@ -80,14 +84,17 @@
     <div class="box-body">
         <div class="row">
             <div class="col-md-12">
-                <h1>PORCENTAJE DE AVANCE</h1>
+                @if(isset($nomgrupo))
+                <h1>PORCENTAJE DE AVANCE GRUPO: {{$nomgrupo->descrip}}</h1>
+                @else
+                <h1>PORCENTAJE DE AVANCE </h1>
+                @endif
                 <div class="box-body table-responsive no-padding">
                     <!--================================================-->  
                      <!---ver si mejora o automatiza--->
                      <table class="table table-hover">
-                          <thead>
+                          <thead style="color:black; font-family:effortless;">
                               <tr>
-                                  <th class="text-center">Grupo</th>
                                   <th class="text-center">Capítulo</th>
                                   <th class="text-center">Total users</th>
                                   <th class="text-center">0%</th>
@@ -98,7 +105,8 @@
                                   <th class="text-center">Rango 81-100%</th>
                               </tr>
                           </thead>
-                          <tbody>
+                          <tbody style="background-color:#EFF4F1; color:black;">
+                            @if(isset($var1) && isset($var2) && isset($var3) && isset($var4) && isset($var5) && isset($totPorCap) && isset($contar))
                               @php
                                   $groupedData = [];
                                   foreach([$var1, $var2, $var3, $var4, $var5] as $data) {
@@ -116,19 +124,36 @@
                                           ];
                                       }
                                   }
+                               /*Odenarde menor a mayor  */
+                               usort($groupedData, function($a, $b) {
+                                    return $a['capitulo'] - $b['capitulo'];
+                                });
+                               /* final orden */
+                               
                               @endphp
-
+                            
                               @foreach ($groupedData as $capituloData)
                                   <tr>
-                                      <td class="text-center">Grupo</td>
                                       <td class="text-center">{{ $capituloData['capitulo'] }}</td>
-                                      <td class="text-center">20</td>
-                                      <td class="text-center">0</td>
+                                      @foreach ($totPorCap as $item)
+                                         @if($capituloData['capitulo'] == $item['capitulo'])
+                                         <?php
+                                            $percent = floor(($item['ceros']*100)/$contar);
+                                           ?>
+                                          <td class="text-center">{{$item['total']}}</td>
+                                          <td class="text-center">{{$item['ceros']}} <br> {{$percent}}%</td>
+                                         @endif
+                                      @endforeach
+                        
                                       @for ($i = 1; $i <= 5; $i++)
-                                          <td class="text-center">{{ $capituloData['rangos'][$i]['total'] }}</td>
+                                           <?php
+                                           $por = round(($capituloData['rangos'][$i]['total'] * 100) / $contar, 0);
+                                           ?>
+                                          <td class="text-center">{{ $capituloData['rangos'][$i]['total'] }} <br> {{$por}}%</td>
                                       @endfor
                                   </tr>
                               @endforeach
+                              @endif
                           </tbody>
                       </table>
                     <!--===============================================-->

@@ -13,8 +13,54 @@ class PorcentajeController extends Controller
     public function index()
     {
         $info = GruposModel::all();
+        
         return view('admin.vistaporcentaje')->with('info', $info);
     }
+//##########################################
+public function totcap($buscar, $tot){
+    $num = $tot;
+    $chapterCounts = array_fill(1, 10, 0); // Inicializar el array con 10 posiciones desde 1 hasta 10
+
+    foreach ($buscar as $subArray) {
+      foreach ($subArray as $item) {
+          if (isset($item->chapter_id) && $item->chapter_id >= 1 && $item->chapter_id <= 10) {
+              $chapterCounts[$item->chapter_id]++;
+          }
+      }
+    }
+      $uniqueChapterIds = [];
+
+          foreach ($buscar as $subArray) {
+              foreach ($subArray as $item) {
+                  if (isset($item->chapter_id) && !in_array($item->chapter_id, $uniqueChapterIds)) {
+                      $uniqueChapterIds[] = $item->chapter_id;
+                  }
+              }
+          }
+    
+      $result = [];
+
+      foreach ($uniqueChapterIds as $chapterId) {
+          if (isset($chapterCounts[$chapterId]) && $chapterId >= 1 && $chapterId <= 10) {
+              $result[$chapterId] = $num - $chapterCounts[$chapterId];
+          }
+      }
+
+      // Ordenar el resultado por clave (capitulo)
+        ksort($result);
+
+        // Crear el resultado final con índices "capitulo" y "total"
+        $finalResult = [];
+        foreach ($result as $capitulo => $total) {
+            $finalResult[] = [
+                "capitulo" => $capitulo,
+                "ceros" => $total,
+                'total' => $num
+            ];
+        }
+
+      return  $finalResult;
+}
 
 //#######################################
 public function tareas($id){
@@ -28,7 +74,7 @@ public function tareas($id){
 } 
 //#################################3
 //################################## validar diferentes capitulos por cadarango
-public function tarporcap($resultadosPorRango1, $des, $ranid){
+public function tarporcap($resultadosPorRango1, $des, $ranid, $cantidad){
 
     $usuariosPorCapitulo = [];
 
@@ -40,9 +86,11 @@ public function tarporcap($resultadosPorRango1, $des, $ranid){
     $usuariosPorCapituloFormatted = [];
 
         foreach ($usuariosPorCapitulo as $capitulo => $total) {
+            $cero = $cantidad - $total;
             $usuariosPorCapituloFormatted[] = [
                 'capitulo' => $capitulo,
                 'total' => $total,
+                'cero'  => $cero,
                 'ranid' => $ranid,
                 'rango' => $des
                 
@@ -77,31 +125,32 @@ public function eval($data){
  public function filtrar(Request $request){
     $valselect = $request->input('idfiltro');
 
-    $resultados = [];
-
     //busca los usuarios asociados acada grupo
-    foreach ($valselect as $valor) {
+   
       $res = DB::table('users')
               ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
-              ->where('users.id_grupo', '=', $valor)
+              ->where('users.id_grupo', '=', $valselect)
               ->select('users.id', 'email', 'grupos.id as idgrup', 'grupos.descrip')
               ->orderBy('users.id', 'desc')
               ->get();
-      $resultados[] = $res;
-    }
+      $resultados = $res;
+      //return $res;
+      //Obtiene el nombre del grupo
+      $nomgrupo = GruposModel::findOrFail($valselect);
+      $contar = count($res);
+      //return $contar;
     //busca el total de users asociados a cada grupos 
-    foreach ($valselect as $valor2) {
+    //foreach ($valselect as $valor2) {
         $res2 = DB::table('users')
                 ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
-                ->where('users.id_grupo', '=', $valor2)
+                ->where('users.id_grupo', '=', $valselect)
                 ->select('grupos.id as idgrupo', 'grupos.descrip', DB::raw('count(users.id) as users_count'))
                 ->groupBy('grupos.id', 'grupos.descrip')
                 ->orderBy('grupos.id', 'desc')
                 ->get();
     
-        $totalusergrup[] = $res2;
-    }
-    
+        $totalusergrup = $res2;
+   // }
    // return $totalusergrup;
     //buscar las personas con las tareas pendientes y capitulos terminados
     $totTareas = DB::table('challenges')
@@ -109,12 +158,13 @@ public function eval($data){
               ->selectRaw('subchapters.chapter_id as cap, COUNT(challenges.id) as tareas')
               ->groupBy('subchapters.chapter_id')
               ->get();
+    
        if(count($resultados) != 0){
         
         $buscar = []; // Aquí almacenaremos los resultados de la consulta
        
-        foreach ($resultados as $nivel1) {
-          foreach ($nivel1 as $res) {
+        foreach ($resultados as $res) {
+       //   foreach ($nivel1 as $res) {
               $user_id = $res->id;
               // y así sucesivamente para cada propiedad que necesites utilizar
               $resultadoConsulta = DB::table('challenge_user')
@@ -128,12 +178,11 @@ public function eval($data){
                                 ->get();
               // Aquí puedes realizar las operaciones que necesites con los datos obtenidos
               $buscar[] = $resultadoConsulta;
-          }
+         // }
       }
-      
-      //return $buscar;
-      //return $totTareas;
-          //return $buscar[$i][$i]->chapter_id;
+     // return $buscar; totcap
+     $totPorCap = $this->totcap($buscar, $contar);
+
           $al = [];
 
           for ($i = 0; $i < count($buscar); $i++) {
@@ -281,29 +330,17 @@ public function eval($data){
           
         }
 
-        //return  $resultadosPorRango1; 
-            //return  $resultadosPorRango2;
-            //return $resultadosPorRango5; //rango del 81 al 100
-        //return $resultadosAgrupados
-
-        $var1 = $this->tarporcap($resultadosPorRango1, '1-15', '1');
-        $var2 = $this->tarporcap($resultadosPorRango2, '16-25', '2');
-        $var3 = $this->tarporcap($resultadosPorRango3, '26-50', '3');
-        $var4 = $this->tarporcap($resultadosPorRango4, '51-80', '4');
-        $var5 = $this->tarporcap($resultadosPorRango5, '81-100', '5');
+        $var1 = $this->tarporcap($resultadosPorRango1, '1-15', '1', $contar);
+        $var2 = $this->tarporcap($resultadosPorRango2, '16-25', '2', $contar);
+        $var3 = $this->tarporcap($resultadosPorRango3, '26-50', '3', $contar);
+        $var4 = $this->tarporcap($resultadosPorRango4, '51-80', '4', $contar);
+        $var5 = $this->tarporcap($resultadosPorRango5, '81-100', '5', $contar);
       
-       
-       
-       // return $var1;
-        // Ahora tienes un arreglo $capitulosData reorganizado por capítulo y rangos, con la información del capítulo
-        
-        
-        //return $capitulosData;
-        // Ahora tienes un arreglo $capitulosData reorganizado por capítulo y rangos
-
+    
       //###################################################
+     
       $info = GruposModel::all();
-      return view('admin.vistaporcentaje',  compact('info', 'var1', 'var2', 'var3', 'var4', 'var5'));
+      return view('admin.vistaporcentaje',  compact('info', 'var1', 'var2', 'var3', 'var4', 'var5', 'nomgrupo', 'totPorCap', 'contar'));
     }
 
 }
