@@ -21,7 +21,18 @@ class GruposController extends Controller
               ->select(DB::raw('COUNT(users.id_grupo) as total, grupos.descrip, grupos.id'))
               ->groupBy('users.id_grupo', 'grupos.descrip', 'grupos.id')
               ->get();
-        return view('grupos.vista')->with('datos', $datos)->with('tot', $tot);
+        //buscar grupos
+        $ngrupo = DB::table('subchapter_user')
+                ->join('users', 'subchapter_user.user_id', '=', 'users.id')
+                ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
+                ->select('grupos.id as idgrup', 'grupos.descrip')
+                ->addSelect(DB::raw('GROUP_CONCAT(DISTINCT subchapter_user.chapter_id) as chapter_ids'))
+                ->groupBy('grupos.id', 'grupos.descrip')
+                ->get();
+        //return $ngrupo;
+        // Procesar los resultados para obtener los chapter_id únicos por grupo
+      
+        return view('grupos.vista')->with('datos', $datos)->with('tot', $tot)->with('ngrupo', $ngrupo);
     }
 
     public function reg(Request $request){
@@ -78,9 +89,40 @@ class GruposController extends Controller
 
     //vincular usuario a un grupo
     public function vingrupo(Request $request){
+        $gr = $request->opcion;
         $us = User::FindOrfail($request->nomusu);
-        $us ->id_grupo = $request->opcion;
+        //##############################
+        if ($us->id_grupo == $gr){
+            $us->id_grupo = $gr;
+        }else{
+          $id = $us->id;
+          SubcapUser::where('user_id', $id)->delete();
+          //validar que el grupo nuevo ya tenga capitulos asignados
+          $capitulos = DB::table('subchapter_user')
+                      ->join('users', 'subchapter_user.user_id', '=', 'users.id')
+                      ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
+                      ->select('grupos.id as idgrup', 'grupos.descrip', 'subchapter_user.chapter_id')
+                      ->where('grupos.id', $gr)
+                      ->distinct('chapter_id')
+                      ->get();
+          if(!empty($capitulos)){
+              foreach($capitulos as $c){
+                      $AddCap = new SubcapUser();
+                      $AddCap->order = $c->chapter_id; // este es el capitulo
+                      $AddCap->chapter_id = $c->chapter_id;
+                      $AddCap->subchapter_id = 1;
+                      $AddCap->user_id = $id;
+                      $AddCap->estado = 0;
+                      $AddCap ->save();
+                }
+              }
+              $us->id_grupo = $gr;
+          
+         }
+        //############################
         $us ->save();
+        //##############################################
+
         return back();
         
     }

@@ -12,6 +12,15 @@
 
 @section('usuarios')
 
+<style>
+  .scrollable-container {
+      width: auto;
+      height: 400px;
+      border: 1px solid #ccc;
+      overflow-y: scroll; /* Agregar scroll vertical */
+    }
+</style>
+
 <div class="box box-default" style="margin-top: 5%;">
     <div class="box-header with-border">
           <!---####################################################---->
@@ -46,7 +55,7 @@
                                       @foreach($info as $g)
                                           <tr>
                                               <td> 
-                                                  <input type="radio" id="radio_{{$g->id}}" name="idfiltro" value="{{$g->id}}">
+                                                  <input type="radio" id="radio_{{$g->id}}" name="idfiltro" value="{{$g->id}}" required>
                                               </td>
                                               <td> 
                                                   <span>{{$g->descrip}}</span>
@@ -103,6 +112,7 @@
                                   <th class="text-center">Rango 26-50%</th>
                                   <th class="text-center">Rango 51-80%</th>
                                   <th class="text-center">Rango 81-100%</th>
+                                  <th class="text-center">Descripción</th>
                               </tr>
                           </thead>
                           <tbody style="background-color:#EFF4F1; color:black;">
@@ -129,7 +139,7 @@
                                     return $a['capitulo'] - $b['capitulo'];
                                 });
                                /* final orden */
-                               
+                               //var_dump($groupedData);
                               @endphp
                             
                               @foreach ($groupedData as $capituloData)
@@ -141,8 +151,9 @@
                                             $percent = floor(($item['ceros']*100)/$contar);
                                            ?>
                                           <td class="text-center">{{$item['total']}}</td>
-                                          <td class="text-center">{{$item['ceros']}} <br> {{$percent}}%</td>
+                                          <td class="text-center">{{$item['ceros']}} <br> {{$percent}}% </td> <!---Esta valida los ceros que no avanzaron-->
                                          @endif
+
                                       @endforeach
                         
                                       @for ($i = 1; $i <= 5; $i++)
@@ -151,6 +162,63 @@
                                            ?>
                                           <td class="text-center">{{ $capituloData['rangos'][$i]['total'] }} <br> {{$por}}%</td>
                                       @endfor
+                                      <!--manejo del modal-->
+                                      <td class="text-center">
+                                        <!-- Button to trigger the modal -->
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal{{ $capituloData['capitulo'] }}">Detalle</button>
+
+                                        <!-- The Modal -->
+                                        <div id="myModal{{ $capituloData['capitulo'] }}" class="modal fade" role="dialog">
+                                            <div class="modal-dialog modal-lg">
+                                                <!-- Modal content -->
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        <h4 class="modal-title">Detalle del capítulo: {{ $capituloData['capitulo'] }}</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                   <!--informacion de contenido-->
+                                                   <div class="box-body table-responsive no-padding">
+                                                        <!--================================================-->  
+                                                        <!---ver si mejora o automatiza--->
+                                                        <table class="table table-hover">
+                                                              <thead style="color:black; font-family:effortless;">
+                                                                  <tr>
+                                                                      <th class="text-center">0%</th>
+                                                                      <th class="text-center">Rango 1-15%</th>
+                                                                      <th class="text-center">Rango 16-25%</th>
+                                                                      <th class="text-center">Rango 26-50%</th>
+                                                                      <th class="text-center">Rango 51-80%</th>
+                                                                      <th class="text-center">Rango 81-100%</th>
+                                                                  </tr>
+                                                              </thead>
+                                                              <tbody style="background-color:#EFF4F1; color:black;">
+                                                              <td class="text-center">0%</td>
+                                                              @for ($i = 1; $i <= 5; $i++)
+                                                                  <td class="text-left">
+                                                                  @foreach($reporusu as $r)
+                                                                  @if($i == $r['rango'] && $capituloData['capitulo'] == $r['capitulo']) 
+                                                                    <p>{{$r['nombre']}} {{$r['apellido']}} </p> 
+                                                                    <!--end modal =================================== -->
+                                                                  @endif
+                                                                @endforeach
+                                                                  </td>
+                                                              @endfor
+                                                                
+                                                              </tbody>
+                                                          </table>
+                                                        <!--===============================================-->
+                                                    </div>
+                                                   <!--en contenido--->
+                                                  </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-warning" data-dismiss="modal">Salir</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                      </td>
+                                      <!---end modal-->
                                   </tr>
                               @endforeach
                               @endif

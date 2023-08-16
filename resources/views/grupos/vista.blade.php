@@ -81,6 +81,7 @@
           <th>Id Grupo</th>
           <th>Grupo</th>
           <th>No Usuarios</th>
+          <th>Capítulos</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -100,6 +101,15 @@
                 {{$t->total}}
               @endif
             @endforeach
+          </td>
+          <td>
+            <!---validar capitulos asociados-->
+            @foreach ($ngrupo as $grupo)
+            @if($d->idgro == $grupo->idgrup)
+                <p>{{ $grupo->chapter_ids }}</p>
+            @endif
+           @endforeach
+            <!--validarcapitulos asosicados-->
           </td>
           <td>
         <a href="{{route('vincap',  ['id' => $d->idgro])}}" type="button" class="btn btn-success">Capitulos</a>

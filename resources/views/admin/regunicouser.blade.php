@@ -68,7 +68,7 @@
                 </div>
             </div>
             <div class="form-row">
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-4">
                 <label for="correo"><b>Correo</b></label>
                 <input type="email" class="form-control" id="correo" name="correo"  Required>
                  <!--validar el correo-->
@@ -83,10 +83,20 @@
                 @endif
                   <!---end validar correo-->
               </div>
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-4">
                 <label for="ced"><b>Cedula</b></label>
                 <input type="number" class="form-control" id="ced" name="ced" Required>
             </div>
+            <!--grupo-->
+            <div class="form-group col-md-4">
+                <label for="ced"><b>Grupo</b></label>
+                <select id="grupo" name="grupo" class="form-control" >
+                @foreach($grup as $gr)
+                  <option value="{{$gr->id}}">{{$gr->descrip}}</option>
+                @endforeach
+                </select>
+            </div>
+            <!--grupo-->
            </div>
             <div class="form-row">
                 <div class="form-group col-md-5">

@@ -13,7 +13,7 @@
 @section('cargosCreate')
 
 <!--botones-->
-<h2>ACTUALIZAR USUARIO</h2>
+<h2>ACTUALIZAR USUARIO </h2>
 <div class="container">
 <div class="row box-body">
     <div class="col-12">

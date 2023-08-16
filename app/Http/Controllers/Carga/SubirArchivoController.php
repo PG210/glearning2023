@@ -17,6 +17,7 @@ use App\PosUsuModel\PosUsu;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use App\PosUsuModel\SubcapUser;//se agrego esta parte
 
 
 
@@ -103,7 +104,8 @@ class SubirArchivoController extends Controller
 
             $usern= $array[$i][6];
             $userem = $array[$i][2];
-           
+            $ngrupo = $array[$i][10];
+
             $datovalidar = DB::table('users')->where('username', '=', $usern)->count();
             $validaremail = DB::table('users')->where('email', '=', $userem)->count();
            
@@ -116,6 +118,7 @@ class SubirArchivoController extends Controller
               $category->sexo=$array[$i][3];
               $category->username= $array[$i][6];
               $category->email= $array[$i][2];
+              $category->cedula= $array[$i][11];
               if(is_numeric($array[$i][10])){
                 $category->id_grupo = $array[$i][10]; //id_grupo
               }else{
@@ -145,6 +148,39 @@ class SubirArchivoController extends Controller
           }
            
          }
+         //#####################################
+          //validar que el grupo nuevo ya tenga capitulos asignados
+          $capitulos = DB::table('subchapter_user')
+                      ->join('users', 'subchapter_user.user_id', '=', 'users.id')
+                      ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
+                      ->select('grupos.id as idgrup', 'grupos.descrip', 'subchapter_user.chapter_id')
+                      ->where('grupos.id', $ngrupo)
+                      ->distinct('chapter_id')
+                      ->get();
+
+           $usuarios = DB::table('users')
+                      ->where('id_grupo', '=', $ngrupo)
+                      ->select('id as iduser', 'firstname as nombre')
+                      ->get();
+
+          if(!empty($capitulos)){
+              foreach($usuarios as $u){
+                foreach($capitulos as $c){
+                  $ver = SubcapUser::where('chapter_id', $c->chapter_id)->where('user_id', $u->iduser)->count();
+                  if($ver == 0){
+                    $usun = new SubcapUser();
+                    $usun->order = $c->chapter_id; // este debe validarse
+                    $usun->chapter_id = $c->chapter_id;
+                    $usun->subchapter_id = 1;
+                    $usun->user_id = $u->iduser;
+                    $usun->estado = 0;
+                    $usun->save();
+                  }
+                }
+                
+              }
+            }
+         //#####################################
          $msj="¡Usuarios Registrados Éxitosamente!";
          return back()->with('mensaje',$msj);
     }

@@ -258,7 +258,7 @@ Route::get('/admin/capitulos/vin/usu/{id}/{id1}', [GruposController::class, 'vin
 Route::get('/admin/capitulos/eliminar/usu/{id}/{id1}', [GruposController::class, 'eliminarvincap'])->middleware('auth');
 
 //generar archivo
-Route::get('/generar/respuestas/nuevo/{id}', [ReportcompletosController::class, 'nuevoid'])->middleware('redirectIfSessionExpired');
+Route::post('/generar/respuestas/nuevo', [ReportcompletosController::class, 'nuevoid'])->name('generatequest')->middleware('redirectIfSessionExpired');
 //ruta para buscar usuarios
 Route::post('/admin/buscar/user', [GruposController::class, 'buscarusu'])->name('buscar_usuario')->middleware('auth');
 

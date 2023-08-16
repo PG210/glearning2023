@@ -1,0 +1,8 @@
+Nombres,Apellidos,CORREO,GENERO,Area,Posicion,Usuario,contrasenia,concontrasenia,Personaje,Grupo,cedula
+JOSE DARIO,MONTES GONZALEZ,jmontes@bancow.com.co,M,15,19,jmontes@bancow.com.co,FORMARTE2025,FORMARTE2025,9,5,1102811471
+JESIKA RAMIREZ,VALBUENA,jvalbuena@bancow.com.co,F,15,19,jvalbuena@bancow.com.co,FORMARTE2025,FORMARTE2025,9,5,1110452060
+SAMARIA BOLAÑOS,ARIZA,sbolanos@bancow.com.co,F,15,19,sbolanos@bancow.com.co,FORMARTE2025,FORMARTE2025,9,5,1145848977
+HELLEN MELISSA,VARGAS SANCHEZ,hmvargas@bancow.com.co,F,15,19,hmvargas@bancow.com.co,FORMARTE2025,FORMARTE2025,9,5,1118502014
+LINA MARCELA,MUÑOZ QUINTERO,lmquintero@bancow.com.co,F,15,19,lmquintero@bancow.com.co,FORMARTE2025,FORMARTE2025,9,5,1144028585
+PAULO CESAR,VASQUEZ URIBE,pcvasquez@bancow.com.co,M,15,19,pcvasquez@bancow.com.co,FORMARTE2025,FORMARTE2025,9,5,16951506
+OSCAR IVAN,TRUJILLO AMAYA,otrujillo@bancow.com.co,M,15,19,otrujillo@bancow.com.co,FORMARTE2025,FORMARTE2025,9,5,1145945985

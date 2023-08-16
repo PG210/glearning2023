@@ -121,7 +121,61 @@ public function eval($data){
 
     return $res;
 }
+//=================buscar usuarios  ==============
+public function usuariosbus($data, $rango){
+    $grouped_data = [];
+    foreach ($data as $item) {
+     $capitulo = $item["capitulo"];
+     $idusu = $item["idusu"];
+     
+     if (!array_key_exists($capitulo, $grouped_data)) {
+         $grouped_data[$capitulo] = [];
+     }
+     
+     $grouped_data[$capitulo][] = $idusu;
+     }
+    
+     //buscarlos usuarios que necesita
+         $userst = DB::table('users')->get();
+            $bloque = [];
+            foreach ($grouped_data as $capitulo => $usuarios) {
+            foreach ($userst as $user) {
+                if (in_array($user->id, $usuarios)) {
+                    $bloque[] = [
+                        "capitulo" => $capitulo,
+                        "usuario" => $user->id,
+                        "nombre" => $user->firstname,
+                        "apellido" => $user->lastname,
+                        "correo" => $user->email,
+                        "rango" => $rango
+                    ];
+                }
+            }
+        }
+
+    return $bloque;
+}
 //###################################
+//============= Unir las variables paramandaruna sola
+public function unirvar($u1, $u2, $u3, $u4, $u5){
+    $datosunidos = [];
+    foreach([$u1, $u2, $u3, $u4, $u5] as $datos) {
+     foreach ($datos as $item) {
+         $cap = $item['capitulo'];
+             $datosunidos[] = [
+                 'capitulo' => $cap,
+                 'usuario' => $item['usuario'],
+                 'nombre' =>  $item['nombre'],
+                 'apellido' => $item['apellido'],
+                 'correo' => $item['correo'],
+                 'rango' => $item['rango'],
+             ];
+         
+     }
+ }
+return $datosunidos;
+}
+//==================================
  public function filtrar(Request $request){
     $valselect = $request->input('idfiltro');
 
@@ -330,17 +384,29 @@ public function eval($data){
           
         }
 
+        // return $resultadosPorRango1;
         $var1 = $this->tarporcap($resultadosPorRango1, '1-15', '1', $contar);
         $var2 = $this->tarporcap($resultadosPorRango2, '16-25', '2', $contar);
         $var3 = $this->tarporcap($resultadosPorRango3, '26-50', '3', $contar);
         $var4 = $this->tarporcap($resultadosPorRango4, '51-80', '4', $contar);
         $var5 = $this->tarporcap($resultadosPorRango5, '81-100', '5', $contar);
-      
-    
+         
+       //return $var1;
+        //================consultar los usuarios asociados ==============
+        $u1 =  $this->usuariosbus($resultadosPorRango1, 1);
+        $u2 =  $this->usuariosbus($resultadosPorRango2, 2);
+        $u3 =  $this->usuariosbus($resultadosPorRango3, 3);
+        $u4 =  $this->usuariosbus($resultadosPorRango4, 4);
+        $u5 =  $this->usuariosbus($resultadosPorRango5, 5);
+       //return $u5;
+       //##############################################
+       $reporusu = $this->unirvar($u1, $u2, $u3, $u4, $u5);
+        //return $reporusu;
+     // return $groupedData;
       //###################################################
      
       $info = GruposModel::all();
-      return view('admin.vistaporcentaje',  compact('info', 'var1', 'var2', 'var3', 'var4', 'var5', 'nomgrupo', 'totPorCap', 'contar'));
+      return view('admin.vistaporcentaje',  compact('info', 'var1', 'var2', 'var3', 'var4', 'var5', 'nomgrupo', 'totPorCap', 'contar', 'reporusu'));
     }
 
 }

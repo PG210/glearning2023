@@ -42,6 +42,8 @@
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                             <h4 class="modal-title">Generar reporte de respuestas por grupo</h4>
                           </div>
+                          <form method="POST" action="{{route('generatequest')}}">
+                            @csrf
                           <div class="modal-body scrollable-container">
                             <!--tabla--->
                             <div class="table-responsive">
@@ -53,13 +55,11 @@
                                   </tr>
                                 </thead>
                                 <tbody>
-                                 @foreach($grup as $gmodal)
-                                  <tr>
-                                    <td>{{$gmodal->descrip}}</td>
-                                     <td>
-                                        <a href="/generar/respuestas/nuevo/{{$gmodal->id}}" type="button" class="btn btn-success btn-md">Descargar</a>
-                                      </td>
-                                  </tr>
+                                  @foreach($grup as $gmodal)
+                                    <tr>
+                                      <td> <input type="checkbox" id="ck{{$gmodal->id}}" name="idarchivo[]" value="{{$gmodal->id}}" ></td>
+                                      <td> <span>{{$gmodal->descrip}}</span></td>
+                                    </tr>
                                   @endforeach
                                 </tbody>
                               </table>
@@ -68,7 +68,9 @@
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-warning" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary">Generar</button>
                           </div>
+                         </form>
                         </div>
 
                       </div>

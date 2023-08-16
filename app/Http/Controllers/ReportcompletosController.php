@@ -266,20 +266,26 @@ class ReportcompletosController extends Controller
     }
     //
 
-    public function nuevoid($id){
-        //limpiar archivo  
+    public function nuevoid(Request $request){
+      
+      $lista = $request->idarchivo;
+       //limpiar archivo  
+    if(!empty($lista)){
       $exist = file_exists("informe/archivo.txt");
-      if ($exist)
-        {
-        $borrado = unlink("informe/archivo.txt");
-                  //#########################
+      if ($exist){
+       $borrado = unlink("informe/archivo.txt");
+       $borrado = unlink("informe/nuevoarchivo.txt");
+        //#########################
         //evidencia videos
-        $info = DB::table('videos')
+        
+        for($i = 0; $i < Count($lista); $i++){
+        $id1 = $lista[$i]; 
+        $res1 = DB::table('videos')
                 ->join('challenges', 'videos.id_challenge', '=', 'challenges.id') 
                 ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')  
                 ->join('users', 'videos.id_user', '=', 'users.id')
                 ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
-                ->where('grupos.id', $id)
+                ->where('grupos.id', $id1)
                 ->select('users.id as id_usuario', 'users.firstname as Usuario', 'users.lastname as Apellido', 'grupos.descrip as grup',
                          'challenges.name as nombre_reto', 'challenges.description as descripcion',
                         'challenges.material', 'challenges.urlvideo as video', 
@@ -287,46 +293,62 @@ class ReportcompletosController extends Controller
                         'videos.evidence as Evidencia_videos')
                 ->distinct()
                 ->get();
-    
+         $info[] = $res1;
+        }
         //respuestas de lecturas
-        $info2 = DB::table('readings')
+        for($i = 0; $i < Count($lista); $i++){
+        $id2 = $lista[$i]; 
+         $res2 = DB::table('readings')
                  ->join('challenges', 'readings.id_challenge', '=', 'challenges.id')
                  ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
                  ->join('users', 'readings.id_user', '=', 'users.id')
                  ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
-                 ->where('grupos.id', $id)
+                 ->where('grupos.id', $id2)
                  ->select('users.id as id_usuario', 'users.firstname as Usuario', 'users.lastname as Apellido', 'grupos.descrip as grup',
                           'challenges.name as nombre_reto',  'challenges.description as descripcion', 'challenges.material', 'challenges.urlvideo as video', 
                          'challenges.params as palabras', 'challenges.subchapter_id as idsub', 'subchapters.chapter_id as cap',
                          'readings.evidence as Evidencia_Lecturas')
                 ->distinct()
                 ->get();
+            $info2[] = $res2;
+        }
         //respuestas de salidas
-        $info3 = DB::table('outdoors')
+        for($i = 0; $i < Count($lista); $i++){
+        $id3 = $lista[$i];
+        $res3 = DB::table('outdoors')
                 ->join('challenges', 'outdoors.id_challenge', '=', 'challenges.id')
                 ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
                 ->join('users', 'outdoors.id_user', '=', 'users.id')
                 ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
-                ->where('grupos.id', $id)
+                ->where('grupos.id', $id3)
                 ->select('users.id as id_usuario', 'users.firstname as Usuario', 'users.lastname as Apellido', 'grupos.descrip as grup',
                         'challenges.name as nombre_reto',  'challenges.description as descripcion', 'challenges.material', 'challenges.urlvideo as video', 
                         'challenges.params as palabras', 'challenges.subchapter_id as idsub', 'subchapters.chapter_id as cap',
                         'outdoors.evidence as evioutdoor', 'outdoors.video', 'outdoors.image as img')
             ->distinct()
             ->get();
+            $info3[] = $res3;
+        }
+       
         //respuestas de pictures
-        $info4 = DB::table('pictures')
+        for($i = 0; $i < Count($lista); $i++){
+        $id4 = $lista[$i];
+        $res4 = DB::table('pictures')
                 ->join('challenges', 'pictures.id_challenge', '=', 'challenges.id')
                 ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
                 ->join('users', 'pictures.id_user', '=', 'users.id')
                 ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
-                ->where('grupos.id', $id)
+                ->where('grupos.id', $id4)
                 ->select('users.id as id_usuario', 'users.firstname as Usuario', 'users.lastname as Apellido', 'grupos.descrip as grup',
                         'challenges.name as nombre_reto',  'challenges.description as descripcion', 'challenges.material', 'challenges.urlvideo as video', 
                         'challenges.params as palabras', 'challenges.subchapter_id as idsub', 'subchapters.chapter_id as cap',
                         'pictures.evidence as evipic', 'pictures.video', 'pictures.image as img')
             ->distinct()
             ->get();
+            $info4[] = $res4;
+        }
+       // return $info4;
+        //######################################
         $ar = fopen("informe/archivo.txt", "w");
         fwrite($ar, "Usuario*Grupo*nombre_reto*descripcion_reto*palabras*Evidencia_Lecturas*Evidencia_videos*Evidencia_Salidas*Descrip_imagen*Url Video*Link imagen*Capitulo\n");
         $array_num = count($info);
@@ -334,29 +356,63 @@ class ReportcompletosController extends Controller
         $linkout = "https://glearning.com.co/storage/gameoutdoor/";
         $linkfoto = "https://glearning.com.co/storage/gamefoto/";
         //videos
-        for($i=0; $i<$array_num; $i++){
+        //return $info;
+        /*for($i=0; $i<$array_num; $i++){
             $des = preg_replace("/[\r\n|\n|\r]+/", " ", $info[$i]->descripcion);
             $pal = preg_replace("/[\r\n|\n|\r]+/", " ", $info[$i]->palabras);
             $vid = preg_replace("/[\r\n|\n|\r]+/", " ", $info[$i]->Evidencia_videos);
             fwrite($ar, $info[$i]->Usuario.'-'.$info[$i]->Apellido.'*'.$info[$i]->grup.'*'.$info[$i]->nombre_reto.'*'.$des.'*'.$pal.'*'.'*'.$vid.'*'.'*'.'*'.'*'.'*'.$info[$i]->cap.PHP_EOL);
+            }*/
+        //#################################
+       foreach ($info as $infousu) {
+            foreach ($infousu as $video) {
+                $des = preg_replace("/[\r\n|\n|\r]+/", " ", $video->descripcion);
+                $pal = preg_replace("/[\r\n|\n|\r]+/", " ", $video->palabras);
+                $vid = preg_replace("/[\r\n|\n|\r]+/", " ", $video->Evidencia_videos);
+                fwrite($ar, $video->Usuario.'-'.$video->Apellido.'*'.$video->grup.'*'.$video->nombre_reto.'*'.$des.'*'.$pal.'*'.'*'.$vid.'*'.'*'.'*'.'*'.'*'.$video->cap.PHP_EOL); 
             }
+        }
         //lecturas
-        for($i=0; $i<count($info2); $i++){
+        /*for($i=0; $i<count($info2); $i++){
             $des = preg_replace("/[\r\n|\n|\r]+/", " ", $info2[$i]->descripcion);
             $pal = preg_replace("/[\r\n|\n|\r]+/", " ", $info2[$i]->palabras);
             $lec = preg_replace("/[\r\n|\n|\r]+/", " ", $info2[$i]->Evidencia_Lecturas);
             //lecturas
             fwrite($ar, $info2[$i]->Usuario.'-'.$info2[$i]->Apellido.'*'.$info[$i]->grup.'*'.$info2[$i]->nombre_reto.'*'.$des.'*'.$pal.'*'.$lec.'*'.'*'.'*'.'*'.'*'.'*'.$info2[$i]->cap.PHP_EOL);
-            }
+            }*/
+        //###################################
+        foreach ($info2 as $infousu1) {
+            foreach ($infousu1 as $lectura) {
+                $des = preg_replace("/[\r\n|\n|\r]+/", " ", $lectura->descripcion);
+                $pal = preg_replace("/[\r\n|\n|\r]+/", " ", $lectura->palabras);
+                $lec = preg_replace("/[\r\n|\n|\r]+/", " ", $lectura->Evidencia_Lecturas);
+                //lecturas
+                fwrite($ar, $lectura->Usuario.'-'.$lectura->Apellido.'*'.$lectura->grup.'*'.$lectura->nombre_reto.'*'.$des.'*'.$pal.'*'.$lec.'*'.'*'.'*'.'*'.'*'.'*'.$lectura->cap.PHP_EOL);
+         }
+        }
+        
         //evidencia de salidas
-        for($i=0; $i<count($info3); $i++){
+        /* for($i=0; $i<count($info3); $i++){
             $des = preg_replace("/[\r\n|\n|\r]+/", " ", $info3[$i]->descripcion);
             $pal = preg_replace("/[\r\n|\n|\r]+/", " ", $info3[$i]->palabras);
             $sal = preg_replace("/[\r\n|\n|\r]+/", " ", $info3[$i]->evioutdoor);
             $link = $linkout.$info3[$i]->img;
             //lecturas
             fwrite($ar, $info3[$i]->Usuario.'-'.$info3[$i]->Apellido.'*'.$info[$i]->grup.'*'.$info3[$i]->nombre_reto.'*'.$des.'*'.$pal.'*'.'*'.'*'.$sal.'*'.'*'.$info3[$i]->video.'*'.$link.'*'.$info3[$i]->cap.PHP_EOL);
+            }*/
+        //##############################
+         //evidencia de salidas
+        foreach ($info3 as $infousu3) {
+            foreach ($infousu3 as $salida) {
+                $des = preg_replace("/[\r\n|\n|\r]+/", " ", $salida->descripcion);
+                $pal = preg_replace("/[\r\n|\n|\r]+/", " ", $salida->palabras);
+                $sal = preg_replace("/[\r\n|\n|\r]+/", " ", $salida->evioutdoor);
+                $link = $linkout.$salida->img;
+                //lecturas
+                fwrite($ar, $salida->Usuario.'-'.$salida->Apellido.'*'.$salida->grup.'*'.$salida->nombre_reto.'*'.$des.'*'.$pal.'*'.'*'.'*'.$sal.'*'.'*'.$salida->video.'*'.$link.'*'.$salida->cap.PHP_EOL);
             }
+        }
+        /*
         //evidencia imagenes
         for($i=0; $i<count($info4); $i++){
             $des = preg_replace("/[\r\n|\n|\r]+/", " ", $info4[$i]->descripcion);
@@ -365,11 +421,55 @@ class ReportcompletosController extends Controller
             $linkf = $linkfoto.$info4[$i]->img;
             //lecturas
             fwrite($ar, $info4[$i]->Usuario.'-'.$info4[$i]->Apellido.'*'.$info[$i]->grup.'*'.$info4[$i]->nombre_reto.'*'.$des.'*'.$pal.'*'.'*'.'*'.'*'.$ev.'*'.$info4[$i]->video.'*'.$linkf.'*'.$info4[$i]->cap.PHP_EOL);
+            }*/
+
+        //#################################
+        //evidencia imagenes
+       
+        foreach ($info4 as $infousu4) {
+            foreach ($infousu4 as $imagen) {
+                $des = preg_replace("/[\r\n|\n|\r]+/", " ", $imagen->descripcion);
+                $pal = preg_replace("/[\r\n|\n|\r]+/", " ", $imagen->palabras);
+                $ev = preg_replace("/[\r\n|\n|\r]+/", " ", $imagen->evipic);
+                $linkf = $linkfoto.$imagen->img;
+                //lecturas
+                fwrite($ar, $imagen->Usuario.'-'.$imagen->Apellido.'*'.$imagen->grup.'*'.$imagen->nombre_reto.'*'.$des.'*'.$pal.'*'.'*'.'*'.'*'.$ev.'*'.$imagen->video.'*'.$linkf.'*'.$imagen->cap.PHP_EOL);
             }
+        }
+        
         fclose($ar);
-     }  
-      //return back();
-      return response()->download('informe/archivo.txt');
+        //================ Acomodar os datos del archiv para que salgan ordenados ================
+        // Leer datos del archivo de texto
+            $fileContents = file_get_contents('informe/archivo.txt');
+            $dataArray = explode(PHP_EOL, $fileContents);
+
+            // Omitir la primera línea
+            $firstLine = array_shift($dataArray);
+            $dataArray = array_filter($dataArray);
+            // Definir una función de comparación para ordenar por Grupo
+            // Ordenar el arreglo de datos por el campo "Grupo"
+                usort($dataArray, function ($a, $b) {
+                    $columnsA = explode('*', $a);
+                    $columnsB = explode('*', $b);
+                    
+                    $grupoA = isset($columnsA[1]) ? $columnsA[1] : ''; // Índice 1 es el campo Grupo
+                    $grupoB = isset($columnsB[1]) ? $columnsB[1] : '';
+                    
+                    return strcmp($grupoA, $grupoB);
+                });
+                // Escribir los datos ordenados en el archivo
+                $header = "Usuario*Grupo*nombre_reto*descripcion_reto*palabras*Evidencia_Lecturas*Evidencia_videos*Evidencia_Salidas*Descrip_imagen*Url Video*Link imagen*Capitulo";
+               // Agregar el encabezado al principio de los datos ordenados
+                $sortedContents = $header . PHP_EOL . implode(PHP_EOL, $dataArray);
+                //Datos Completos
+                file_put_contents("informe/nuevoarchivo.txt", $sortedContents);
+        //=============================
+       }  
+      //
+      return response()->download('informe/nuevoarchivo.txt');
+    }else{
+        return back();
+    }
 
     }
     //buscar usuarios por grupos

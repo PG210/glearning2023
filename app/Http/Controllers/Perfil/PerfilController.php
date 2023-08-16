@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Session;
+use App\PosUsuModel\SubcapUser;//se agrego esta parte
 use Dompdf\Dompdf;
 use Illuminate\Support\Facades\View;
 
@@ -75,6 +76,8 @@ class PerfilController extends Controller
 
     //actualizar perfil de usuario desde el admin
    public function actualizarusuadmin(Request $request, $id){
+        $gr = $request->input('grupo');
+        
         $actu =User::findOrfail($id);
         $actu->firstname = $request->input('nombre');
         $actu->lastname = $request->input('apellido');
@@ -85,7 +88,36 @@ class PerfilController extends Controller
         if($request->pass != Null){
             $actu->password=Hash::make($p);
         }
-        $actu->id_grupo = $request->input('grupo');
+         //#########################
+        //validar que al cambiar de grupo se debe vincular nuevamente la info.
+        //return $actu->id_grupo;
+        if ($actu->id_grupo == $gr){
+            $actu->id_grupo = $gr;
+        }else{
+            SubcapUser::where('user_id', $id)->delete();
+            //validar que el grupo nuevo ya tenga capitulos asignados
+            $capitulos = DB::table('subchapter_user')
+                        ->join('users', 'subchapter_user.user_id', '=', 'users.id')
+                        ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
+                        ->select('grupos.id as idgrup', 'grupos.descrip', 'subchapter_user.chapter_id')
+                        ->where('grupos.id', $gr)
+                        ->distinct('chapter_id')
+                        ->get();
+            if(!empty($capitulos)){
+                foreach($capitulos as $c){
+                        $AddCap = new SubcapUser();
+                        $AddCap->order = $c->chapter_id; // este es el capitulo
+                        $AddCap->chapter_id = $c->chapter_id;
+                        $AddCap->subchapter_id = 1;
+                        $AddCap->user_id = $id;
+                        $AddCap->estado = 0;
+                        $AddCap ->save();
+                }
+                }
+                $actu->id_grupo = $gr;
+            
+        }
+        //#############################
         $actu->save();
         Session::flash('datreg', 'Usuario actualizado exitosamente!');
         return back();
