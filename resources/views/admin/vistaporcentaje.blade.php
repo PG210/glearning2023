@@ -111,7 +111,8 @@
                                   <th class="text-center">Rango 16-25%</th>
                                   <th class="text-center">Rango 26-50%</th>
                                   <th class="text-center">Rango 51-80%</th>
-                                  <th class="text-center">Rango 81-100%</th>
+                                  <th class="text-center">Rango 81-99%</th>
+                                  <th class="text-center">Rango 100%</th> <!--se agrego 28 - 08-2023-->
                                   <th class="text-center">Descripción</th>
                               </tr>
                           </thead>
@@ -119,13 +120,13 @@
                             @if(isset($var1) && isset($var2) && isset($var3) && isset($var4) && isset($var5) && isset($totPorCap) && isset($contar))
                               @php
                                   $groupedData = [];
-                                  foreach([$var1, $var2, $var3, $var4, $var5] as $data) {
+                                  foreach([$var1, $var2, $var3, $var4, $var5, $var6] as $data) { /*Se agrego 28-08-2023 */
                                       foreach ($data as $item) {
                                           $capitulo = $item['capitulo'];
                                           if (!isset($groupedData[$capitulo])) {
                                               $groupedData[$capitulo] = [
                                                   'capitulo' => $capitulo,
-                                                  'rangos' => array_fill(1, 5, ['total' => 0]),
+                                                  'rangos' => array_fill(1, 6, ['total' => 0]), /*Se agrego 28-08-23 */
                                               ];
                                           }
 
@@ -156,7 +157,7 @@
 
                                       @endforeach
                         
-                                      @for ($i = 1; $i <= 5; $i++)
+                                      @for ($i = 1; $i <= 6; $i++) <!--se agrego 28-08-23-->
                                            <?php
                                            $por = round(($capituloData['rangos'][$i]['total'] * 100) / $contar, 0);
                                            ?>
@@ -171,12 +172,12 @@
                                         <div id="myModal{{ $capituloData['capitulo'] }}" class="modal fade" role="dialog">
                                             <div class="modal-dialog modal-lg">
                                                 <!-- Modal content -->
-                                                <div class="modal-content">
+                                                <div class="modal-content" style="border-radius:20px;">
                                                     <div class="modal-header">
                                                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                                                         <h4 class="modal-title">Detalle del capítulo: {{ $capituloData['capitulo'] }}</h4>
                                                     </div>
-                                                    <div class="modal-body">
+                                                    <div class="modal-body scrollable-container">
                                                    <!--informacion de contenido-->
                                                    <div class="box-body table-responsive no-padding">
                                                         <!--================================================-->  
@@ -189,16 +190,41 @@
                                                                       <th class="text-center">Rango 16-25%</th>
                                                                       <th class="text-center">Rango 26-50%</th>
                                                                       <th class="text-center">Rango 51-80%</th>
-                                                                      <th class="text-center">Rango 81-100%</th>
+                                                                      <th class="text-center">Rango 81-99%</th>
+                                                                      <th class="text-center">Rango 100%</th> <!-- agregado 28/08/2023-->
                                                                   </tr>
                                                               </thead>
                                                               <tbody style="background-color:#EFF4F1; color:black;">
-                                                              <td class="text-center">0%</td>
-                                                              @for ($i = 1; $i <= 5; $i++)
+                                                              <td class="text-left">
+                                                               <!--aqui se puede imprimir los ceros-->
+                                                               @foreach($datacompleta as $dt)
+                                                                 @if($capituloData['capitulo'] == $dt['capitulo'])
+                                                                  @php
+                                                                  $varCorreos[] = [
+                                                                                      'email' => $dt['email'],
+                                                                                      'nom' => $dt['nom']
+                                                                                  ];
+                                                                  @endphp
+                                                                  <p> <a href="mailto:{{$dt['email']}}?subject=Información G-Learning&body=¡Hola! Solo quería recordarte que es importante seguir avanzando en tu aprendizaje. ¡No te detengas y sigue mejorando tus habilidades! %0D%0A%0D%0A Visita: https://glearning.com.co %0D%0A"><i class="fa fa-envelope text-success"></i></a> {{$dt['nom']}} {{$dt['ape']}}</p> 
+                                                                @endif
+                                                               @endforeach
+                                                               <p>
+                                                                 @php
+                                                                 var_dump($varCorreos);
+                                                                  $varCorreo = $varCorreos;
+                                                                  $rango = "0%"
+                                                                @endphp
+
+                                                                <button class="btn btn-info" id="boton{{ $capituloData['capitulo'] }}"  onclick='enviarCorreos(<?= json_encode($varCorreo) ?>, "<?= $rango ?>")'>Enviar Correos</button>
+                                                               
+                                                               </p>
+                                                               <!--end ceros-->
+                                                              </td>
+                                                              @for ($i = 1; $i <= 6; $i++)
                                                                   <td class="text-left">
                                                                   @foreach($reporusu as $r)
                                                                   @if($i == $r['rango'] && $capituloData['capitulo'] == $r['capitulo']) 
-                                                                    <p>{{$r['nombre']}} {{$r['apellido']}} </p> 
+                                                                    <p> {{$r['nombre']}} {{$r['apellido']}} </p> 
                                                                     <!--end modal =================================== -->
                                                                   @endif
                                                                 @endforeach
@@ -234,10 +260,19 @@
     <!-- /.box-body -->
 </div>
 
-
-
-
-
-
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    function enviarCorreos(correos, rango) {
+         console.log(rango);
+        axios.post('/enviar-correos/'+ rango, { correos: correos })
+            .then(function(response) { 
+                toastr.success('Correos enviados correctamente', 'Acción completada!', {timeOut:3000});
+            })
+            .catch(function(error) {
+                toastr.error('Error al enviar correos', 'Lo sentimos!', {timeOut:3000});
+             
+            });
+    }
+</script>
 
 @endsection

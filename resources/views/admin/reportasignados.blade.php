@@ -11,7 +11,7 @@
 
 
 @section('usuarios')
-<h1>RETOS COMPLETOS</h1>
+<h1>RETOS COMPLETOS </h1>
 
 <div class="box-body table-responsive no-padding">
     <table class="table table-hover">

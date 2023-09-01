@@ -167,6 +167,7 @@
                                 <th>Nombre</th>
                                 <th>Nombre de Usuario</th>
                                 <th>Grupo</th>
+                                <th>Estado</th>
                                 <th>Nivel</th>
                                 <th>Porcentaje</th>
                                 <th>Puntos S</th>
@@ -182,6 +183,11 @@
                                     <td>{{ $user->firstname }} {{ $user->lastname }} </td>                
                                     <td>{{ $user->username }} </td>
                                     <td>{{$user->descrip}}</td>
+                                    @if($user->estado == 0)
+                                    <td><span style="background-color:yellow">Inactivo</span></td>
+                                    @else
+                                    <td>Activo</td>
+                                    @endif
                                     <td>{{$niveles[$user->id] ?? 0}}</td>
                                     <td>
                                     <div class="panel-group" id="accordion">
@@ -229,6 +235,11 @@
                                            <td>{{ $res->firstname }} {{ $res->lastname }} </td> 
                                            <td>{{ $res->username }} </td>
                                             <td>{{ $res->descrip}}</td>
+                                            @if($res->estado == 0)
+                                            <td><span style="background-color:yellow">Inactivo</span></td>
+                                            @else
+                                            <td>Activo</td>
+                                            @endif
                                             <td>{{ $niveles[$res->id] ?? 0}}</td>
                                             <!--aqui validar que ya completamos-->
                                             <td>

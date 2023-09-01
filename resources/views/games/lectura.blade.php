@@ -47,6 +47,16 @@
               {{ $retos->description }}
             </p>
             <tiempos-component tiempoasignado="{{ $retos->time }}"></tiempos-component>
+
+               <!--descargar material-->
+               <br>
+              <div class="form-group visible-xs"> 
+                <a href="/storage/public/{{ $retos->material }}" target="_blank" class="btn btn-block btn-info" style="white-space:normal;" download>
+                  <i class="fa fa-download"></i>
+                  Descargar material
+                </a>                                    
+              </div> 
+              <!--end material-->  
             
             <form method="POST" enctype="multipart/form-data" action="{{ route('gamesplay.lectura', 5) }}">
                 @csrf
@@ -55,8 +65,8 @@
 
                 <div class="row" style="margin:4% 0% 0% 0%;text-align: -webkit-center;">
                   <div class="col-md-12">
-
                     <div class="panel-group">
+      
                       <div class="panel panel-default" style="box-shadow: 0px 5px 6px 0px #670024;border-color: #ea0d5b;">
                         <div class="panel-heading" style="background-color: #ea0d5b; color: #fff;text-align: center;">
                           <h4 class="panel-title">

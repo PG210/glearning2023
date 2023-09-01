@@ -1,6 +1,25 @@
 @extends('layouts.app')
 
 @section('content')
+
+<style>
+   @media (max-width: 767px) {
+    .mobile-style {
+      width: 100%;
+      height: auto;
+      /* Otros estilos específicos para celular */
+    }
+  }
+
+   /* Estilos para pantallas grandes (escritorios) */
+   @media (min-width: 768px) {
+    .desktop-style {
+      width: 100%;
+      height: 420px;
+      /* Otros estilos específicos para pantallas grandes */
+    }
+  }
+</style>
     <!-- /.sidebar-menu -->
   </section>
   <!-- /.sidebar -->
@@ -210,10 +229,10 @@
             <div class="media">                
               <div class="media-body">
               @if (strpos($capitulos->videoIntro, 'http') !== false) 
-                <iframe src="{{$capitulos->videoIntro}}" id="framevideos" class="{{ $videodisplay }}" frameborder="0" style="width:100%; height:420px;" allowfullscreen></iframe>
+                <iframe src="{{$capitulos->videoIntro}}" id="framevideos" class="{{ $videodisplay }}" style="width:100%; height:420px; " frameborder="0" allowfullscreen></iframe>
               @else 
               <video src="{{ asset('/storage/public/videos/' .$capitulos->videoIntro) }}" id="videoIntro" class="{{$videodisplay}}"
-                     style="width:100%; height:420px; object-fit: cover; "  controls  allowfullscreen></video>
+                     style="width:100%; height:auto; object-fit: cover; "  controls  allowfullscreen></video>
               @endif
               </div>
             </div>

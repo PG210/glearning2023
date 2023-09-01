@@ -170,6 +170,7 @@ class GamesController extends Controller
         //obtener los datos del jugador
         $userplayer = User::find($userauthid);
         
+        
         //obtener las respuestas elegidas por el jugador
         $valorjuego = $request->valorjuego;
         $usuario = $request->usuario;

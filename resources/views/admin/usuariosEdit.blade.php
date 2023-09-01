@@ -159,7 +159,7 @@
             <div class="formi">
                 <div class="card">
                   <div class="title m-b-md">
-                     ACTUALIZAR USUARIO
+                     ACTUALIZAR USUARIO 
                   </div>
                     <div class="card-body">
                         <form method="POST" id="regForm" enctype="multipart/form-data" action="{{ route('usuario.update', $usuarios->id) }}">

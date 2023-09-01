@@ -21,7 +21,7 @@ class ReportcompletosController extends Controller
         /*Aqui se agrego los users */
         $res = DB::table('users')
                   ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
-                  ->select('users.id', 'firstname', 'lastname', 'username', 'email', 'level', 's_point', 'i_point', 'g_point', 'grupos.descrip')
+                  ->select('users.id', 'firstname', 'lastname', 'username', 'email', 'level', 's_point', 'i_point', 'g_point', 'grupos.descrip', 'estado')
                   ->orderBy('s_point', 'desc')
                   ->get();
           //buscar las personas con las tareas pendientes y capitulos terminados
@@ -68,6 +68,8 @@ class ReportcompletosController extends Controller
           });//este me da los niveles 
         /*finaliza */
         $grupos = DB::table('grupos')->get();
+
+       // return $res;
         return view('admin.reportcompletos')->with('usuarios', $res)->with('grup', $grupos)->with('bus', $al)->with('niveles', $niveles);
     }
     

@@ -67,7 +67,7 @@
                           <iframe width="600" height="315" src="{{ $retos->urlvideo }}" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                           @else 
                           <div style="padding:0% 10% 0% 10%;text-align: -webkit-center;">
-                              <video src="{{ asset('/storage/public/videos/' .$retos->urlvideo) }}" style="width:100%; height:450px; object-fit: cover;" controls></video>
+                              <video src="{{ asset('/storage/public/videos/' .$retos->urlvideo) }}" style="width:100%; height:auto; object-fit: cover;" controls></video>
                           </div>
                           @endif
                       </div>

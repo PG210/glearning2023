@@ -72,7 +72,7 @@ function codeBD(){
               <tiempos-component tiempoasignado="{{ $retos->time }}"></tiempos-component>
 
               <!-- juego ahorcado -->
-              <div class="webgl-content">
+              <div class="webgl-content hidden-xs">
                 <button class="btn btn-warning btn-lg" id="boton" onclick="senddata(palabra,modo_juego)" style="visibility: hidden; width: 50%;margin-top: 2%;margin-left: 20%;margin-right: -25%;">Empezar Juego</button>
                 
                 <div id="gameContainer" style="width: 95%; height: 580px; margin: auto"></div>
@@ -95,7 +95,24 @@ function codeBD(){
                 </script>
               </div>
             </div>
+              <!--aqui termina juego-->
+              <!--aqui avanzar -->
+                <!--pantallas xs-->
+                <div class="visible-xs">
+                    <div class="container">
+                      <p>Este juego solamente esta disponible en pantalla de Computadora</p>
+                      <form method="POST" action="{{ route('gamesplay.unitygamesplayed', 5) }}">
+                        @csrf
+                        <input type="hidden" name="valorjuego" id="asdf" value="1">
+                        <input type="hidden" name="idretoactual" value="{{ $retos->id }}">
+                        <input type="hidden" name="usuario" value="{{ Auth::user()->id }}">
 
+                        <button class="btn btn-success btn-lg" id="boton_BD" style="width: 50%;margin-top: 2%;margin-left: 20%;margin-right: -25%;">CONTINUAR</button>                
+                      </form>
+                    </div>
+                </div>
+                <!--end pantallas xs-->
+              <!--end avanzar-->
               </div>
               <!-- /.user-block -->
             </div>

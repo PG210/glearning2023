@@ -3,9 +3,12 @@
 
 @section('content')
 
+
 </section>
 <!-- /.sidebar -->
 </aside>
+
+
 
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -473,6 +476,7 @@ if ($retospending == 0) {
 <!-- /.content-wrapper -->
 
 <!-- Main Footer -->
+<div  class="visible-xs" style="background-color:#ecf0f5; padding-top: 20em; ">
 <footer class="main-footer">
   <div class="pull-right hidden-xs">
     <b>Version</b> 1.1.2
@@ -480,6 +484,19 @@ if ($retospending == 0) {
   <strong>Copyright &copy; 2018 <a href="#">Evolución</a>.</strong> All rights
   reserved.
 </footer>
+</div>
+
+<!---footer--para web-->
+<div  class=" hidden-xs">
+<footer class="main-footer">
+  <div class="pull-right hidden-xs">
+    <b>Version</b> 1.1.2
+  </div>
+  <strong>Copyright &copy; 2018 <a href="#">Evolución</a>.</strong> All rights
+  reserved.
+</footer>
+</div>
+<!--end footer-->
 <style>
   ul.navega li {
   display: inline;

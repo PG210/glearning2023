@@ -1,6 +1,29 @@
 @extends('layouts.sopaletras')
 
 @section('content')
+
+<style>
+
+@keyframes rotate {
+      from {
+        transform: rotate(90deg);
+      }
+      to {
+        transform: rotate(270deg);
+      }
+    }
+
+    /* Aplicamos la rotación solo cuando la pantalla cambia a orientación horizontal */
+    @media screen and (max-width: 767px){
+  
+      .rotating-object {
+      animation: rotate 0.5s linear forwards;
+     
+    }
+    
+  }
+
+  </style>
     <!-- /.sidebar-menu -->
   </section>
   <!-- /.sidebar -->
@@ -73,17 +96,22 @@
               <div class="user-block">
 
               <h1>COMENZANDO EL RETO - SOPA DE LETRAS</h1>
+             
               <p style="text-align: center;">{{ $retos->description }}</p>
               
-              <p>Tienes {{ $retos->time }} minutos para terminar</p>
+              <p style="text-align: center;">Tienes {{ $retos->time }} minutos para terminar</p>
               <tiempos-component tiempoasignado="{{ $retos->time }}"></tiempos-component>
-
-              <div class="webgl-content">
+              
+              <!--aqui inicia el camino-->
+              <div class="webgl-content hidden-xs">
               
               <button class="btn btn-warning btn-lg" id="boton" onclick="senddata(limpia,modo_juego)" style="visibility: hidden; width: 60%;margin-top: 1%;margin-left: 17%;margin-right: -25%;">Empezar Juego</button>
               
-              <div id="unityContainer" style="width: 95%; height: 580px; margin: auto"></div>
-
+             <!--este es el juego de unity -->
+              <div  id="unityContainer"  style="width: 95%; height: 580px; margin: auto"></div>
+              <!--final juego de unity -->
+              
+               
               <form method="POST" action="{{ route('gamesplay.unitygamesplayed', 12) }}">
                 @csrf
                 <input type="hidden" name="valorjuego" id="asdf" value="">
@@ -105,7 +133,21 @@
                 
               </div>
               </div>
-
+              <!--aqui termina el juego-->
+              <!--pantallas xs-->
+               <div class="visible-xs">
+                   <div class="container">
+                     <p>Este juego solamente esta disponible en pantalla de Computadora</p>
+                     <form method="POST" action="{{ route('gamesplay.unitygamesplayed', 12) }}">
+                      @csrf
+                      <input type="hidden" name="valorjuego" id="asdf" value="1">
+                      <input type="hidden" name="idretoactual" value="{{ $retos->id }}">
+                      <input type="hidden" name="usuario" value="{{ Auth::user()->id }}">
+                      <button class="btn btn-success btn-lg" id="boton_BD" style="width: 50%;margin-top: 2%;margin-left: 20%;margin-right: -25%;">CONTINUAR</button>                
+                    </form>
+                   </div>
+               </div>
+              <!--end pantallas xs-->
               </div>
               <!-- /.user-block -->
             </div>

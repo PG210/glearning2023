@@ -76,8 +76,10 @@ class PerfilController extends Controller
 
     //actualizar perfil de usuario desde el admin
    public function actualizarusuadmin(Request $request, $id){
+       // return $request;
         $gr = $request->input('grupo');
-        
+        $p = $request->input('passw');
+
         $actu =User::findOrfail($id);
         $actu->firstname = $request->input('nombre');
         $actu->lastname = $request->input('apellido');
@@ -85,7 +87,8 @@ class PerfilController extends Controller
         $actu->username = $request->input('usuario');
         $actu->email = $request->input('email');
         $actu->avatar_id = $request->input('avat');
-        if($request->pass != Null){
+        if($request->passw != Null){
+           
             $actu->password=Hash::make($p);
         }
          //#########################

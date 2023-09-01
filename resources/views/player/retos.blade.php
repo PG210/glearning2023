@@ -40,7 +40,7 @@
                           <div class="row" style="margin:4% 0% 0% 0%;text-align: -webkit-center;">
                             <div class="col-md-12">
                               <div class="form-group">                
-                                <a type="button" style="font-size: 1.7rem; width: 45%;" class="btn btn-block btn-primary" href="{{ route('player.startchallenge', ['id' => $quix->id, 'idreto' => $retos->id]) }}">
+                                <a type="button" style="font-size: 1.7rem; width: 45%; white-space: nowrap;" class="btn btn-block btn-primary" href="{{ route('player.startchallenge', ['id' => $quix->id, 'idreto' => $retos->id]) }}">
                                     <strong> Comenzar:</strong> {{ $quix->name }}
                                 </a>
                               </div>                                  
@@ -98,7 +98,7 @@
                         <div class="row" style="margin:4% 0% 0% 0%;text-align: -webkit-center;">
                           <div class="col-md-12">
                             <div class="form-group">                 
-                              <a href="{{ route('games.ahorcado', $retos->id) }}" type="button" style="font-size: 1.7rem; width: 45%;" class="btn btn-block btn-primary">
+                              <a href="{{ route('games.ahorcado', $retos->id) }}" type="button" style="font-size: 1.7rem; width: 45%; white-space: nowrap;" class="btn btn-block btn-primary">
                                 <strong> Comenzar:</strong> {{ $retos->name }}
                               </a>
                             </div>
@@ -155,7 +155,7 @@
                         <div class="row" style="margin:4% 0% 0% 0%;text-align: -webkit-center;">
                           <div class="col-md-12">
                             <div class="form-group">                 
-                              <a href="{{ route('games.sopaletras', $retos->id) }}" type="button" style="font-size: 1.7rem; width: 45%;" class="btn btn-block btn-primary">
+                              <a href="{{ route('games.sopaletras', $retos->id) }}" type="button" style="font-size: 1.7rem; width: 45%; white-space: nowrap;" class="btn btn-block btn-primary">
                                   <strong> Comenzar:</strong> {{ $retos->name }}
                               </a>
                             </div>
@@ -212,7 +212,7 @@
                       <div class="row" style="margin:4% 0% 0% 0%;text-align: -webkit-center;">
                         <div class="col-md-12">
                           <div class="form-group">                 
-                            <a href="{{ route('games.rompecabezas', $retos->id) }}" type="button" style="font-size: 1.7rem; width: 45%;" class="btn btn-block btn-primary">
+                            <a href="{{ route('games.rompecabezas', $retos->id) }}" type="button" style="font-size: 1.7rem; width: 45%; white-space: nowrap;" class="btn btn-block btn-primary">
                               <strong> Comenzar:</strong> {{ $retos->name }}
                             </a>
                           </div>
@@ -272,7 +272,7 @@
                         <div class="row" style="margin:4% 0% 0% 0%;text-align: -webkit-center;">
                           <div class="col-md-12">
                             <div class="form-group">                 
-                              <a href="{{ route('games.seevideos', $retos->id) }}" type="button" style="font-size: 1.7rem; width: 45%;" class="btn btn-block btn-primary">
+                              <a href="{{ route('games.seevideos', $retos->id) }}" type="button" style="font-size: 1.7rem; width: 45%; white-space: nowrap;" class="btn btn-block btn-primary">
                                   <strong> Comenzar:</strong> {{ $retos->name }}
                               </a>
                             </div>
@@ -300,7 +300,7 @@
                                 <div class="panel panel-default" style="box-shadow: 0px 5px 6px 0px #670024;border-color: #ea0d5b;">
                                   <div class="panel-heading" style="background-color: #ea0d5b; color: #fff;text-align: center;">
                                     <h4 class="panel-title">
-                                      <a data-toggle="collapse" href="#collapse1">Ver Material</a>
+                                      <a data-toggle="collapse" href="#collapse1">Ver Material </a>
                                     </h4>
                                   </div>
                                   <div id="collapse1" class="panel-collapse collapse">
@@ -330,7 +330,7 @@
                       <div class="row" style="margin:4% 0% 0% 0%;text-align: -webkit-center;">
                         <div class="col-md-12">
                           <div class="form-group">                
-                            <a href="{{ route('games.upfotos', $retos->id) }}" type="button" style="font-size: 1.7rem; width: 45%;" class="btn btn-block btn-primary">
+                            <a href="{{ route('games.upfotos', $retos->id) }}" type="button" style="font-size: 1.7rem; width: 45%; white-space: nowrap;" class="btn btn-block btn-primary">
                               <strong> Comenzar:</strong> {{ $retos->name }}
                             </a>
                           </div>
@@ -388,7 +388,7 @@
                         <div class="row" style="margin:4% 0% 0% 0%;text-align: -webkit-center;">
                           <div class="col-md-12">
                             <div class="form-group">                 
-                              <a href="{{ route('games.lectura', $retos->id) }}" type="button" style="font-size: 1.7rem; width: 45%;" class="btn btn-block btn-primary">
+                              <a href="{{ route('games.lectura', $retos->id) }}" type="button" style="font-size: 1.7rem; width: 45%; white-space: nowrap;" class="btn btn-block btn-primary">
                                 <strong> Comenzar:</strong> {{ $retos->name }}
                               </a>
                             </div>   
@@ -412,8 +412,16 @@
                         @if( !empty($retos->material) ) 
                           <div class="col-md-12 col-sm-8 col-xs-12">
                             <div class="info-box">                              
-                              
-
+                             <!--descargar material-->
+                             <br>
+                                  <div class="form-group visible-xs"> 
+                                    <a href="/storage/public/{{ $retos->material }}" target="_blank" class="btn btn-block btn-info" style="white-space:normal;" download>
+                                      <i class="fa fa-download"></i>
+                                      Descargar material
+                                    </a>                                    
+                                  </div> 
+                                  <!--end material-->  
+                            
                               <div class="panel-group">
                                 <div class="panel panel-default" style="box-shadow: 0px 5px 6px 0px #670024;border-color: #ea0d5b;">
                                   <div class="panel-heading" style="background-color: #ea0d5b; color: #fff;text-align: center;">
@@ -447,7 +455,7 @@
                       <div class="row" style="margin:4% 0% 0% 0%;text-align: -webkit-center;">
                         <div class="col-md-12">
                           <div class="form-group">                
-                            <a href="{{ route('games.outdoor', $retos->id) }}" type="button" style="font-size: 100%; width: 45%;" class="btn btn-block btn-primary">
+                            <a href="{{ route('games.outdoor', $retos->id) }}" type="button" style="font-size: 100%; width: 45%; white-space: nowrap;" class="btn btn-block btn-primary">
                               <strong> Comenzar:</strong> {{ $retos->name }}
                             </a>
                           </div>

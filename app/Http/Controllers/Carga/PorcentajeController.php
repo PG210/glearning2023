@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\PosUsuModel\GruposModel;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Mail;//se agrego para correo
+use App\Mail\CorreoRecordar;//se agrego email
 use DB;
 
 class PorcentajeController extends Controller
@@ -152,14 +154,62 @@ public function usuariosbus($data, $rango){
                 }
             }
         }
+     //ordenar la lista de usuarios
+   usort($bloque, function($a, $b) {
+        return strcmp($a["nombre"], $b["nombre"]);
+    });
 
     return $bloque;
 }
+//============================================= validar arrays separados
+public function valarray($array, $resultados, $c){
+    $consul = [];
+    $dator = [];
+    if(!empty($array)){
+        $data1id = array_column($array, 'usuario');
+        $resultados_array = json_decode(json_encode($resultados), true);
+        $data2id = array_column($resultados_array, 'id');
+
+        $diff = array_diff($data2id, $data1id);
+        //reorrer
+       
+        foreach ($diff as $value) {
+           $consul[] = DB::table('users')
+                      ->where('id', $value)
+                      ->select('id', 'firstname as nom', 'lastname as ape', 'email')
+                      ->get();
+        }
+       //##############################
+       $cap = $c; 
+       //###Agregar un campo capitulo a la data convertir en array manejable
+        $dator = $consul;
+        // Convertir objetos a arrays asociativos
+        $dator = array_map(function($item) {
+            return (array) $item[0];
+        }, $dator);
+
+        // Agregar el campo "capitulo" a cada conjunto de datos
+        foreach ($dator as &$datoq) {
+            $datoq["capitulo"] = $cap;
+        }
+        unset($datoq); // Liberar la referencia al último elemento
+       
+       //###########################
+    }else{
+        $diff = '';
+    }
+   //ordenar la lista de usuarios
+   usort($dator, function($a, $b) {
+        return strcmp($a["nom"], $b["nom"]);
+    });
+
+   return $dator;
+}
 //###################################
 //============= Unir las variables paramandaruna sola
-public function unirvar($u1, $u2, $u3, $u4, $u5){
+public function unirvar($u1, $u2, $u3, $u4, $u5, $u6){ // se agrego la variable $u6
     $datosunidos = [];
-    foreach([$u1, $u2, $u3, $u4, $u5] as $datos) {
+    foreach([$u1, $u2, $u3, $u4, $u5, $u6] as $datos) {
      foreach ($datos as $item) {
          $cap = $item['capitulo'];
              $datosunidos[] = [
@@ -184,11 +234,14 @@ return $datosunidos;
       $res = DB::table('users')
               ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
               ->where('users.id_grupo', '=', $valselect)
+              ->where('users.estado', '=', 1)
               ->select('users.id', 'email', 'grupos.id as idgrup', 'grupos.descrip')
               ->orderBy('users.id', 'desc')
               ->get();
       $resultados = $res;
-      //return $res;
+      //return $resultados;
+      //#############################3
+     //return $resultados;
       //Obtiene el nombre del grupo
       $nomgrupo = GruposModel::findOrFail($valselect);
       $contar = count($res);
@@ -198,6 +251,7 @@ return $datosunidos;
         $res2 = DB::table('users')
                 ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
                 ->where('users.id_grupo', '=', $valselect)
+                ->where('users.estado', '=', 1)
                 ->select('grupos.id as idgrupo', 'grupos.descrip', DB::raw('count(users.id) as users_count'))
                 ->groupBy('grupos.id', 'grupos.descrip')
                 ->orderBy('grupos.id', 'desc')
@@ -205,7 +259,7 @@ return $datosunidos;
     
         $totalusergrup = $res2;
    // }
-   // return $totalusergrup;
+    //return $totalusergrup;
     //buscar las personas con las tareas pendientes y capitulos terminados
     $totTareas = DB::table('challenges')
               ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
@@ -234,7 +288,7 @@ return $datosunidos;
               $buscar[] = $resultadoConsulta;
          // }
       }
-     // return $buscar; totcap
+     
      $totPorCap = $this->totcap($buscar, $contar);
 
           $al = [];
@@ -289,7 +343,7 @@ return $datosunidos;
         $rango2 = ['min' => 16, 'max' => 25];
         $rango3 = ['min' => 26, 'max' => 50];
         $rango4 = ['min' => 51, 'max' => 80];
-        $rango5 = ['min' => 81, 'max' => 100];
+        $rango5 = ['min' => 81, 'max' => 99];
 
         // Inicializar arreglos para almacenar los resultados agrupados por rango de porcentaje
         $resultadosPorRango1 = []; //rango de 1 a 15
@@ -297,6 +351,7 @@ return $datosunidos;
         $resultadosPorRango3 = [];
         $resultadosPorRango4 = [];
         $resultadosPorRango5 = []; //rango de 81 a 100
+        $resultadosPorRango6 = []; //si estos valen 100 exactos o mas  
 
         // Agrupar los datos por el rango de porcentaje correspondiente
         foreach ($al as $item) {
@@ -365,9 +420,26 @@ return $datosunidos;
                         'porcentaje' => $porcentaje,
                     ];
                     break;
-               //rango del 81 al 100
+               //rango del 81 al 99
                 case $porcentaje >= $rango5['min'] && $porcentaje <= $rango5['max']:
                     $resultadosPorRango5[] = [
+                        'grupo' => $grupo,
+                        'nomgrup' => $nomgrup,
+                        'capitulo' => $capitulo,
+                        'usuarios_por_capitulo' => 1,
+                        'idusu' => $item['usuario'],
+                        'tcom' => $item['tcom'],
+                        'tfaltan' => $item['tfaltan'],
+                        'ttotal' => $item['ttotal'],
+                        'nivel' => $item['nivel'],
+                        'porcentaje' => $porcentaje,
+                    ];
+                    break;
+
+                //rango mayor al 100 %
+                //se agrego este caso 28/08/23
+                case $porcentaje >= '100':
+                    $resultadosPorRango6[] = [
                         'grupo' => $grupo,
                         'nomgrup' => $nomgrup,
                         'capitulo' => $capitulo,
@@ -389,24 +461,95 @@ return $datosunidos;
         $var2 = $this->tarporcap($resultadosPorRango2, '16-25', '2', $contar);
         $var3 = $this->tarporcap($resultadosPorRango3, '26-50', '3', $contar);
         $var4 = $this->tarporcap($resultadosPorRango4, '51-80', '4', $contar);
-        $var5 = $this->tarporcap($resultadosPorRango5, '81-100', '5', $contar);
-         
+        $var5 = $this->tarporcap($resultadosPorRango5, '81-99', '5', $contar);
+        $var6 = $this->tarporcap($resultadosPorRango6, '100', '6', $contar);  //se agrego este caso 28/08/23
        //return $var1;
+       
         //================consultar los usuarios asociados ==============
         $u1 =  $this->usuariosbus($resultadosPorRango1, 1);
         $u2 =  $this->usuariosbus($resultadosPorRango2, 2);
         $u3 =  $this->usuariosbus($resultadosPorRango3, 3);
         $u4 =  $this->usuariosbus($resultadosPorRango4, 4);
         $u5 =  $this->usuariosbus($resultadosPorRango5, 5);
-       //return $u5;
+        $u6 =  $this->usuariosbus($resultadosPorRango6, 6);   //se agrego este caso 28/08/23
+      
        //##############################################
-       $reporusu = $this->unirvar($u1, $u2, $u3, $u4, $u5);
+      
+       $reporusu = $this->unirvar($u1, $u2, $u3, $u4, $u5, $u6);  //se agrego este caso 28/08/23
+
         //return $reporusu;
-     // return $groupedData;
+       // return $groupedData;
+      // return $resultados;
+       $groupedData1 = [];
+       $groupedData2 = [];
+       $groupedData3 = [];
+       $groupedData4 = [];
+       $groupedData5 = [];
+       $groupedData6 = [];
+
+            foreach ($reporusu as $entry) {
+                $capitulo = $entry['capitulo'];
+               
+                switch (true) {
+                    case $capitulo === 1:
+                        $groupedData1[] = $entry;
+                        break;
+
+                    case $capitulo === 2:
+                        $groupedData2[] = $entry;
+                        break;
+
+                    case $capitulo === 3:
+                        $groupedData3[] = $entry;
+                        break;
+                    
+                    case $capitulo === 4:
+                         $groupedData4[] = $entry;
+                        break;
+
+                    case $capitulo === 5:
+                        $groupedData5[] = $entry;
+                        break;
+
+                    case $capitulo == 6:
+                        $groupedData6[] = $entry;
+                        break;
+                }
+                
+            }
+        
+        //#############################
+        $c1 =  $this->valarray($groupedData1, $resultados, 1);
+        $c2 =  $this->valarray($groupedData2, $resultados, 2);
+        $c3 =  $this->valarray($groupedData3, $resultados, 3);
+        $c4 =  $this->valarray($groupedData4, $resultados, 4);
+        $c5 =  $this->valarray($groupedData5, $resultados, 5);
+        $c6 =  $this->valarray($groupedData6, $resultados, 6);
+        
+       // return $c2;
+
+       // Unir todos los arreglos en uno solo, estees para saber las personas que no han comenzado su curso
+       $datacompleta = array_merge($c1, $c2, $c3, $c4, $c5, $c6);
       //###################################################
-     
+     //  return $datacompleta;
       $info = GruposModel::all();
-      return view('admin.vistaporcentaje',  compact('info', 'var1', 'var2', 'var3', 'var4', 'var5', 'nomgrupo', 'totPorCap', 'contar', 'reporusu'));
+
+      return view('admin.vistaporcentaje',  compact('info', 'var1', 'var2', 'var3', 'var4', 'var5', 'var6', 'nomgrupo', 'totPorCap', 'contar', 'reporusu', 'resultados', 'datacompleta'));
     }
+
+    //###################################################
+    public function correos(Request $request, $rango){
+        $correos = $request->input('correos'); // Obtener el array de correos desde la solicitud POST
+        $ran = $rango;
+       foreach ($correos as $correo) {
+        Mail::to($correo['email'])->send(new CorreoRecordar($correo['nom'], $ran));
+       }
+
+       // Mail::to($correos['email'])->send(new CorreoRecordar($correos['nom']));
+            // Lógica para enviar correos usando el array de correos
+            return response()->json(['message' => 'Correos enviados correctamente.']);
+    }
+
+    //###################################################
 
 }

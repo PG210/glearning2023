@@ -330,3 +330,7 @@ Route::get('/evolucion/insignia/win/{id}', [PerfilController::class, 'insigniaVi
 Route::get('/reporte/view/porcentaje', [PorcentajeController::class, 'index'])->name('porcentaje')->middleware('redirectIfSessionExpired');
 //filtrarpor grupos
 Route::post('/reporte/view/filtrar', [PorcentajeController::class, 'filtrar'])->name('valFormuPorcentaje')->middleware('redirectIfSessionExpired');
+
+//enviar   correos
+Route::post('/enviar-correos/{id}', [PorcentajeController::class, 'correos'])->middleware('redirectIfSessionExpired');
+

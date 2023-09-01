@@ -331,7 +331,7 @@ class GruposController extends Controller
       $res = DB::table('users')
               ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
               ->where('users.id_grupo', '=', $valor)
-              ->select('users.id', 'firstname', 'lastname', 'username', 'email', 'level', 's_point', 'i_point', 'g_point', 'grupos.descrip')
+              ->select('users.id', 'firstname', 'lastname', 'username', 'email', 'level', 's_point', 'i_point', 'g_point', 'grupos.descrip', 'estado')
               ->orderBy('s_point', 'desc')
               ->get();
       $resultados[] = $res;
@@ -405,7 +405,7 @@ class GruposController extends Controller
     $buscar = DB::table('users')
               ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
               ->where('users.email', '=', $request->dato)
-              ->select('users.id', 'firstname', 'lastname', 'username', 'email', 'level', 's_point', 'i_point', 'g_point', 'grupos.descrip')
+              ->select('users.id', 'firstname', 'lastname', 'username', 'email', 'level', 's_point', 'i_point', 'g_point', 'grupos.descrip', 'estado')
               ->orderBy('s_point', 'desc')
               ->get();
     if(count($buscar) != 0){
