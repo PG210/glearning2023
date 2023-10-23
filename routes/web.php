@@ -10,7 +10,7 @@ use App\Http\Controllers\Perfil\InsigniaController; //se agrego para insigias
 use App\Http\Controllers\Carga\GruposRecom;
 use App\Http\Controllers\Carga\GruposInsignias;//se agrego este controlador
 use App\Http\Controllers\Carga\PorcentajeController;//se agrego este controlador
-
+use App\Http\Controllers\Perfil\Administrador;//se agrego este controlador
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -334,3 +334,8 @@ Route::post('/reporte/view/filtrar', [PorcentajeController::class, 'filtrar'])->
 //enviar   correos
 Route::post('/enviar-correos/{id}', [PorcentajeController::class, 'correos'])->middleware('redirectIfSessionExpired');
 
+//================ perfil de administrcion ==============
+
+Route::get('/admin', [Administrador::class, 'index'])->middleware('redirectIfSessionExpired');
+Route::get('/admin/reporte', [Administrador::class, 'resultado'])->name('reportegeneral')->middleware('redirectIfSessionExpired');
+Route::POST('/admin/reporte/busqueda', [Administrador::class, 'consultarter'])->name('consultauser')->middleware('redirectIfSessionExpired');

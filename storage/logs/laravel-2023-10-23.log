@@ -1,0 +1,8 @@
+[2023-10-23 20:30:41] localhost.ERROR: Cannot declare class App\Http\Controllers\Perfil\InsigniaController, because the name is already in use {"exception":"[object] (Symfony\\Component\\Debug\\Exception\\FatalErrorException(code: 64): Cannot declare class App\\Http\\Controllers\\Perfil\\InsigniaController, because the name is already in use at C:\\xampp\\htdocs\\evolucion\\app\\Http\\Controllers\\Perfil\\Administrador.php:19)
+[stacktrace]
+#0 {main}
+"} 
+[2023-10-23 20:30:45] localhost.ERROR: Cannot declare class App\Http\Controllers\Perfil\InsigniaController, because the name is already in use {"exception":"[object] (Symfony\\Component\\Debug\\Exception\\FatalErrorException(code: 64): Cannot declare class App\\Http\\Controllers\\Perfil\\InsigniaController, because the name is already in use at C:\\xampp\\htdocs\\evolucion\\app\\Http\\Controllers\\Perfil\\Administrador.php:19)
+[stacktrace]
+#0 {main}
+"} 

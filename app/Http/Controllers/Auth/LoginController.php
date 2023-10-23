@@ -33,7 +33,11 @@ class LoginController extends Controller
         if ($user->admin == 1) {
             return redirect('/backdoor');
         } else {
-            return redirect('/home');
+            if($user->admin == 2){
+                return redirect('/admin');
+            }else{
+                return redirect('/home');
+            }
         }
       }else{
         Auth::logout();
