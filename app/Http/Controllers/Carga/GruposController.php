@@ -402,12 +402,24 @@ class GruposController extends Controller
 
    //buscar usuario por grupos
   public function consultarter(Request $request){
-    $buscar = DB::table('users')
+    $cadena = $request->dato;
+    if (str_contains($cadena, "@")) {
+      $buscar = DB::table('users')
               ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
-              ->where('users.email', '=', $request->dato)
+              ->where('users.email', '=', $cadena)
               ->select('users.id', 'firstname', 'lastname', 'username', 'email', 'level', 's_point', 'i_point', 'g_point', 'grupos.descrip', 'estado')
               ->orderBy('s_point', 'desc')
               ->get();
+      } else {
+        $buscar = DB::table('users')
+                ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
+                ->where('users.firstname', 'like', '%' . $cadena . '%')
+                ->orWhere('users.lastname', 'like', '%' . $cadena . '%')
+                ->select('users.id', 'firstname', 'lastname', 'username', 'email', 'level', 's_point', 'i_point', 'g_point', 'grupos.descrip', 'estado')
+                ->orderBy('s_point', 'desc')
+                ->get();
+      }
+   
     if(count($buscar) != 0){
       $tTareas = DB::table('challenges')
                   ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')

@@ -197,43 +197,78 @@
                                                               <tbody style="background-color:#EFF4F1; color:black;">
                                                               <td class="text-left">
                                                                <!--aqui se puede imprimir los ceros-->
+                                                               @php
+                                                                  $varCorreos = [];
+                                                               @endphp
                                                                @foreach($datacompleta as $dt)
                                                                  @if($capituloData['capitulo'] == $dt['capitulo'])
                                                                   @php
+                                                                 
                                                                   $varCorreos[] = [
                                                                                       'email' => $dt['email'],
-                                                                                      'nom' => $dt['nom']
+                                                                                      'nom' => $dt['nom'],
+                                                                                      'rango' => "7",
+                                                                                      'cap' => $dt['capitulo']
                                                                                   ];
+                                                                   
                                                                   @endphp
-                                                                  <p> <a href="mailto:{{$dt['email']}}?subject=Información G-Learning&body=¡Hola! Solo quería recordarte que es importante seguir avanzando en tu aprendizaje. ¡No te detengas y sigue mejorando tus habilidades! %0D%0A%0D%0A Visita: https://glearning.com.co %0D%0A"><i class="fa fa-envelope text-success"></i></a> {{$dt['nom']}} {{$dt['ape']}}</p> 
+                                                                  <p> {{$dt['nom']}} {{$dt['ape']}}</p> 
                                                                 @endif
                                                                @endforeach
-                                                               <p>
-                                                                 @php
-                                                                 var_dump($varCorreos);
-                                                                  $varCorreo = $varCorreos;
-                                                                  $rango = "0%"
-                                                                @endphp
-
-                                                                <button class="btn btn-info" id="boton{{ $capituloData['capitulo'] }}"  onclick='enviarCorreos(<?= json_encode($varCorreo) ?>, "<?= $rango ?>")'>Enviar Correos</button>
-                                                               
-                                                               </p>
+                                                               @if(!empty($varCorreos))
+                                                                    @php
+                                                                     // var_dump($varCorreos);
+                                                                      $varCorreo = $varCorreos;
+                                                                      $rango = "1";
+                                                                    @endphp
+                                                                    <p style="font-size:16px;">
+                                                                    <button class="btn" id="boton{{ $capituloData['capitulo'] }}"  onclick='enviarCorreos(<?= json_encode($varCorreo) ?>, "<?= $rango ?>")'><i class="fa fa-envelope text-success"></i>&nbsp; Enviar</button>
+                                                                  </p>
+                                                                @endif
                                                                <!--end ceros-->
                                                               </td>
+                                                              @php
+                                                               $corr = [];
+                                                              @endphp
                                                               @for ($i = 1; $i <= 6; $i++)
                                                                   <td class="text-left">
                                                                   @foreach($reporusu as $r)
                                                                   @if($i == $r['rango'] && $capituloData['capitulo'] == $r['capitulo']) 
+                                                                  @php
+                            
+                                                                   $corr[$i] = [
+                                                                                      'email' => $r['correo'],
+                                                                                      'nom' => $r['nombre'],
+                                                                                      'rango' => $r['rango'],
+                                                                                      'cap' => $r['capitulo']
+
+                                                                                  ];
+                                                                    
+                                                                  @endphp
                                                                     <p> {{$r['nombre']}} {{$r['apellido']}} </p> 
                                                                     <!--end modal =================================== -->
                                                                   @endif
                                                                 @endforeach
+                                                                @if(isset($corr[$i]))
+                                                                @php
+                                                                  $varCorreo1 = [$corr[$i]];
+                                                                  //var_dump($varCorreo1);
+                                                                  $rango1 = "1";
+                                                                @endphp
+                                                                  <p style="font-size:16px;">
+                                                                  <button class="btn" id="boton{{ $capituloData['capitulo'] }}"  onclick='enviarCorreos(<?= json_encode($varCorreo1) ?>, "<?= $rango1 ?>")'><i class="fa fa-envelope text-success"></i>&nbsp; Enviar</button>
+                                                                </p>
+                                                                @endif
                                                                   </td>
                                                               @endfor
-                                                                
+                                                              <!--===================================---->
                                                               </tbody>
+                                                            
+                                                           
                                                           </table>
                                                         <!--===============================================-->
+                                                       
+                                                        <!---==============================================-->
                                                     </div>
                                                    <!--en contenido--->
                                                   </div>
@@ -263,7 +298,7 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
     function enviarCorreos(correos, rango) {
-         console.log(rango);
+         console.log(correos);
         axios.post('/enviar-correos/'+ rango, { correos: correos })
             .then(function(response) { 
                 toastr.success('Correos enviados correctamente', 'Acción completada!', {timeOut:3000});

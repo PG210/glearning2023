@@ -20,10 +20,13 @@ class CorreoRecordar extends Mailable
 
     public $ran;
 
-    public function __construct($nombre, $ran)
+    public $cap;
+
+    public function __construct($nombre, $ran, $cap)
     {
         $this->nombre = $nombre;
         $this->ran = $ran;
+        $this->cap = $cap;
     }
     /**
      * Build the message.
@@ -35,6 +38,6 @@ class CorreoRecordar extends Mailable
     public function build()
     {
         return $this->view('mails.avance')
-        ->with(['nombre' => $this->nombre, 'ran' => $this->ran]);
+        ->with(['nombre' => $this->nombre, 'ran' => $this->ran, 'cap' => $this->cap]);
     }
 }

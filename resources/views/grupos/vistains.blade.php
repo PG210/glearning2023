@@ -12,15 +12,71 @@
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
   <!--<script src="{{asset('dist/js/estilo.js')}}"></script>-->
+  <style>
+  @media screen and (min-width: 1920px) {
+        h3, h2 {
+          font-family: 'Roboto';
+          font-size: 2.2em !important;
+          line-height: 1.6em;
+          margin-bottom: 0.0rem !important;
+        }
+    }
+
+    @media screen and (min-width: 1400px) and (max-width: 1919px) {
+        h3 {
+          font-family: 'Roboto';
+          font-size: 2.2em !important;
+          line-height: 1.6em;
+          margin-bottom: 0.0rem !important;
+        }
+    }
+
+    @media screen and (min-width: 501px) and (max-width: 1399px) {
+        h6 {
+          font-family: 'Roboto';
+          font-size: 1em !important;
+          line-height: 2.3em;
+        }
+      }
+
+      @media screen and (min-width: 371px) and (max-width: 500px) {
+        h6 {
+          font-family: 'Roboto';
+          font-size: 0.85em !important;
+          line-height: 1.5em;
+        }
+      }
+
+      @media screen and (min-width: 360px) and (max-width: 370px) {
+        h6 {
+          font-family: 'Roboto';
+          font-size: 0.85em !important;
+          line-height: 1.0em;
+        }
+      }
+
+      @media screen and (max-width: 359px) {
+        h6 {
+          font-family: 'Roboto';
+          font-size: 0.65em !important;
+          line-height: 1.2em;
+        }
+    }
+    .tletra{
+      font-family: 'Roboto';
+    }
+  </style>
 </head>
 <body>
 <div style="background-color:#1ED5F4;">
     <div class="container text-end" style="padding-top:5px; padding-bottom:5px;">
        <div class="container">
-        <button class="btn btn-success" id="btnDownload" > <i class="bi bi-download"></i>&nbsp;Descargar</button>
+        <button class="btn btn-success d-none d-lg-block" id="btnDownload" > <i class="bi bi-download"></i>&nbsp;Descargar</button>
+        <button class="btn btn-success  d-lg-none" id="btnDownload2" > <i class="bi bi-download"></i>&nbsp;Descargar</button>
       </div>
     </div>
 </div>
+
 <!--<button onclick="descargarPDF()">Descargar en PDF</button>-->
 <br>
 <div id="elementToCapture">
@@ -37,7 +93,7 @@
         </div>
         <div class="row"> 
          <div class="col-12">
-            <h3 class="text-center"><span style="color:blue; font-size:26px;"><b>Certifica que:</b></span> </h3>
+            <h3 class="text-center"><span style="color:blue;"><b>Certifica que:</b></span> </h3>
             <br>
          </div>
         </div>
@@ -52,7 +108,7 @@
         <div class="col-2">
         </div>
         <div class="col-8">
-            <p> <h3 class="text-center"><span style="color:blue; font-size:26px; ">
+            <p> <h3 class="text-center"><span style="color:blue;">
                <b>Aprobó el programa:</b></span>
                 @if(strlen($info[0]->name) > 25)
                    {{$info[0]->name}}
@@ -73,7 +129,7 @@
             <div class="col-3">
             </div>
             <div class="col-5">
-             <h3 ><span style="color:white; font-size:26px; "><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Intensidad horaria: {{$info[0]->horas}}</b></span> </h3>
+             <h3 ><span style="color:white;"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Intensidad horaria: {{$info[0]->horas}}</b></span> </h3>
             </div>
             <div class="col-4">
             </div>
@@ -92,6 +148,7 @@
 ?>
   <!--#################################################################--->
        <!--visualizar en pantallas pequenias-->
+  <div id="elementToCapture2">
   <div class="d-block d-sm-none" style="background-image: url('/dist/img/fondo2.png'); background-size: cover; background-position: center;  background-size: contain; background-size: 100% auto; background-repeat: no-repeat; padding-top:0px;">
     <br>
      <div class="text-start"  style="position: relative;  z-index: 1;">
@@ -138,6 +195,7 @@
     <br>
     </div>
   </div>
+  </div>
   <h5 class="text-center" style="margin-top:8px;">Fecha emisión:  {{$fecha}}</h5>
   <!--eend visualiar en pantallas pequenias-->
   <!--################################################################-->
@@ -147,7 +205,7 @@
             <div class="col-2"></div> 
             <div class="col-8 text-center">
             <!--describir insignia-->
-            <button class="btn btn-warning  ms-2"  style="margin-top:10px;" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+            <button class="btn btn-warning  ms-2 tletra"  style="margin-top:10px;" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
                 Descripción Insignia
             </button>
             <div class="collapse" id="collapseExample">
@@ -156,20 +214,13 @@
                 </div>
             </div>
             @auth
-            <!--end describir inignia-->
-           <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#comu{{$info[0]->id}}">
-                Compartir en perfil <i class="bi bi-linkedin"></i>
-            </button>-->
-           <!-- <a  class="btn btn-primary" href="https://www.linkedin.com/sharing/share-offsite/?url=http://127.0.0.1:8000/ver/insignia/{{$info[0]->id}}" target="_blank">
-                 Compartir en historia <i class="bi bi-linkedin"></i>
-             </a>-->
-             <!--boton-->
+            
              <?php
                 $fec = $info[0]->created_at;
                 $anio = date("Y", strtotime($fec));
                 $mes = date("m", strtotime($fec));
               ?>
-             <a class="btn btn-primary ms-2" style="margin-top:10px;"  href="https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME&name={{$info[0]->name}}&organizationId=35549462&issueYear=2023&issueMonth={{$mes}}&certUrl=https://glearning.com.co/evolucion/insignia/win/{{$info[0]->id}}&certId={{$info[0]->id}} ">
+             <a class="btn btn-primary ms-2 tletra" style="margin-top:10px;"  href="https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME&name={{$info[0]->name}}&organizationId=35549462&issueYear=2023&issueMonth={{$mes}}&certUrl=https://glearning.com.co/evolucion/insignia/win/{{$info[0]->id}}&certId={{$info[0]->id}} ">
                Compartir en perfil <i class="bi bi-linkedin"></i>
              </a>
                           <!--end boton-->
@@ -179,7 +230,7 @@
                     <div class="modal-dialog modal-lg modal-dialog-scrollable">
                     <div class="modal-content" style="border-radius:20px;">
                         <div class="modal-header">
-                        <h5 class="modal-title">Compartir insignia</h5>
+                        <h5 class="modal-title tletra">Compartir insignia</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body" style="text-align:left;">
@@ -229,15 +280,16 @@
   <!--#################################################################################--->
   <footer class="d-none d-lg-block">
   <div style="background-color:#1ED5F4;">
-    <div class="container text-center">
+    <div class="container text-center tletra">
        <br><p style="font-size:20px;">&copy; 2023 Evolución SAS. Todos los derechos reservados.</p>
        <br>
     </div>
     </div>
   </footer>
-  <footer class="footer fixed-bottom d-block d-sm-none">
+ 
+  <footer class="footer  d-block d-sm-none">
   <div style="background-color:#1ED5F4;">
-    <div class="container text-center">
+    <div class="container text-center tletra">
        <br><p style="font-size:18px;">&copy; 2023 Evolución SAS. Todos los derechos reservados.</p>
        <br>
     </div>
@@ -272,6 +324,27 @@
   <script>
         document.getElementById('btnDownload').addEventListener('click', function() {
             const elementToCapture = document.getElementById('elementToCapture');
+
+            html2canvas(elementToCapture).then(function(canvas) {
+                const imgData = canvas.toDataURL('image/png');
+
+                const img = new Image();
+                img.src = imgData;
+
+                /*const pdf = new jsPDF();
+                pdf.addImage(img, 'PNG', 15, 15, 180, 0);
+                pdf.save('midiploma.pdf');*/
+
+                const link = document.createElement('a');
+                link.href = imgData;
+                link.download = 'midiploma.png';
+                link.click();
+            });
+        });
+    </script>
+      <script>
+        document.getElementById('btnDownload2').addEventListener('click', function() {
+            const elementToCapture = document.getElementById('elementToCapture2');
 
             html2canvas(elementToCapture).then(function(canvas) {
                 const imgData = canvas.toDataURL('image/png');

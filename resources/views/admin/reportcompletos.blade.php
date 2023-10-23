@@ -145,7 +145,7 @@
                  @csrf
                     <div class="form-row">
                         <div class="col-md-8">
-                        <input type="email" class="form-control" placeholder="Ingrese correo" id="dato" name="dato" required>
+                        <input type="text" class="form-control" placeholder="Ingrese correo" id="dato" name="dato" required>
                         </div>
                         <div class="col-md-4">
                         <button class="btn btn-success float-right" type="submit">Buscar</button>

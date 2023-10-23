@@ -149,6 +149,7 @@ if ($retospending == 0) {
   <!-- todo el bloque de capitulos llamado dinamicamente con VUEJS -->
   <!---aqui se verifica en que capitulo esta-->
   <?php
+       use App\PosUsuModel\CapModel;
         $userauth_id = Auth::user()->id;
         //validar para el procedure o para funcion sql
         $conta = DB::table('subchapter_user')
@@ -180,62 +181,66 @@ if ($retospending == 0) {
                           ->where('challenge_user.user_id', $userauth_id)
                           ->selectRaw('subchapters.chapter_id as capitulo, COUNT(challenge_user.challenge_id) as total')
                           ->groupBy('subchapters.chapter_id')
-                          ->get();              
-             foreach($tarcapitulo as $tc){
-               foreach($tarusuario as $tu){
-                    if($tc->capitulo == $tu->capitulo){
-                      $resta = $tc->total-$tu->total;
-                      if($resta != 0){
-                        $item = [
-                          'cap' => $tu->capitulo,
-                          'tot' => $resta
-                        ];
-                        $captotal[] = $item;
-                      }
-                     
-                    }else{
-                          $item1 = [
-                            'cap' => $tc->capitulo,
-                            'tot' => $tc->total
-                           ];
-                           $capituloscon = $item1;
-                    }
-                    
-               }
-             }
-            //obtener las tareas del capitulo
-            if(isset($captotal[0]['cap'])){
+                          ->get();  
+            //#####################################################
+            //guardar los valores en la base de datos
+            foreach ($tarcapitulo as $tar) {
+                //valida que el capitulo y el usuario no se repitan
+                $validar = CapModel::where('idusu', $userauth_id)->where('idcap', $tar->capitulo)->count();
+                if($validar == 0){
+                  $Reg = new CapModel();
+                  $Reg->idusu = $userauth_id;
+                  $Reg->idcap = $tar->capitulo;
+                  $Reg->numtareas = $tar->total;
+                  $Reg->orden = $tar->capitulo;
+                  $Reg->estado = 0;
+                  $Reg->save();
+                }
+            }
+            //aqui hacer si el capitulo actual esta completo cambiarel estado a 1 completado
+            foreach($tarusuario as $tusu){
+              $valor = CapModel::where('idusu', $userauth_id)->where('idcap', $tusu->capitulo)->where('numtareas', $tusu->total)->where('estado', '0')
+                     ->select('id')
+                     ->first();
+              if(!empty($valor)){
+                $Actu = CapModel::findOrFail($valor->id);
+                $Actu->estado = 1;
+                $Actu->save();
+
+              }
+              
+            }
+            //## Aqui se obtiene todo el rango de los capitulos y se debe ordenarlos por el orden 
+            $capitulos = CapModel::where('idusu', $userauth_id)->where('estado', '0')->orderBy('orden', 'asc')->get();
+           // var_dump($capitulos);
+            //####################################################
+            //obtener las tareas totales del capitulo 
+            $tarcapi = "";
+            $tarea = "";
+            $capconsul = "";
+            $diferentes = "";
+
+            if(isset($capitulos[0]->idcap)){
             $tarcapi = DB::table('challenges')
-                ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
-                ->where('subchapters.chapter_id', $captotal[0]['cap'])
-                ->select('challenges.id')
-                ->get();
-            $tarea = DB::table('challenge_user')
-                ->join('challenges', 'challenge_user.challenge_id', '=', 'challenges.id')
-                ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
-                ->where('challenge_user.user_id', $userauth_id)
-                ->where('subchapters.chapter_id', $captotal[0]['cap'])
-                ->select('challenge_id as id')
-                ->get();
-            $capconsul = $captotal[0]['cap'];
-            }else{
-              $tarcapi = DB::table('challenges')
                       ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
-                      ->where('subchapters.chapter_id', $subc[0]->chapter_id)
+                      ->where('subchapters.chapter_id', $capitulos[0]->idcap)
                       ->select('challenges.id')
                       ->get();
-              $tarea = DB::table('challenge_user')
+
+            //##################################################
+            //tareas realizadas por el usuario
+            $tarea = DB::table('challenge_user')
                       ->join('challenges', 'challenge_user.challenge_id', '=', 'challenges.id')
                       ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
                       ->where('challenge_user.user_id', $userauth_id)
-                      ->where('subchapters.chapter_id', $subc[0]->chapter_id)
+                      ->where('subchapters.chapter_id', $capitulos[0]->idcap)
                       ->select('challenge_id as id')
                       ->get();
-              $capconsul = $subc[0]->chapter_id;
-            }
             //aqui se calcula para ver loscapitulos
+             $capconsul = $capitulos[0]->idcap;
+            
             //################### validar en que parte va
-           
+
             $tarea1 = json_decode($tarcapi);
             $tarea2 = json_decode($tarea);
 
@@ -252,8 +257,29 @@ if ($retospending == 0) {
               $vec[] = $d->id;
             }
             //#################
+          }
+          //validacion de los puntajes, barras de progreso
+          if(isset($capitulos[0]->idcap)){
+            $pend = $contar1 - $contar2;
+            $totalsum = 0;
+            foreach($tarcapitulo as $s){
+              $totalsum +=  $s->total;
+            }
+            $barra = ($retosfinish * 100) / $totalsum;
+            $barrac = number_format($barra,0);
+            }
+            else{
+                $totalsum = $retosfinish;
+                $pend = 0;
+                if($retosfinish == 0){
+                  $barrac = 0;
+                }else{
+                  $barrac = 100;
+                }
+                 
+            }
+          //#############
          }
-      
     ?>
   <!--end verificacion-->
   @if($conta != 0)
@@ -268,35 +294,26 @@ if ($retospending == 0) {
     @endforeach
     </ul> 
     <br>
-    <?php
-      $pend = $contar1 - $contar2;
-      $totalsum = 0;
-      foreach($tarcapitulo as $s){
-        $totalsum +=  $s->total;
-      }
-      $barra = ($retosfinish * 100) / $totalsum;
-      $barrac = number_format($barra,0);
-    ?>
       <h5>Tareas pendientes: {{$pend}} </h5>
      <br>
-    </center>
-    @if(empty($diferentes))
-      @if(isset($capituloscon['cap']))
+     <!---=============================== pantallas grandes ============================== --->
+     @if(empty($diferentes))
         <div class="text-center">
-          <a href="{{ route('capitulos.show', $capituloscon['cap']) }}" class="btn btn-primary mx-auto">Comenzar</a>
-        </div>
-      @endif
-    @else
-      @if($contar2 == 0)
-        <div class="text-center">
-          <a href="{{ route('capitulos.show', $capconsul) }}" class="btn btn-primary mx-auto">Comenzar</a>
+            <h4>Espera un nuevo capítulo ... </h4>
         </div>
       @else
-        <div class="text-center">
-          <a href="/challenge/{{$vec[0]}}" class="btn btn-primary mx-auto">Continuar</a>
-        </div>
-     @endif
-   @endif
+        @if($contar2 == 0)
+          <div class="text-center">
+            <a href="{{ route('capitulos.show', $capconsul) }}" class="btn btn-primary mx-auto">Comenzar capítulo {{$capconsul}}</a>
+          </div>
+        @else
+          <div class="text-center">
+            <a href="/challenge/{{$vec[0]}}" class="btn btn-primary mx-auto">Continuar</a>
+          </div>
+      @endif
+    @endif
+     <!---- ============================ end pantallas grandes ============================--->
+    </center>
   </p>
   <br>
 </div>
@@ -305,7 +322,7 @@ if ($retospending == 0) {
 @if(empty($diferentes))
       @if(isset($capituloscon['cap']))
         <div class="text-center">
-          <a href="{{ route('capitulos.show', $capituloscon['cap']) }}" class="btn btn-primary mx-auto">Comenzar</a>
+        <h5>Espera un nuevo capítulo ... </h5>
         </div>
       @endif
     @else
@@ -319,12 +336,8 @@ if ($retospending == 0) {
         </div>
      @endif
    @endif
-    </div>
+</div>
 <!--end pantallas pequeñas-->
-  @else
-   <div class="flex hidden-xs" id="app">
-    <playerchapters-component></playerchapters-component>
-  </div>
   @endif
    
   <div class="flex cuadro">

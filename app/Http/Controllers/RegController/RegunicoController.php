@@ -48,7 +48,11 @@ class RegunicoController extends Controller
                  $Pos =new PosUsu();
                  $category->firstname=$request->input('nombre');
                  $category->lastname=$request->input('apellido');
-                 $category->avatar_id=$request->input('avatar');
+                 if(empty($request->input('avatar'))){
+                  $category->avatar_id=9;
+                 }else{
+                  $category->avatar_id=$request->input('avatar');
+                 }
                  $category->sexo=$request->input('sexo');
                  $category->username= $request->input('correo');
                  $category->email= $request->input('correo');

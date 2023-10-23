@@ -10,7 +10,7 @@
                     <div class="panel-heading" role="tab" id="headingOne" style="color:black; background-color:#1bf9cd; border-radius:10px;">
                     <h4 class="panel-title">
                         <a style=" color: inherit;" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        <h3> Datos Personales </h3>
+                        <h3> Datos Personales</h3>
                         </a>
                       </h4>
                     </div>
@@ -38,11 +38,22 @@
                             </div>
                             </div>
                            </div>                      
-                  
-                        <div class="form-group">
+                        <!--###################################--->
+                        <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
                             <label for="email">Email</label>
                             <input type="email" class="form-control" id="email" name="email" value="{{$usu[0]->email}}" readonly>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="form-group">
+                            <label for="ced">Cedula</label>
+                            <input type="ced" class="form-control" id="ced" name="ced" value="{{$usu[0]->cedula}}">
+                            </div>
+                          </div>
                         </div>
+                        <!--############################-->
                         <div class="row">
                           <div class="col-md-6">
                             <div class="form-group">

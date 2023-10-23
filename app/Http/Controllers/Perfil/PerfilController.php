@@ -41,6 +41,7 @@ class PerfilController extends Controller
             $usuact->username = $request->input('usuario');
             $usuact->email = $request->input('email');
             $usuact->avatar_id = $request->input('avat');
+            $usuact->cedula = $request->input('ced');//cedula
             $usuact->password=Hash::make($p);
             $usuact->save();
             return redirect('/home');
@@ -51,6 +52,7 @@ class PerfilController extends Controller
             $usuact->sexo = $request->input('genero');
             $usuact->username = $request->input('usuario');
             $usuact->email = $request->input('email');
+            $usuact->cedula = $request->input('ced');//cedula
             $usuact->avatar_id = $request->input('avat');
             $usuact->save();
             return redirect('/home');
@@ -130,7 +132,7 @@ class PerfilController extends Controller
         $idusu=auth()->id();
         $usu = DB::table('users')->where('users.id', '=', $idusu)
             ->join('avatars', 'users.avatar_id', '=', 'avatars.id')
-            ->select('users.id as userid', 'users.firstname', 'users.lastname', 'users.username', 'users.sexo', 'users.email', 'users.avatar_id', 
+            ->select('users.id as userid', 'users.firstname', 'users.lastname', 'users.username', 'users.sexo', 'users.email', 'users.cedula', 'users.avatar_id', 
                     'avatars.id', 'avatars.name', 'avatars.description', 'avatars.img')
             ->get();
         $avatar=DB::table('avatars')->where('avatars.sexo', '=', 'Femenino')->get();
@@ -152,7 +154,9 @@ class PerfilController extends Controller
 
    //aqui insignia que viene desde el popup compartir
    public function detinsignia($id){
+    if (Auth::check()) {
     $usu =  Auth::user()->id;
+
     $info = DB::table('insigcap_user')
            ->join('users', 'insigcap_user.userid', '=', 'users.id')
            ->join('insigniacap', 'insigcap_user.insigid', '=', 'insigniacap.id')
@@ -163,7 +167,11 @@ class PerfilController extends Controller
                      'insigniacap.url as imagen', 'insigniacap.descripcion as description', 'insigcap_user.created_at', 'insigniacap.horas')
            ->get();
            //return $info;
+    
      return view('grupos.vistains')->with('info', $info);
+    }else{
+        return redirect('https://glearning.com.co/');
+    }
    }
 
    //aqui validarla inignia que viene desde la vista de recompensas

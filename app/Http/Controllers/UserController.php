@@ -159,6 +159,7 @@ class UserController extends Controller
         $outdoors=DB::table('outdoors')->where('id_user', '=', $id)->delete();
         $pictures=DB::table('pictures')->where('id_user', '=', $id)->delete();
         $insigcap = DB::table('insigcap_user')->where('userid', '=', $id)->delete();
+        $usercap = DB::table('capasig')->where('idusu', '=', $id)->delete();  //eliminartabla de capiyulos asociados
         $users ->delete();
         Session::flash('eliminado', 'Usuario eliminado con éxito!');
         return back();

@@ -26,6 +26,9 @@
     <link rel="stylesheet" href="{{ asset('dist/css/AdminLTE.css') }}">
     <!-- Style Color -->
     <link rel="stylesheet" href="{{ asset('dist/css/skins/_all-skins.css') }} ">
+
+    <link rel="stylesheet" href="{{ asset('dist/css/stylo.css') }} ">
+
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -40,6 +43,8 @@
     <script src="{{ asset('js/bootstrap/dist/js/bootstrap.min.js') }} "></script>
     <!-- AdminLTE App -->
     <script src="{{ asset('dist/js/adminlte.min.js') }} "></script>
+
+     
 
     <script>
         var nomRetos;
@@ -453,6 +458,7 @@
       </a>
 
     <?php
+       
         $userauth_id = Auth::user()->id;
         //validar para el procedure o para funcion sql
         $conta = DB::table('subchapter_user')
@@ -469,6 +475,8 @@
                 ->distinct('chapter_id')
                 ->orderBy('chapter_id','ASC')
                 ->get();
+            $capi = DB::table('capasig')->where('idusu', $userauth_id)->select('idcap as chapter_id')->orderBy('idcap', 'ASC')->get();
+            $capsig = DB::table('capasig')->where('idusu', $userauth_id)->where('estado', '0')->orderBy('orden', 'asc')->get();
             //$capitulosprocedural = DB::select("call chapterSecuence($userauth_id)");
          }else{
             //###################3
@@ -520,36 +528,10 @@
             //##########################################
             }
     ?>    
-      @if($conta == 0 && isset($capitulosprocedural))
-      <ul class="treeview-menu">
-          @foreach($capitulosprocedural as $capitulo)
-            @if ($capitulo->RETOS_CAPITULO_REQUERIDO != 0)
-              @foreach($al as $b)
-                 @if($b['capitulo'] == $capitulo->id)
-                       <?php
-                       $por = ($b['tcom']*100)/$b['ttotal'];
-                       
-                        $red = round($por, 0);
-                       
-                       
-                       ?>
-                  <li><a href="{{ route('capitulos.show', $capitulo->id) }} ">
-                     {{ $capitulo->name }} 
-                    </a>
-                    <div class="progress" style="margin-right:3px; margin-bottom:0px;">
-                        <div class="progress-bar" role="progressbar" aria-valuenow="<?= $red ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?= $red ?>%; background-color:#25c5ab; color:black;">
-                            <?= $red ?>% 
-                        </div>
-                    </div></li>
-                    @endif
-                @endforeach            
-            @endif
-          @endforeach
-          <br>
-      </ul>
-      @else
-      <ul class="treeview-menu">
-          @foreach($subc as $s)
+      @if(isset($capi))
+     
+       <ul class="treeview-menu">
+          @foreach($capi as $s)
                <!---ver porcentaje de capitulos--> 
                @foreach($al as $b)
                     @if($b['capitulo'] == $s->chapter_id)
@@ -559,8 +541,8 @@
                        $red = round($por, 0);
                        ?>
                   <li>
-                    <a href="{{ route('capitulos.show', $s->chapter_id) }} ">
-                        {{$s->name}}</a>
+                    <a href="/capitulos/{{$s->chapter_id}} ">
+                       Capítulo {{$s->chapter_id}}</a>
                     <div class="progress" style="margin-right:3px; margin-bottom:0px;">
                     <div class="progress-bar" role="progressbar" aria-valuenow="<?= $red ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?= $red ?>%; background-color:#25c5ab; color:black;">
                         <?= $red ?>%
@@ -571,11 +553,16 @@
                 @endforeach 
                <!--end porcentaje capitulos-->        
           @endforeach
-          <br>
+         <br>
       </ul>
       @endif
+      
     </li>
-    <li><a href="{{ url('/recompensas') }}"><i class="fa fa-arrow-circle-right"></i> <span>Distinciones</span></a></li>
+    <li style="padding:0px 15px 0px 15px;">
+       <a class="btn" href="/capitulos/{{$capsig[0]->idcap}}" style="color:white; background-color:#1C0C53; padding: 3px; margin-top:1em; margin-bottom:1em;">Continuar Capítulo {{$capsig[0]->idcap}}</a>
+    </li>
+    <li>
+    <a href="{{ url('/recompensas') }}"><i class="fa fa-arrow-circle-right"></i> <span>Distinciones</span></a></li>
    <!--se agrego para informacion-->
    <li><a href="{{ url('/material/ver') }}"><i class="fa fa-arrow-circle-right"></i> <span>Material</span></a></li>
 

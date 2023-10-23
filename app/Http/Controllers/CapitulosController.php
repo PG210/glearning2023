@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Chapter;
 use App\Subchapter;
 use App\PosUsuModel\SubcapUser;
+use App\PosUsuModel\CapituloModel; //se agrego este modelo
 use DB;
 use Auth;
 use Session;
@@ -119,11 +120,14 @@ class CapitulosController extends Controller
                    ->where('estado', '=', 0)
                    ->select('chapter_id', 'id', 'estado')
                    ->distinct('chapter_id')
-                   ->orderBy('chapter_id','ASC')
+                   ->orderBy('chapter_id','asc')
                    ->get();
+            
             if(isset($usercap[0]->chapter_id)){
             if($usercap[0]->estado == 0){ //aqui avanza  los capitulos pero se debe validar el total de completados 
-                $capitulos = Chapter::find($usercap[0]->chapter_id);
+               //  $capitulos = Chapter::find($usercap[0]->chapter_id);
+               //$capitulos = DB::table('chapters')->where('chapters.id', $id)->get();
+                $capitulos = CapituloModel::where('chapters.id', $id)->first();
                  //cantidad de subcapitulos en el capitulo actual
                 $consub = DB::table('subchapters')->where('chapter_id', $usercap[0]->chapter_id)->count();
                 $cat = SubcapUser::find($usercap[0]->id);
@@ -132,11 +136,15 @@ class CapitulosController extends Controller
                 $mensaje = 0;
             }
           }else{
-            $capitulos = Chapter::find($id);
+           // $capitulos = Chapter::find($id);
+           // $capitulos = DB::table('chapters')->where('chapters.id', $id)->get();
+           $capitulos = CapituloModel::where('chapters.id', $id)->first();
             $mensaje = 1;
           }
         }else{
-            $capitulos = Chapter::find($id);
+            //$capitulos = Chapter::find($id);
+            //$capitulos = DB::table('chapters')->where('chapters.id', $id)->get();
+            $capitulos = CapituloModel::where('chapters.id', $id)->first();
             $mensaje = 0;
         }
         //$capitulos = Chapter::find($id);
@@ -177,6 +185,7 @@ class CapitulosController extends Controller
             $retp = [];
         }
        //
+      // return $capitulos;
         //######################
         return view('player.capitulos')
                ->with('capitulos', $capitulos)

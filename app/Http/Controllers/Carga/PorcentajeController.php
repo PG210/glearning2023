@@ -540,9 +540,39 @@ return $datosunidos;
     //###################################################
     public function correos(Request $request, $rango){
         $correos = $request->input('correos'); // Obtener el array de correos desde la solicitud POST
-        $ran = $rango;
+       
+        //############# validar el rango
+       foreach($correos as $vc){
+        switch ($vc['rango']) {
+            case 1:
+                 $ran = "1-15%";
+                break;
+            case 2:
+                $ran = "16-25%";
+                break;
+            case 3:
+                $ran = "26-50%";
+                break;
+            case 4:
+                $ran = "51-80%";
+                break;
+            case 5:
+                $ran = "81-99%";
+                break;
+            case 6:
+                $ran = "100%";
+                break;
+            case 7:
+                $ran = "0%";
+                break;
+            default:
+                $ran = " ";
+        }     
+     }   
+
        foreach ($correos as $correo) {
-        Mail::to($correo['email'])->send(new CorreoRecordar($correo['nom'], $ran));
+       
+        Mail::to($correo['email'])->send(new CorreoRecordar($correo['nom'], $ran, $correo['cap']));
        }
 
        // Mail::to($correos['email'])->send(new CorreoRecordar($correos['nom']));
