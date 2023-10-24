@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Session;
 use App\PosUsuModel\SubcapUser;//se agrego esta parte
 use Dompdf\Dompdf;
 use Illuminate\Support\Facades\View;
+use App\PosUsuModel\GrupadminModel;//se agrego esta parte
 
 class PerfilController extends Controller
 {
@@ -67,17 +68,27 @@ class PerfilController extends Controller
               ->join('avatars', 'users.avatar_id', '=', 'avatars.id')
               ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
               ->select('users.id as userid', 'users.firstname', 'users.lastname', 'users.username', 'users.sexo', 'users.email', 'users.avatar_id', 
-                       'avatars.id', 'avatars.name', 'avatars.description', 'avatars.img', 'grupos.descrip as grupo', 'users.id_grupo as idgrupo', 'users.cedula')
+                       'avatars.id', 'avatars.name', 'avatars.description', 'avatars.img', 'grupos.descrip as grupo', 'users.id_grupo as idgrupo', 'users.cedula', 'users.admin')
               ->get();
         $avatar=DB::table('avatars')->where('avatars.sexo', '=', 'Femenino')->get();
         $avatarm=DB::table('avatars')->where('avatars.sexo', '!=', 'Femenino')->get();
         $grupos =DB::table('grupos')->select('id as idgrup', 'descrip')->get();
+        //Consultar si el usuario tiene agregado grupos
+        $addgrupos = DB::table('grupadmin')->where('idusu', $id)->get();
         //return $usu;
-        return view('admin.vistaperfil')->with('usu', $usu)->with('avatar', $avatar)->with('avatarm', $avatarm)->with('grupos', $grupos);
+        return view('admin.vistaperfil')
+                    ->with('addgrupos', $addgrupos)
+                    ->with('usu', $usu)
+                    ->with('avatar', $avatar)
+                    ->with('avatarm', $avatarm)
+                    ->with('grupos', $grupos);
     }
 
     //actualizar perfil de usuario desde el admin
    public function actualizarusuadmin(Request $request, $id){
+
+        $gruposid = $request->idarchivo; //guarda los datos de check
+          
        // return $request;
         $gr = $request->input('grupo');
         $p = $request->input('passw');
@@ -124,6 +135,23 @@ class PerfilController extends Controller
         }
         //#############################
         $actu->save();
+        //##################### Guardar en la tabla de grupos ################
+
+        if(!is_null($gruposid)){
+            DB::table('grupadmin')->where('idusu', $id)->delete();
+            foreach ($gruposid as $valor){
+                $ver = DB::table('grupadmin')->where('idusu', $id)->where('idgrupo', $valor)->count();
+                if($ver == 0){
+                    $Add = new GrupadminModel();
+                    $Add->idusu = $id;
+                    $Add->idgrupo = $valor;
+                    $Add->save();
+                }
+               
+              }
+          }
+
+        //################################################
         Session::flash('datreg', 'Usuario actualizado exitosamente!');
         return back();
    }

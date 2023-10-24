@@ -99,13 +99,13 @@
                         </div>
                          <!--grupo-->
                          <div class="row">
-                         <div class="col-md-6">
+                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="pass">Grup actual</label>
                                 <span class="form-control">{{$usu[0]->grupo}}</span>
                             </div>
                            </div>
-                          <div class="col-md-6">
+                          <div class="col-md-4">
                             <div class="form-group">
                                 <label for="usuario">Grupo</label>
                                 <select class="form-control" name="grupo">
@@ -118,11 +118,84 @@
                                 </select>
                             </div>
                            </div>
+                           <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="pass">Rol</label>
+                                <select class="form-control" name="grupo">
+                                      @if($usu[0]->admin == 0)
+                                        <option value="0" selected>Usuario</option> 
+                                        <option value="2">Supervisor</option>
+                                        <option value="1" style="background-color:red; color:white;">Administrador</option>
+                                      @else
+                                        @if($usu[0]->admin == 1)
+                                         <option value="1" selected style="background-color:red; color:white;">Administrador</option>
+                                         <option value="0">Usuario</option> 
+                                         <option value="2">Supervisor</option>
+                                        @else
+                                         <option value="2" selected>Supervisor</option>
+                                         <option value="1" style="background-color:red; color:white;">Administrador</option>
+                                         <option value="0">Usuario</option> 
+                                         @endif
+                                      @endif
+                                      
+                                </select>
+                            </div>
+                           </div>
                         </div>
                          <!--end formulario--->
                     </div>
                     </div>
                 </div>
+                <!----si es supervisor mostrareste panel-->
+                @if($usu[0]->admin == 2)
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingTwo" style="border-radius:20px; color:black; background-color:#1bf9cd;">
+                    <h4 class="panel-title">
+                        <a style="text-decoration: none;" class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo1" aria-expanded="false" aria-controls="collapseTwo1">
+                       <h3> Agregar grupos (Supervisor)</h3>
+                        </a>
+                    </h4>                  
+                    </div>
+                    <div id="collapseTwo1" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                    <div class="panel-body letrap">
+                       <!---informacion-->
+                         <!--tabla--->
+                         <div class="table-responsive">
+                         <table class="table">
+                          <thead>
+                              <tr>
+                                  <th class="text-center">&nbsp;Elegir</th>
+                                  <th>Nombre grupo</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              @foreach($grupos as $gmodal)
+                              <tr>
+                                  <td>
+                                      @php
+                                          $isChecked = false;
+                                          foreach($addgrupos as $dg) {
+                                              if($dg->idgrupo == $gmodal->idgrup) {
+                                                  $isChecked = true;
+                                                  break;
+                                              }
+                                          }
+                                      @endphp
+                                      <input type="checkbox" id="ck{{$gmodal->idgrup}}" name="idarchivo[]" value="{{$gmodal->idgrup}}" {{$isChecked ? 'checked' : ''}}>
+                                  </td>
+                                  <td><span>{{$gmodal->descrip}}</span></td>
+                              </tr>
+                              @endforeach
+                          </tbody>
+                      </table>
+                            </div>
+                            <!--end tabla-->
+                       <!--end informacion-->
+                    </div>
+                    </div>
+                </div>
+                @endif
+                <!--end supervisor-->
                 <div class="panel panel-default">
                     <div class="panel-heading" role="tab" id="headingTwo" style="border-radius:20px; color:black; background-color:#1bf9cd;">
                     <h4 class="panel-title">
