@@ -34,7 +34,7 @@ class LoginController extends Controller
             return redirect('/backdoor');
         } else {
             if($user->admin == 2){
-                return redirect('/admin');
+                return redirect('/admin/reporte');
             }else{
                 return redirect('/home');
             }

@@ -162,13 +162,9 @@
 
             <!-- sidebar menu: : style can be found in sidebar.less -->
             <ul class="sidebar-menu" data-widget="tree">
-              <li class="header">Navegación Principal</li>
+              <li class="header text-center"><h5 style="color:white;">Navegación Principal</h5></li>
 
-              <li>
-                <a href="#">
-                  <i class="fa fa-dashboard"></i> <span>Inicio</span>
-                </a>
-              </li>
+              
               <li class="treeview">
                   <a href="#">
                     <i class="fa fa-group"></i>

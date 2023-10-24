@@ -3,8 +3,7 @@
 @section('titulos')
 <section class="content-header">
     <ol class="breadcrumb">
-    <li><a href="{{ url('/backdoor') }}"><i class="fa fa-dashboard"></i> Inicio</a></li>
-    <li class="active">Completos</li>
+    <li class="active"><i class="fa fa-dashboard"></i> Completos</li>
     </ol>
 </section>
 @endsection
@@ -87,7 +86,7 @@
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                             <h4 class="modal-title">Filtrar Por Grupos</h4>
                           </div>
-                          <form method="POST" action="{{route('valFormu')}}">
+                          <form method="POST" action="{{route('filtrarFormu')}}">
                           <div class="modal-body scrollable-container"  >
                             <!--filtro-->
                                   @csrf
@@ -122,7 +121,7 @@
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-warning" data-dismiss="modal">Cerrar</button>
-                            <a href="/reportcompletos" class="btn btn-primary float-right" type="submit">Deshacer</a>
+                            <a href="/admin/reporte" class="btn btn-primary float-right" type="submit">Deshacer</a>
                             <button class="btn btn-success float-right" type="submit">Filtrar</button>
                           </div>
                           </form>
@@ -133,7 +132,7 @@
                   <!--end modal-->
                   <!---###################################################----->
                   <!--bton de filtro-->
-                    <a href="{{route('porcentaje')}}" type="button" class="btn btn-warning">Porcentajes</a>
+                    <a href="{{route('porcentajeAdmin')}}" type="button" class="btn btn-warning">Porcentajes</a>
                   <!--end boton -->
                </div>  
                 <div class="col-md-4" >
@@ -223,7 +222,7 @@
                                     <td>{{ round($user->s_point, 2) }} </td>
                                     <td>{{ $user->i_point }} </td>
                                     <td>{{ $user->g_point }} </td>
-                                    <td><a type="button" class="btn btn-warning" href="{{ route('reportcompletos.show', $user->id) }}">
+                                    <td><a type="button" class="btn btn-warning" href="{{ route('detalleusu', ['id' => $user->id]) }}">
                                           Completados</a></td>
                                 </tr>
                             @endforeach
@@ -277,7 +276,7 @@
                                             <td>{{ round($res->s_point, 2) }} </td>
                                             <td>{{ $res->i_point }} </td>
                                             <td>{{ $res->g_point }} </td>
-                                            <td><a type="button" class="btn btn-warning" href="{{ route('reportcompletos.show', $res->id) }}">
+                                            <td><a type="button" class="btn btn-warning" href="{{ route('detalleusu', $res->id) }}">
                                                   Completados</a>
                                             </td>
                                           </tr>

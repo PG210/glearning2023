@@ -11,6 +11,7 @@ use App\Http\Controllers\Carga\GruposRecom;
 use App\Http\Controllers\Carga\GruposInsignias;//se agrego este controlador
 use App\Http\Controllers\Carga\PorcentajeController;//se agrego este controlador
 use App\Http\Controllers\Perfil\Administrador;//se agrego este controlador
+use App\Http\Controllers\Perfil\PorcentajeAdmin;//se agrego este controlador
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -339,3 +340,9 @@ Route::post('/enviar-correos/{id}', [PorcentajeController::class, 'correos'])->m
 Route::get('/admin', [Administrador::class, 'index'])->middleware('redirectIfSessionExpired');
 Route::get('/admin/reporte', [Administrador::class, 'resultado'])->name('reportegeneral')->middleware('redirectIfSessionExpired');
 Route::POST('/admin/reporte/busqueda', [Administrador::class, 'consultarter'])->name('consultauser')->middleware('redirectIfSessionExpired');
+Route::get('/admin/detalle/{id}', [Administrador::class, 'detalle'])->name('detalleusu')->middleware('redirectIfSessionExpired');
+Route::POST('/admin/mas/detalle', [Administrador::class, 'masdet'])->name('masdet')->middleware('redirectIfSessionExpired');
+Route::POST('/admin/filtrar/usuarios/grupos', [Administrador::class, 'filtrarFormu'])->name('filtrarFormu')->middleware('redirectIfSessionExpired');
+Route::get('/admin/reporte/view/porcentaje', [PorcentajeAdmin::class, 'porcentaje'])->name('porcentajeAdmin')->middleware('redirectIfSessionExpired');
+Route::POST('/admin/reporte/view/filtrar', [PorcentajeAdmin::class, 'filtrar'])->name('AdminvalFormuPorcentaje')->middleware('redirectIfSessionExpired');
+Route::post('/admin/enviar-correos/{id}', [PorcentajeAdmin::class, 'correos'])->middleware('redirectIfSessionExpired');
