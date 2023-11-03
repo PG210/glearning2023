@@ -94,6 +94,18 @@
                     </div> 
                   </div>
                   <!--end actualizar-->
+                  <!--actualizar avatar-->
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label for="avatar">Imagen Avatar</label>
+                      <div class="form-inline">    
+                          <img src="{{ asset($recompensas[0]->avatarchange)}}" width="100px">
+                          <input type="file" class="form-control" name="avatar" id="avatar">
+                        <!--<input type="hidden" name="imgavatar" value="{{$recompensas[0]->imagen}}">-->
+                      </div>
+                    </div>
+                  </div>
+                  <!---end avatar-->
                   <div class="col-md-12">
                     <button type="submit" class="btn btn-default">Actualizar</button>
                   </div>

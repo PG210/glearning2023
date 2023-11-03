@@ -232,6 +232,7 @@
                     <li><a href="{{ url('insignias') }}"><i class="fa fa-star text-aqua"></i> <span>Insignias</span></a></li>
                     <li><a href="{{ url('reconocimientos') }}"><i class="fa fa-diamond text-aqua"></i> <span>Reconocimientos</span></a></li>
                     <li><a href="{{ url('causasadmin') }}"><i class="fa fa-cube text-aqua"></i> <span>Causas</span></a></li>
+                    <li><a href="{{ route('registrarAvatars') }}"><i class="fa fa-user-circle-o text-aqua"></i> <span>Avatars</span></a></li>
                 </ul>
               </li>
               <li class="treeview">

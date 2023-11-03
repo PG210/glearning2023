@@ -25,9 +25,13 @@ class HomeController extends Controller
      */
     public function index()
     {
+
         
         $userauthid = Auth::user()->id;
-
+        
+        $valp = DB::table('users')->where('id', $userauthid)->select('admin')->first();
+       
+        if($valp->admin == 0){
         $competencia_usuario = DB::table('users')
                                 ->select(DB::raw('MAX(competences.name) as competencia'),
                                         DB::raw('MAX(subchapter_user.chapter_id) as max_chapter'),
@@ -40,5 +44,12 @@ class HomeController extends Controller
 
         return view('home')
                 ->with('competencia_usuario', $competencia_usuario);
+        }else{
+            if($valp->admin == 1){
+                return redirect('/backdoor');
+            }else{
+                return redirect('/admin/reporte');
+            }
+        }
     }
 }

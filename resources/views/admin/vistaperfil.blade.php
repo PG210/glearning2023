@@ -121,7 +121,7 @@
                            <div class="col-md-4">
                             <div class="form-group">
                                 <label for="pass">Rol</label>
-                                <select class="form-control" name="grupo">
+                                <select class="form-control" name="rol">
                                       @if($usu[0]->admin == 0)
                                         <option value="0" selected>Usuario</option> 
                                         <option value="2">Supervisor</option>

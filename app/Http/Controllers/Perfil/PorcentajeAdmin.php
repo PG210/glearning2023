@@ -12,12 +12,7 @@ use DB;
 
 class PorcentajeAdmin extends Controller
 {
-    public function porcentaje()
-    {
-        $info = GruposModel::all();
-        
-        return view('admingrupos.vistaporcentaje')->with('info', $info);
-    }
+  
 //##########################################
 public function totcap($buscar, $tot){
     $num = $tot;
@@ -227,8 +222,24 @@ return $datosunidos;
 }
 //==================================
  public function filtrar(Request $request){
-    $valselect = $request->input('idfiltro');
+    $idusu=auth()->id();
+    $info = DB::table('grupadmin')
+              ->join('grupos', 'grupadmin.idgrupo', '=', 'grupos.id')
+              ->where('idusu', $idusu)
+              ->select('grupos.id', 'grupos.descrip')
+              ->get();
+   
+    if(count($info) != 0){ //valiar que tenga datos
 
+        if(is_null($request->input('idfiltro'))){
+          
+            $valselect = $info[0]->id;
+
+        }else{
+            $valselect = $request->input('idfiltro');       
+        }
+
+     $nomgrupo = GruposModel::findOrFail($valselect);
     //busca los usuarios asociados acada grupo
    
       $res = DB::table('users')
@@ -243,7 +254,7 @@ return $datosunidos;
       //#############################3
      //return $resultados;
       //Obtiene el nombre del grupo
-      $nomgrupo = GruposModel::findOrFail($valselect);
+      // $nomgrupo = GruposModel::findOrFail($valselect);
       $contar = count($res);
       //return $contar;
     //busca el total de users asociados a cada grupos 
@@ -531,9 +542,11 @@ return $datosunidos;
        // Unir todos los arreglos en uno solo, estees para saber las personas que no han comenzado su curso
        $datacompleta = array_merge($c1, $c2, $c3, $c4, $c5, $c6);
       //###################################################
+        }else{
+            $var1 = $var2 = $var3 = $var4 = $var5 = $var6 = "";
+            $nomgrupo = $totPorCap = $contar = $reporusu = $resultados = $datacompleta = "";
+        }
      //  return $datacompleta;
-      $info = GruposModel::all();
-
       return view('admingrupos.vistaporcentaje',  compact('info', 'var1', 'var2', 'var3', 'var4', 'var5', 'var6', 'nomgrupo', 'totPorCap', 'contar', 'reporusu', 'resultados', 'datacompleta'));
     }
 
@@ -580,6 +593,24 @@ return $datosunidos;
             return response()->json(['message' => 'Correos enviados correctamente.']);
     }
 
-    //###################################################
+    //============ index inicial =============
+      
+    public function porcentaje()
+    {
+        $idusu = auth()->id();
+        $info = DB::table('grupadmin')
+                  ->join('grupos', 'grupadmin.idgrupo', '=', 'grupos.id')
+                  ->where('idusu', $idusu)
+                  ->select('grupos.id', 'grupos.descrip')
+                  ->get();
+        $request = new Request();
+        $parametro = "";
+        //return $info;
+        $consulta = $this->filtrar($request, $parametro);
+        return $consulta;
+        //return view('admingrupos.vistaporcentaje')->with('info', $info);
+    }
+
+    //============ end index ============
 
 }

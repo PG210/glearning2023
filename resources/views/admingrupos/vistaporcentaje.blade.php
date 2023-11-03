@@ -51,6 +51,7 @@
                                         </tr>
                                       </thead>
                                       <tbody>
+                                      @if(count($info) != 0)
                                       @foreach($info as $g)
                                           <tr>
                                               <td> 
@@ -61,6 +62,7 @@
                                               </td>
                                           </tr>
                                       @endforeach
+                                      @endif
                                         <!-- Agrega más filas según tus datos -->
                                       </tbody>
                                     </table>
@@ -74,7 +76,9 @@
                           <div class="modal-footer">
                             <button type="button" class="btn btn-warning" data-dismiss="modal">Cerrar</button>
                             <a href="{{route('porcentajeAdmin')}}" class="btn btn-primary float-right" type="submit">Deshacer</a>
+                            @if(count($info) != 0)
                             <button class="btn btn-success float-right" type="submit">Filtrar</button>
+                            @endif
                           </div>
                           </form>
                         </div>
@@ -91,6 +95,7 @@
     <!-- /.box-header -->
     <div class="box-body">
         <div class="row">
+          @if(isset($nomgrupo))
             <div class="col-md-12">
                 @if(isset($nomgrupo))
                 <h1>PORCENTAJE DE AVANCE GRUPO: {{$nomgrupo->descrip}}</h1>
@@ -288,7 +293,8 @@
                 </div>
                         
             </div>
-            <!-- /.col -->                                
+            <!-- /.col -->   
+          @endif                             
         </div>
     </div>
     <!-- /.box-body -->

@@ -16,6 +16,7 @@ use App\PosUsuModel\SubcapUser;//se agrego esta parte
 use Dompdf\Dompdf;
 use Illuminate\Support\Facades\View;
 use App\PosUsuModel\GrupadminModel;//se agrego esta parte
+use App\Avatar;
 
 class PerfilController extends Controller
 {
@@ -33,6 +34,7 @@ class PerfilController extends Controller
     }
 
     public function actu(Request $request, $id){
+        $avat = DB::table('avatars')->where('id', $request->input('avat'))->select('img')->get();
         $p =  $request->input('pass');
         if($p!=null){
             $usuact =User::findOrfail($id);
@@ -42,6 +44,7 @@ class PerfilController extends Controller
             $usuact->username = $request->input('usuario');
             $usuact->email = $request->input('email');
             $usuact->avatar_id = $request->input('avat');
+            $usuact->imgavat = $avat[0]->img; //guarda la direccion del avatar
             $usuact->cedula = $request->input('ced');//cedula
             $usuact->password=Hash::make($p);
             $usuact->save();
@@ -55,6 +58,7 @@ class PerfilController extends Controller
             $usuact->email = $request->input('email');
             $usuact->cedula = $request->input('ced');//cedula
             $usuact->avatar_id = $request->input('avat');
+            $usuact->imgavat = $avat[0]->img; //guarda la direccion del avatar
             $usuact->save();
             return redirect('/home');
         }
@@ -86,12 +90,15 @@ class PerfilController extends Controller
 
     //actualizar perfil de usuario desde el admin
    public function actualizarusuadmin(Request $request, $id){
-
+       // return $request;
+      // return $id;
         $gruposid = $request->idarchivo; //guarda los datos de check
           
        // return $request;
         $gr = $request->input('grupo');
         $p = $request->input('passw');
+
+        $avat = DB::table('avatars')->where('id', $request->input('avat'))->select('img')->get(); //consultar el avatar para sacar la dirccion
 
         $actu =User::findOrfail($id);
         $actu->firstname = $request->input('nombre');
@@ -100,6 +107,8 @@ class PerfilController extends Controller
         $actu->username = $request->input('usuario');
         $actu->email = $request->input('email');
         $actu->avatar_id = $request->input('avat');
+        $actu->admin = $request->input('rol');
+        $actu->imgavat = $avat[0]->img;//direccion del avatar
         if($request->passw != Null){
            
             $actu->password=Hash::make($p);
@@ -107,6 +116,7 @@ class PerfilController extends Controller
          //#########################
         //validar que al cambiar de grupo se debe vincular nuevamente la info.
         //return $actu->id_grupo;
+       // return $gr;
         if ($actu->id_grupo == $gr){
             $actu->id_grupo = $gr;
         }else{
@@ -281,4 +291,32 @@ class PerfilController extends Controller
     
     return view('grupos.vistamat')->with('ninfo', $al);
    }
+   //=================== funcion para vista e registrar avatars
+   public function regavatar(){
+     $avatar = DB::table('avatars')->get();
+     return view('admin.viewavatar')->with('avatar', $avatar);
+   }
+
+   public function actuAvatar(Request $request){
+   // nombre genero descrip idusu avat
+   if ($request->hasFile('avat')) {  
+        $file = $request->file('avat');//guarda la variable id en un file
+        $nameruta = $file->getClientOriginalName();
+        //$limpiarnombre = str_replace(array("#",".",";"," "), '', $name);
+        //$val = $limpiarnombre.".".$file->guessExtension();//renombra el archivo subido
+        $ruta = public_path("storage/avatar2023/".$nameruta);//ruta para guardar el archivo pdf/ es la carpeta
+        copy($file, $ruta);
+    }
+
+     $Act = Avatar::findOrFail($request->idusu);
+     $Act->name = $request->nombre; 
+     $Act->description = $request->descrip;
+     $Act->sexo = $request->genero;
+     if ($request->hasFile('avat')) { 
+        $Act->img = "storage/avatar2023/".$nameruta;
+     }
+     $Act->save();
+     return back();
+   }
+   //======================
 }

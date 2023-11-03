@@ -134,6 +134,7 @@ class AwardController extends Controller
      */
     public function update(Request $request, $id)
     {
+        
         //
         $status="";
         //obtener y guardar el archivo imagen (debe crearse un link a la carpeta storage=>public con php artisan storage:link)
@@ -152,10 +153,20 @@ class AwardController extends Controller
             $pathfile = $request->imagennoupdate;
         }
 
-        $reconocimiento = Gift::find($id);
+        //guaradar avatar
+        if ($request->hasFile('avatar')) {            
+            $ruta = $request->file('avatar')->getClientOriginalName();
+            $rutavatar = 'storage/avatar2023/'.$ruta;
+            $request->file('avatar')->storeAs('avatar2023/', $ruta);
+        }
+       //end guaradaravatar
 
+        $reconocimiento = Gift::find($id);
         $reconocimiento->name = $request->name; 
         $reconocimiento->imagen = $pathfile;
+        if($request->hasFile('avatar')){
+          $reconocimiento->avatarchange = $rutavatar;
+        }
         $reconocimiento->s_point = $request->spoints;
         $reconocimiento->i_point = $request->ipoints;
         $reconocimiento->g_point = $request->gpoints;
@@ -171,6 +182,8 @@ class AwardController extends Controller
                           'gifts.i_point', 'gifts.g_point', 'gifts.description', 
                           'avatars.description as desavatar', 'avatars.sexo', 'nombre', 'tipo', 'descrip')
                          ->get();
+
+      
 
         return view('admin.reconocimientos')->with('reconocimientos', $reconocimientos)
                                     ->with('status', $status); 

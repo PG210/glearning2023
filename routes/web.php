@@ -346,3 +346,8 @@ Route::POST('/admin/filtrar/usuarios/grupos', [Administrador::class, 'filtrarFor
 Route::get('/admin/reporte/view/porcentaje', [PorcentajeAdmin::class, 'porcentaje'])->name('porcentajeAdmin')->middleware('redirectIfSessionExpired');
 Route::POST('/admin/reporte/view/filtrar', [PorcentajeAdmin::class, 'filtrar'])->name('AdminvalFormuPorcentaje')->middleware('redirectIfSessionExpired');
 Route::post('/admin/enviar-correos/{id}', [PorcentajeAdmin::class, 'correos'])->middleware('redirectIfSessionExpired');
+
+//=========================== ruta para crear ==================
+Route::get('/admin/registrar/avatar', [PerfilController::class, 'regavatar'])->name('registrarAvatars')->middleware('redirectIfSessionExpired');
+Route::POST('/admin/update/avatar', [PerfilController::class, 'actuAvatar'])->name('actuAvatar')->middleware('redirectIfSessionExpired');
+

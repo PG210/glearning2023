@@ -67,7 +67,9 @@
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-warning" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary">Generar</button>
+                            @if(count($grup) != 0)
+                             <button type="submit" class="btn btn-primary">Generar</button>
+                            @endif
                           </div>
                          </form>
                         </div>
@@ -122,7 +124,9 @@
                           <div class="modal-footer">
                             <button type="button" class="btn btn-warning" data-dismiss="modal">Cerrar</button>
                             <a href="/admin/reporte" class="btn btn-primary float-right" type="submit">Deshacer</a>
+                            @if(count($grup) != 0)
                             <button class="btn btn-success float-right" type="submit">Filtrar</button>
+                            @endif
                           </div>
                           </form>
                         </div>
@@ -228,6 +232,7 @@
                             @endforeach
                             @endif
                             @if(isset($resultado))
+                                 @if(count($resultado) != 0)
                                   @foreach ($resultado as $nivel1)
                                       @foreach ($nivel1 as $res) 
                                           <tr>      
@@ -282,6 +287,7 @@
                                           </tr>
                                        @endforeach
                                    @endforeach
+                                   @endif
                             @endif
                         </tbody>
                         <tbody id="tablamostrar"></tbody>

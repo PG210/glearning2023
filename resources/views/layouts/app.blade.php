@@ -53,8 +53,9 @@
  
     <?php
         //Todos los retos
+      
         $challenges = App\Challenge::all(); 
-
+      
         echo "<script>var numRetos = ($challenges).length</script>";
         echo "<script>console.log(numRetos);</script>";
 
@@ -75,6 +76,12 @@
             //code...
             $useravatar = App\User::find($userid);
             $avatarimage = App\Avatar::find($useravatar->avatar_id);
+            
+            $imagenAvat = DB::table('users')
+                         ->where('users.id', $userid)
+                         ->select('users.imgavat as img')->get();
+
+
             
             $avataritem = App\Avatar::find($useravatar->avatar_id);
     
@@ -298,7 +305,7 @@
                     <!-- Menu Toggle Button -->
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                     <!-- The user image in the navbar-->
-                    <img src="{{ asset($avatarimage) }}" class="user-image" alt="User Image">
+                    <img src="{{ asset($imagenAvat[0]->img) }}" class="user-image" alt="User Image">
                     <!-- hidden-xs hides the username on small devices so only the image appears. -->
                     @auth
                     <span class="hidden-xs">{{ Auth::user()->firstname }} </span>
@@ -306,7 +313,7 @@
                     </a>
                     <ul class="dropdown-menu">
 
-                @guest
+                   @guest
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
                         </li>
@@ -319,7 +326,7 @@
                     <!-- The user image in the menu -->
                     <li class="user-header">
                        
-                        <img src="{{ asset($avatarimage) }}" class="img-circle" alt="User Image">
+                        <img src="{{ asset($imagenAvat[0]->img) }}" class="img-circle" alt="User Image">
                         <p>
                         @auth
                             <span> {{ Auth::user()->firstname }} </span>
@@ -384,7 +391,7 @@
   <!-- Sidebar user panel (optional) -->
   <div class="user-panel">
     <div class="pull-left image">
-      <img src="{{ asset($avatarimage) }} " class="img-circle" alt="User Image">
+      <img src="{{  asset($imagenAvat[0]->img) }} " class="img-circle" alt="User Image">
     </div>
     <div class="pull-left info" style="text-align: center;">
 

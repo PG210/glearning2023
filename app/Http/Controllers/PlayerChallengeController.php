@@ -470,7 +470,7 @@ class PlayerChallengeController extends Controller
                $search = DB::table('gifts')
                          ->where('id_grupo', $reto->id_grupo)
                          ->where('avatar_id', $userplayer->avatar_id)
-                         ->select('gifts.id as idin', 'gifts.imagen', 'gifts.name')
+                         ->select('gifts.id as idin', 'gifts.imagen', 'avatarchange as avatar', 'gifts.name')
                          ->first();
                 //validar que esta insignia no este rpetida
                 $validarin = DB::table('gift_user')->where('user_id', $userauthid)->where('gift_id', $search->idin)->get();
@@ -480,6 +480,12 @@ class PlayerChallengeController extends Controller
                         'user_id' => $userplayer->id,
                         // Agrega más columnas y valores según corresponda
                     ]);
+                    
+                    //====================aqui se debe actualizar el usuario =========================
+                    $usuact =User::findOrfail($userplayer->id);
+                    $usuact->imgavat = $search->avatar; //guarda la direccion del avatar
+                    $usuact->save();
+                    //==============================================================================
                     //una insignia nueva
                     $recompensapopup = 1;
                     $recompensawon = $search->imagen;

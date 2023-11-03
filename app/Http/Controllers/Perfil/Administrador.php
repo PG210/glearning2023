@@ -21,14 +21,20 @@ class Administrador extends Controller
 
     public function resultado()
     {
+        $idusu=auth()->id();
+        $grupoAdmin = DB::table('grupadmin')->where('idusu', $idusu)->select('idgrupo')->get();
 
         /*Aqui se agrego los users */
-        $res = DB::table('users')
+        if(count($grupoAdmin) != 0){ //validar si hay usuarios
+        foreach($grupoAdmin as $ga){
+           $res[] = DB::table('users')
                   ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
+                  ->where('users.id_grupo', $ga->idgrupo)
                   ->select('users.id', 'firstname', 'lastname', 'username', 'email', 'level', 's_point', 'i_point', 'g_point', 'grupos.descrip', 'estado')
                   ->orderBy('s_point', 'desc')
                   ->get();
-          //buscar las personas con las tareas pendientes y capitulos terminados
+        }
+        //buscar las personas con las tareas pendientes y capitulos terminados
            
           $totTareas = DB::table('challenges')
                     ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
@@ -36,16 +42,18 @@ class Administrador extends Controller
                     ->groupBy('subchapters.chapter_id')
                     ->get();
       
-             for ($x = 0; $x < count($res); $x++) {
+             foreach($res as $narray){
+                foreach($narray as $obj){
                     $buscar[] = DB::table('challenge_user')
                           ->join('challenges', 'challenge_user.challenge_id', '=', 'challenges.id')
                           ->join('subchapters', 'challenges.subchapter_id', '=', 'subchapters.id')
-                          ->where('challenge_user.user_id', $res[$x]->id)
+                          ->where('challenge_user.user_id', $obj->id)
                           ->selectRaw('COUNT(challenge_user.challenge_id) as valor, challenge_user.user_id as idusu, subchapters.chapter_id')
                           ->groupBy('challenge_user.user_id', 'subchapters.chapter_id')
                           ->get(); 
+                   }
                   }
-      
+              
                 //return $buscar[$i][$i]->chapter_id;
                 $al = [];
                 for ($i = 0; $i < count($buscar); $i++) {
@@ -65,38 +73,58 @@ class Administrador extends Controller
                       $al[] = $item;
                     }
                 }
-                } 
+            }
+          
           //#############
           $niveles = collect($al)->groupBy('usuario')->map(function ($items) {
             return count($items);
           });//este me da los niveles 
         /*finaliza */
-        $grupos = DB::table('grupos')->get();
+        }else{
+            $al[] = "";
+            $niveles = "";
+            $res[] = "";
+        } //cierre del if de validacion
 
+        $grupos = DB::table('grupadmin')
+                  ->join('grupos', 'grupadmin.idgrupo', '=', 'grupos.id')
+                  ->where('idusu', $idusu)
+                  ->select('grupos.id', 'grupos.descrip')
+                  ->get();
+       
        // return $res;
-        return view('admingrupos.reportegeneral')->with('usuarios', $res)->with('grup', $grupos)->with('bus', $al)->with('niveles', $niveles);
+        return view('admingrupos.reportegeneral')->with('resultado', $res)->with('grup', $grupos)->with('bus', $al)->with('niveles', $niveles);
     }
 
     //==============vistade busqueda ================
      //buscar usuario por grupos
   public function consultarter(Request $request){
             $cadena = $request->dato;
-            if (str_contains($cadena, "@")) {
-            $buscar = DB::table('users')
-                    ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
-                    ->where('users.email', '=', $cadena)
-                    ->select('users.id', 'firstname', 'lastname', 'username', 'email', 'level', 's_point', 'i_point', 'g_point', 'grupos.descrip', 'estado')
-                    ->orderBy('s_point', 'desc')
-                    ->get();
-            } else {
+            $idusu = auth()->id();
+            $grupos = DB::table('grupadmin')
+                        ->join('grupos', 'grupadmin.idgrupo', '=', 'grupos.id')
+                        ->where('idusu', $idusu)
+                        ->select('grupos.id', 'grupos.descrip')
+                        ->get();
+        
+                if (str_contains($cadena, "@")) {
+                
                 $buscar = DB::table('users')
                         ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
-                        ->where('users.firstname', 'like', '%' . $cadena . '%')
-                        ->orWhere('users.lastname', 'like', '%' . $cadena . '%')
+                        ->where('users.email', '=', $cadena)
                         ->select('users.id', 'firstname', 'lastname', 'username', 'email', 'level', 's_point', 'i_point', 'g_point', 'grupos.descrip', 'estado')
                         ->orderBy('s_point', 'desc')
                         ->get();
-            }
+                } else {
+                    $buscar = DB::table('users')
+                            ->join('grupos', 'users.id_grupo', '=', 'grupos.id')
+                            ->where('users.firstname', 'like', '%' . $cadena . '%')
+                            ->orWhere('users.lastname', 'like', '%' . $cadena . '%')
+                            ->select('users.id', 'firstname', 'lastname', 'username', 'email', 'level', 's_point', 'i_point', 'g_point', 'grupos.descrip', 'estado')
+                            ->orderBy('s_point', 'desc')
+                            ->get();
+                }
+            
         
             if(count($buscar) != 0){
             $tTareas = DB::table('challenges')
@@ -142,14 +170,13 @@ class Administrador extends Controller
                 //##########################################
             }
             //########################
-            $grupos = DB::table('grupos')->get();
+             
             return view('admingrupos.reportegeneral')->with('usuarios', $buscar)->with('grup', $grupos)->with('bus', $al)->with('niveles', $niveles);
             
             }else{
-            $grupos = DB::table('grupos')->get();
-            $buscar = [];
-            $al = [];
-            $niveles =[];
+                $buscar = [];
+                $al = [];
+                $niveles =[];
             return view('admingrupos.reportegeneral')->with('usuarios', $buscar)->with('grup', $grupos)->with('bus', $al)->with('niveles', $niveles);
             }
             
@@ -281,6 +308,7 @@ class Administrador extends Controller
     //=========================== filtros ==============
     public function filtrarFormu(Request $request){
 
+        $idusu=auth()->id();
     
         $valselect = $request->input('idfiltro');
     
@@ -354,7 +382,12 @@ class Administrador extends Controller
         }
     
         //return $grouped[86] ?? 0;
-        $grupos = DB::table('grupos')->get();
+        $grupos = DB::table('grupadmin')
+                ->join('grupos', 'grupadmin.idgrupo', '=', 'grupos.id')
+                ->where('idusu', $idusu)
+                ->select('grupos.id', 'grupos.descrip')
+                ->get();
+
     
         return view('admingrupos.reportegeneral')->with('resultado', $resultados)->with('grup', $grupos)->with('bus', $al)->with('niveles', $niveles);
        }
